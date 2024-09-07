@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import Loader from "@/components/loader/Loader";
 import Link from "next/link";
+import img from "../../../../public/img.svg";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -97,13 +98,7 @@ function Login() {
             <span className="text-green_1">D</span>ata
           </h2>
           <div className="sm:relative sm:m-auto sm:w-3/4 sm:aspect-[3/2]">
-            <Image
-              src={"/img.svg"}
-              alt="login"
-              sizes="100vw 100vh"
-              priority
-              fill
-            />
+            <Image src={img} alt="login" sizes="100vw 100vh" priority fill />
           </div>
           <p className="text-white text-3xl  mt-4 line-height md:text-6xl">
             مرحبًا بك.
