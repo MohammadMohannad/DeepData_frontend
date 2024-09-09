@@ -13,7 +13,7 @@ const poppins = Poppins({
 });
 
 function Signup() {
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   return (
     <div className="bg-white min-h-screen flex justify-start flex-col items-center md:justify-center">
