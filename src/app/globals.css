@@ -2,11 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 * {
-  font-family: "Readex Pro", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  direction: rtl;
 }
 body {
   color: var(--foreground);
@@ -15,8 +13,8 @@ body {
 .line-height {
   line-height: 4.5rem !important;
 }
-.left {
-  direction: ltr !important;
+.right {
+  direction: rtl !important;
 }
 @layer utilities {
   .text-balance {
