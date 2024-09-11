@@ -1,23 +1,39 @@
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
 
-function Button_one({ step, loading, disabled, ...props }) {
+function ButtonOne({ step = 0, loading, page = "signup", disabled, ...props }) {
+  // Define the button text based on conditions
+  const getButtonText = () => {
+    if (loading && page === "signup") return "جاري انشاء حساب...";
+    if (step === 3) return "انشاء حساب";
+    if (step >= 1) return "التالي";
+    if (page === "login" && loading) return "جاري تسجيل الدخول...";
+    if (page === "login" && !loading) return "تسجيل الدخول";
+    return null;
+  };
+
+  // Combine dynamic classes
+  const buttonClasses = `
+    relative h-12 col-span-6 bg-green_1 hover:bg-green_1 transition-colors duration-300 
+    ${
+      loading ? "opacity-50 flex flex-row-reverse gap-2 cursor-not-allowed" : ""
+    }
+    ${page === "login" ? "w-full" : ""}
+  `;
+
   return (
     <Button
-      type="submit" // This will trigger form submission and validation
-      className={`relative h-12 col-span-6 bg-green_1 hover:bg-green_1 transition-colors duration-300 ${
-        loading
-          ? "opacity-50 flex gap-2 cursor-not-allowed transition-colors duration-300"
-          : ""
-      }`}
+      type="submit"
       disabled={loading || disabled}
+      className={buttonClasses.trim()} // Remove any extra spaces from the class string
       {...props}
     >
       {loading && <Loader />}
-      {loading ? "جاري إنشاء الحساب..." : step === 3 ? "انشاء حساب" : "التالي"}
+      <span className="right">{getButtonText()}</span>
     </Button>
   );
 }
 
-export default Button_one;
+export default ButtonOne;

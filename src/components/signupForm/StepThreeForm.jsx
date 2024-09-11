@@ -22,7 +22,7 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
             },
           }))
         }
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <Input
@@ -41,7 +41,7 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
             },
           }))
         }
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <Button_one

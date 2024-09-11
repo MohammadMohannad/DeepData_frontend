@@ -15,10 +15,10 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
         }
         type="text"
         placeholder="الاسم الكامل"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 right"
         required
       />
-      <div className="col-span-6 h-12 flex gap-2">
+      <div className="col-span-6 h-12 flex flex-row-reverse gap-2">
         <Input
           type="text"
           maxLength={11}
@@ -41,7 +41,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, "");
           }}
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 placeholder:text-right"
           required
         />
         <Input
@@ -66,7 +66,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, "");
           }}
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 placeholder:text-right"
         />
       </div>
       <Input
@@ -79,7 +79,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           })
         }
         placeholder="البريد الالكتروني"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <div className="col-span-6 h-12 flex gap-2">
@@ -99,7 +99,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
               },
             })
           }
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 right"
           required
         />
         <Input
@@ -118,7 +118,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
               },
             })
           }
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 right"
           required
         />
         <Input
@@ -137,7 +137,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
               },
             })
           }
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 right"
           required
         />
       </div>
@@ -154,7 +154,7 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
             },
           })
         }
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 right"
         required
       />
       <Button_one step={step} loading={loading} />

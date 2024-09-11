@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
   return (
     <>
-      <div className="col-span-6 h-12 flex gap-2">
+      <div className="col-span-6 h-12 flex flex-row-reverse gap-2 ">
         <Input
           type="text"
           maxLength={11}
@@ -29,7 +29,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-digits
           }}
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 placeholder:text-right"
           required
         />
         <Input
@@ -54,7 +54,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-digits
           }}
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 placeholder:text-right"
         />
       </div>
       <Input
@@ -70,7 +70,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
         }
         type="text"
         placeholder="رابط صفحة الانستغرام"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <Input
@@ -86,7 +86,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
         }
         type="text"
         placeholder="رابط صفحة الفيسبوك"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <Input
@@ -108,7 +108,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
         onInput={(e) => {
           e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-digits
         }}
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
       <FileUploader

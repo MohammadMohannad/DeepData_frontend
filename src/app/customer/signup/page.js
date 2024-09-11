@@ -23,9 +23,9 @@ function Signup() {
         <span className="text-green_1">D</span>eep
         <span className="text-green_1">D</span>ata
       </h2>
-      <div className="bg-white md:border rounded flex flex-col justify-items-start md:flex-row-reverse md:w-5/6 max-w-7xl">
+      <div className="bg-white md:border rounded flex flex-col justify-items-start md:flex-row md:w-5/6 max-w-7xl">
         <div className="w-full md:w-1/2 flex flex-col items-center p-2 md:p-6">
-          <div className="hidden md:flex w-full mb-14 items-end justify-start h-10">
+          <div className="hidden md:flex flex-row-reverse w-full mb-14 items-end justify-start h-10">
             <Button
               variant="ghost"
               className={step === 1 ? "hidden" : "text-black text-base h-full"}
@@ -36,15 +36,13 @@ function Signup() {
           </div>
           <div className="grid grid-cols-3 mb-6 h-2 min-w-[300px] rounded-[5px] overflow-hidden bg-gray-100">
             <div
-              onClick={() => setStep(3)}
               className={
-                step === 3
+                step === 1
                   ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
                   : "col-span-1 h-full transition-all ease-linear duration-300"
               }
             ></div>
             <div
-              onClick={() => setStep(2)}
               className={
                 step === 2
                   ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
@@ -52,9 +50,8 @@ function Signup() {
               }
             ></div>
             <div
-              onClick={() => setStep(1)}
               className={
-                step === 1
+                step === 3
                   ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
                   : "col-span-1 h-full transition-all ease-linear duration-300"
               }
@@ -62,7 +59,7 @@ function Signup() {
           </div>
           <h2 className="font-bold text-2xl">انشاء حساب</h2>
           <div className="md:w-2/3 w-full">
-            <p className="text-sm text-center text-zinc-500 mb-4">
+            <p className="text-sm right text-center text-zinc-500 mb-4">
               مرحبا بك في DeepData
             </p>
             <SignupForm step={step} setStep={setStep} />
@@ -82,7 +79,7 @@ function Signup() {
         </div>
         <div className="hidden md:block w-1/2 p-10 pt-6 bg-zinc-900 rounded-r">
           <h2
-            className={`${poppins.className} mb-8 text-3xl font-medium text-white`}
+            className={`${poppins.className} mb-8 text-3xl text-right font-medium text-white`}
           >
             <span className="text-green_1">D</span>eep
             <span className="text-green_1">D</span>ata
@@ -90,7 +87,7 @@ function Signup() {
           <div className="relative sm:m-auto sm:w-3/4 sm:aspect-[3/2]">
             <Image src={img} alt="login" sizes="100vw 100vh" priority fill />
           </div>
-          <p className="text-white text-3xl  mt-4 line-height md:text-6xl">
+          <p className="text-white mt-4 text-right line-height md:text-[56px]">
             مرحبًا بك.
             <br /> ابدأ رحلتك
             <br />
