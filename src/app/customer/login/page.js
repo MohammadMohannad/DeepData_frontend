@@ -1,18 +1,11 @@
 "use client";
-import { Poppins } from "next/font/google";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import Loader from "@/components/loader/Loader";
 import Link from "next/link";
-import img from "../../../../public/img.svg";
+import img from "@/assets/img.svg";
+import logo from "@/assets/logo.svg";
 import Button_one from "@/components/customButtons/Button_one";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
-});
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -39,9 +32,7 @@ function Login() {
     <div className="bg-white min-h-screen flex items-center justify-center">
       <div className="bg-white md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
         <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
-          <h2
-            className={`${poppins.className} md:hidden mb-16 text-2xl font-medium text-black`}
-          >
+          <h2 className="md:hidden mb-16 text-3xl font-medium text-black">
             <span className="text-green_1">D</span>eep
             <span className="text-green_1">D</span>ata
           </h2>
@@ -80,13 +71,10 @@ function Login() {
             </p>
           </div>
         </div>
-        <div className="hidden md:block w-1/2 p-10 pt-6 bg-zinc-900 rounded-r">
-          <h2
-            className={`${poppins.className} mb-8 text-right text-3xl font-medium text-white`}
-          >
-            <span className="text-green_1">D</span>eep
-            <span className="text-green_1">D</span>ata
-          </h2>
+        <div className="hidden md:block w-1/2 p-10 pt-6 bg-zinc-900 rounded-r right">
+          <div className="w-40 h-8 relative py-6">
+            <Image src={logo} alt="logo" fill priority sizes="100vw" />
+          </div>
           <div className="sm:relative sm:m-auto sm:w-3/4 sm:aspect-[3/2]">
             <Image src={img} alt="login" sizes="100vw 100vh" priority fill />
           </div>

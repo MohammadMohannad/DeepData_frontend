@@ -3,23 +3,16 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Poppins } from "next/font/google";
 import SignupForm from "@/components/signupForm/SignupForm";
-import img from "../../../../public/img.svg";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
-});
+import img from "@/assets/img.svg";
+import logo from "@/assets/logo.svg";
 
 function Signup() {
   const [step, setStep] = useState(1);
 
   return (
     <div className="bg-white min-h-screen flex justify-start flex-col items-center md:justify-center">
-      <h2
-        className={`${poppins.className} md:hidden mb-[72px] text-4xl mt-7 font-medium text-black`}
-      >
+      <h2 className="md:hidden mb-[72px] text-4xl mt-7 font-medium text-black">
         <span className="text-green_1">D</span>eep
         <span className="text-green_1">D</span>ata
       </h2>
@@ -77,13 +70,10 @@ function Signup() {
             </p>
           </div>
         </div>
-        <div className="hidden md:block w-1/2 p-10 pt-6 bg-zinc-900 rounded-r">
-          <h2
-            className={`${poppins.className} mb-8 text-3xl text-right font-medium text-white`}
-          >
-            <span className="text-green_1">D</span>eep
-            <span className="text-green_1">D</span>ata
-          </h2>
+        <div className="hidden md:block right w-1/2 p-10 pt-6 bg-zinc-900 rounded-r">
+          <div className="w-40 h-8 relative py-6">
+            <Image src={logo} alt="logo" fill priority sizes="100vw" />
+          </div>
           <div className="relative sm:m-auto sm:w-3/4 sm:aspect-[3/2]">
             <Image src={img} alt="login" sizes="100vw 100vh" priority fill />
           </div>
