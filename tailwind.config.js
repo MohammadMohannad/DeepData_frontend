@@ -12,7 +12,7 @@ module.exports = {
         green_1: "#1AB68A",
         green_2: "#158b69",
         gray_1: "#e5e5e5",
-        background: "hsl(var(--background))",
+        background: "var(--background)",
         foreground: "hsl(var(--foreground))",
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -50,7 +50,7 @@ module.exports = {
           2: "hsl(var(--chart-2))",
           3: "hsl(var(--chart-3))",
           4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))",
+          5: "var(--chart-5)",
         },
       },
       borderRadius: {

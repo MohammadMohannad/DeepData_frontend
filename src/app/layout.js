@@ -1,10 +1,7 @@
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import "./globals.css";
-import { Poppins, Readex_Pro } from "next/font/google";
+import { Readex_Pro } from "next/font/google";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
 const readex_Pro = Readex_Pro({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -17,8 +14,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ar">
-      <body className={`${readex_Pro.className} ${poppins.className}`}>
-        {children}
+      <body className={readex_Pro.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

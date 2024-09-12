@@ -16,7 +16,6 @@ const CustomYAxisTick = ({ x, y, payload, type, align }) => {
     <text
       x={x}
       y={y}
-      style={{ fill: "#000000" }} // Set your desired text color here
       textAnchor={align}
       fontSize={9} // Adjust the font size if needed
       dy={3} // Adjust the vertical positioning of the text

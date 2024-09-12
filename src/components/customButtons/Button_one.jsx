@@ -16,7 +16,7 @@ function ButtonOne({ step = 0, loading, page = "signup", disabled, ...props }) {
 
   // Combine dynamic classes
   const buttonClasses = `
-    relative h-12 col-span-6 bg-green_1 hover:bg-green_1 transition-colors duration-300 
+    relative h-12 col-span-6 text-white bg-green_1 hover:bg-green_1 transition-colors duration-300 
     ${
       loading ? "opacity-50 flex flex-row-reverse gap-2 cursor-not-allowed" : ""
     }
