@@ -29,10 +29,10 @@ function Login() {
   };
 
   return (
-    <div className="bg-white min-h-screen flex items-center justify-center">
-      <div className="bg-white md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
+    <div className="bg-background min-h-screen flex items-center justify-center">
+      <div className="bg-background md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
         <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
-          <h2 className="md:hidden mb-16 text-3xl font-medium text-black">
+          <h2 className="md:hidden mb-16 text-3xl font-medium text-primary">
             <span className="text-green_1">D</span>eep
             <span className="text-green_1">D</span>ata
           </h2>

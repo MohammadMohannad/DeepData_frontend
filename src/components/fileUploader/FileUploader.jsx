@@ -20,7 +20,7 @@ export function FileUploader({ className, onFileChange, ...props }) {
         id="picture"
         type="file"
         onChange={handleFileChange}
-        className="mt-2 left bg-gray_1 grid items-center"
+        className="mt-2 left bg-primary-foreground grid items-center"
       />
     </div>
   );

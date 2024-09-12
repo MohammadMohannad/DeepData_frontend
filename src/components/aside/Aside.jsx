@@ -54,7 +54,7 @@ function Aside() {
   return (
     <aside className="border-l fixed text-right flex flex-col min-h-screen p-4 lg:w-auto lg:min-w-[222px] gap-6">
       <div className="py-3 pb-4">
-        <h2 className="text-[34px] font-medium">
+        <h2 className="text-[34px] font-medium text-primary">
           <span className="text-green-600 font-bold">D</span>eep
           <span className="text-green-600 font-bold">D</span>ata
         </h2>
@@ -74,7 +74,9 @@ function Aside() {
                       <CommandItem
                         className={`flex min-w-[188px] flex-row-reverse gap-2 px-4 py-2 cursor-pointer 
                     ${
-                      isActive ? "bg-gray-100" : "text-black hover:bg-gray-50"
+                      isActive
+                        ? "bg-secondary"
+                        : "text-primary hover:bg-primary-foreground"
                     }`}
                       >
                         <div>{item.icon}</div>

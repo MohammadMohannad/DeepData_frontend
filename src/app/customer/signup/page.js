@@ -11,41 +11,41 @@ function Signup() {
   const [step, setStep] = useState(1);
 
   return (
-    <div className="bg-white min-h-screen flex justify-start flex-col items-center md:justify-center">
-      <h2 className="md:hidden mb-[72px] text-4xl mt-7 font-medium text-black">
+    <div className="bg-background min-h-screen flex justify-start flex-col items-center md:justify-center">
+      <h2 className="md:hidden mb-[72px] text-4xl mt-7 font-medium text-primary">
         <span className="text-green_1">D</span>eep
         <span className="text-green_1">D</span>ata
       </h2>
-      <div className="bg-white md:border rounded flex flex-col justify-items-start md:flex-row md:w-5/6 max-w-7xl">
+      <div className="bg-background md:border rounded flex flex-col justify-items-start md:flex-row md:w-5/6 max-w-7xl">
         <div className="w-full md:w-1/2 flex flex-col items-center p-2 md:p-6">
           <div className="hidden md:flex flex-row-reverse w-full mb-14 items-end justify-start h-10">
             <Button
               variant="ghost"
-              className={step === 1 ? "hidden" : "text-black text-base h-full"}
+              className={step === 1 ? "hidden" : "text-primary text-base h-full"}
               onClick={() => setStep(step - 1)}
             >
               العودة
             </Button>
           </div>
-          <div className="grid grid-cols-3 mb-6 h-2 min-w-[300px] rounded-[5px] overflow-hidden bg-gray-100">
+          <div className="grid grid-cols-3 mb-6 h-2 min-w-[300px] rounded-[5px] overflow-hidden bg-primary-foreground">
             <div
               className={
                 step === 1
-                  ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
+                  ? "col-span-1 bg-primary h-full transition-all ease-linear duration-300"
                   : "col-span-1 h-full transition-all ease-linear duration-300"
               }
             ></div>
             <div
               className={
                 step === 2
-                  ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
+                  ? "col-span-1 bg-primary h-full transition-all ease-linear duration-300"
                   : "col-span-1 h-full transition-all ease-linear duration-300"
               }
             ></div>
             <div
               className={
                 step === 3
-                  ? "col-span-1 bg-black h-full transition-all ease-linear duration-300"
+                  ? "col-span-1 bg-primary h-full transition-all ease-linear duration-300"
                   : "col-span-1 h-full transition-all ease-linear duration-300"
               }
             ></div>
