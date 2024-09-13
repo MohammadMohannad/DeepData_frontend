@@ -47,6 +47,9 @@ body {
 .dropShadow {
   filter: drop-shadow(-6px -6px 12px #1ab68a77);
 }
+.custom-checkbox-item .absolute.left-2 {
+  display: none !important; /* Hide the default checkmark */
+}
 
 @layer utilities {
   .text-balance {
