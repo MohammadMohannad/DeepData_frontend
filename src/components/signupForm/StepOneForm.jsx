@@ -1,8 +1,53 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Input } from "../ui/input";
 import Button_one from "../customButtons/Button_one";
+import { debounce } from "lodash";
 
 function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
+  // State to track validation errors
+  const [errors, setErrors] = useState({
+    firstPhoneNumber: null,
+    secondPhoneNumber: null,
+  });
+
+  // Validation function for phone numbers
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^(07|9647)\d{9}$/;
+    return phoneRegex.test(phoneNumber);
+  };
+
+  // Debounced function for validating phone numbers
+  const handlePhoneNumberChange = debounce((value, phoneType) => {
+    const trimmedValue = value.trim();
+
+    if (validatePhoneNumber(trimmedValue)) {
+      setErrors((prevState) => ({
+        ...prevState,
+        [phoneType]: null,
+      }));
+    } else {
+      setErrors((prevState) => ({
+        ...prevState,
+        [phoneType]: "الرقم الذي ادخلته غير صالح",
+      }));
+    }
+  }, 300);
+
+  // Handle input change and validation
+  const handleChange = (e, phoneType) => {
+    const { value } = e.target;
+    const numericValue = value.replace(/\D/g, "");
+    setSignupInfo((prevState) => ({
+      ...prevState,
+      userInfo: {
+        ...prevState.userInfo,
+        [phoneType]: numericValue,
+      },
+    }));
+    handlePhoneNumberChange(numericValue, phoneType);
+  };
+
   return (
     <>
       <Input
@@ -15,60 +60,36 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
         }
         type="text"
         placeholder="الاسم الكامل"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 right"
         required
       />
-      <div className="col-span-6 h-12 flex gap-2">
+
+      <div className="col-span-6 h-12 flex flex-row-reverse gap-2">
         <Input
           type="text"
-          maxLength={11}
+          maxLength={14}
           placeholder="رقم الهاتف"
-          value={signupInfo.userInfo.userPhoneNumber.firstPhoneNumber || ""}
-          onChange={(e) =>
-            setSignupInfo({
-              ...signupInfo,
-              userInfo: {
-                ...signupInfo.userInfo,
-                userPhoneNumber: {
-                  ...signupInfo.userPhoneNumber,
-                  firstPhoneNumber: e.target.value,
-                },
-              },
-            })
-          }
-          pattern="\d*"
+          value={signupInfo.userInfo.firstPhoneNumber}
+          onChange={(e) => handleChange(e, "firstPhoneNumber")}
           inputMode="numeric"
-          onInput={(e) => {
-            e.target.value = e.target.value.replace(/\D/g, "");
-          }}
-          className="h-full placeholder:h-6"
+          className={`h-full placeholder:h-6 placeholder:text-right
+            ${errors.firstPhoneNumber && "ring-1 ring-red-500"}`}
           required
         />
+
         <Input
           type="text"
-          maxLength={11}
+          maxLength={14}
           placeholder="رقم الهاتف الثاني"
-          value={signupInfo.userInfo.userPhoneNumber.secondPhoneNumber}
-          onChange={(e) =>
-            setSignupInfo({
-              ...signupInfo,
-              userInfo: {
-                ...signupInfo.userInfo,
-                userPhoneNumber: {
-                  ...signupInfo.userPhoneNumber,
-                  secondPhoneNumber: e.target.value,
-                },
-              },
-            })
-          }
-          pattern="\d*"
+          value={signupInfo.userInfo.secondPhoneNumber}
+          onChange={(e) => handleChange(e, "secondPhoneNumber")}
           inputMode="numeric"
-          onInput={(e) => {
-            e.target.value = e.target.value.replace(/\D/g, "");
-          }}
-          className="h-full placeholder:h-6"
+          className={`h-full placeholder:h-6 placeholder:text-right
+           ${errors.secondPhoneNumber && "ring-1 ring-red-500"}`}
+          required
         />
       </div>
+
       <Input
         type="email"
         value={signupInfo.userInfo.email}
@@ -79,85 +100,57 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           })
         }
         placeholder="البريد الالكتروني"
-        className="col-span-6 h-12 placeholder:h-6"
+        className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
         required
       />
-      <div className="col-span-6 h-12 flex gap-2">
+
+      <div className="col-span-6 h-12 flex flex-row-reverse gap-2">
         <Input
           type="text"
           placeholder="البلد"
-          value={signupInfo.userInfo.address.country}
+          value={signupInfo.businessInfo.country}
           onChange={(e) =>
             setSignupInfo({
               ...signupInfo,
-              userInfo: {
-                ...signupInfo.userInfo,
-                address: {
-                  ...signupInfo.userInfo.address,
-                  country: e.target.value,
-                },
+              businessInfo: {
+                ...signupInfo.businessInfo,
+                country: e.target.value,
               },
             })
           }
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 right"
           required
         />
+
         <Input
           type="text"
           placeholder="المحافظة"
-          value={signupInfo.userInfo.address.city}
+          value={signupInfo.businessInfo.state}
           onChange={(e) =>
             setSignupInfo({
               ...signupInfo,
-              userInfo: {
-                ...signupInfo.userInfo,
-                address: {
-                  ...signupInfo.userInfo.address,
-                  city: e.target.value,
-                },
+              businessInfo: {
+                ...signupInfo.businessInfo,
+                state: e.target.value,
               },
             })
           }
-          className="h-full placeholder:h-6"
-          required
-        />
-        <Input
-          type="text"
-          placeholder="المدينة"
-          value={signupInfo.userInfo.address.subCity}
-          onChange={(e) =>
-            setSignupInfo({
-              ...signupInfo,
-              userInfo: {
-                ...signupInfo.userInfo,
-                address: {
-                  ...signupInfo.userInfo.address,
-                  subCity: e.target.value,
-                },
-              },
-            })
-          }
-          className="h-full placeholder:h-6"
+          className="h-full placeholder:h-6 right"
           required
         />
       </div>
-      <Input
-        type={"text"}
-        placeholder="اسم المشروع"
-        value={signupInfo.businessInfo.businessName}
-        onChange={(e) =>
-          setSignupInfo({
-            ...signupInfo,
-            businessInfo: {
-              ...signupInfo.businessInfo,
-              businessName: e.target.value,
-            },
-          })
+      <Button_one
+        step={step}
+        loading={loading}
+        disabled={
+          errors.firstPhoneNumber ||
+          errors.secondPhoneNumber ||
+          !signupInfo.businessInfo.country ||
+          !signupInfo.businessInfo.state ||
+          !signupInfo.userInfo.email ||
+          !signupInfo.userInfo.userName
         }
-        className="col-span-6 h-12 placeholder:h-6"
-        required
       />
-      <Button_one step={step} loading={loading} />
     </>
   );
 }
