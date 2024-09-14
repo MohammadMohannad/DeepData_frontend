@@ -1,33 +1,10 @@
-"use client";
-import { useState } from "react";
 import Image from "next/image";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import img from "@/assets/img.svg";
 import logo from "@/assets/logo.svg";
-import Button_one from "@/components/customButtons/Button_one";
+import LoginForm from "@/components/loginForm/LoginForm";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Prevent the default form submission
-    if (email && password) {
-      setLoading(true);
-      login();
-    }
-  };
-
-  const login = () => {
-    // Implement login logic here
-    setTimeout(() => {
-      alert("login");
-      setLoading(false);
-    }, 5000);
-  };
-
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
       <div className="bg-background md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
@@ -43,26 +20,7 @@ function Login() {
               <br />
               لتسجيل الدخول إلى حسابك.
             </p>
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col items-center"
-            >
-              <Input
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                type="email"
-                placeholder="البريد الألكتروني"
-                className="h-12 p-3 placeholder:text-right text-sm placeholder:text-sm placeholder:text-zinc-400 placeholder:h-6 mb-2"
-              />
-              <Input
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                type="password"
-                placeholder="كلمة المرور"
-                className="h-12 p-3 placeholder:text-right text-sm placeholder:text-sm placeholder:text-zinc-400 placeholder:h-6 mb-2"
-              />
-              <Button_one page="login" loading={loading} />
-            </form>
+            <LoginForm />
             <p className="text-[16px] text-right text-zinc-500 mt-6">
               ليس لديك حساب؟{" "}
               <Link href="/customer/signup" className="text-green_1">
