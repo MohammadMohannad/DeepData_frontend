@@ -64,7 +64,7 @@ export default function ChatModal({ open, setOpen }) {
       {open && (
         <div className="fixed top-0 left-0 w-full h-full z-50" dir="ltr">
           <div className="w-full h-full relative sm:block flex items-center justify-center">
-            <div className="max-w-[450px]  max-h-[580px] bg-white border-[3px] sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
+            <div className="max-w-[450px]  max-h-[580px] bg-background border-[3px] sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
               <div className="hidden sm:block w-full h-2/5 gradient relative overflow-hidden rounded-t-[6px]">
                 <div className="w-full h-full relative overflow-hidden before:absolute before:inset-0 before:backdrop-blur-2xl before:z-0 p-[20px]">
                   <div className="w-full flex flex-col justify-between h-full relative z-10">
@@ -101,7 +101,7 @@ export default function ChatModal({ open, setOpen }) {
               </div>
 
               {/* old messages */}
-              <div className="scrollbar-hide w-full h-3/5  border-b right px-[20px] pt-4 overflow-y-scroll">
+              <div className="w-full h-3/5  border-b right px-[20px] pt-4 overflow-y-scroll">
                 {messages.map((msg, index) => (
                   <div className="w-[80%] h-fit mb-8" key={index}>
                     <div className="w-full bg-green_1 rounded-l-[6px] rounded-br-[6px] text-[13px] px-2.5 py-1.5 text-white">

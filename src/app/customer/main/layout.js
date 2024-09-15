@@ -7,7 +7,7 @@ export default function RootLayout({ children }) {
       <div className="hidden lg:flex min-w-[222px] min-h-screen">
         <Aside />
       </div>
-      <div className="w-full h-full scrollbar-hide">
+      <div className="w-full h-full">
         <Header />
         <div className="px-2.5 sm:px-5 mt-6 right">{children}</div>
       </div>

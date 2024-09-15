@@ -70,7 +70,7 @@ function Header() {
       >
         <div className="flex flex-row-reverse justify-start items-center gap-2 h-full">
           <div className="relative w-10 h-10 flex items-center justify-center rounded-full border">
-            <Image src={avatar} alt="avatar" sizes="13 13" fill priority />
+            <Image src={avatar} alt="avatar" sizes="(100vw, 100vh)" fill priority />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full border">
             <Bell

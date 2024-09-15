@@ -47,6 +47,20 @@ body {
 .dropShadow {
   filter: drop-shadow(-6px -6px 12px #1ab68a77);
 }
+.custom-checkbox-item .absolute.left-2 {
+  display: none !important; /* Hide the default checkmark */
+}
+/*hide the input type number's arrows For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
 @layer utilities {
   .text-balance {
