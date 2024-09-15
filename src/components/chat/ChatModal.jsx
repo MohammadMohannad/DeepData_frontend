@@ -101,7 +101,7 @@ export default function ChatModal({ open, setOpen }) {
               </div>
 
               {/* old messages */}
-              <div className="scrollbar-hide w-full h-3/5  border-b right px-[20px] pt-4 overflow-y-scroll">
+              <div className="w-full h-3/5  border-b right px-[20px] pt-4 overflow-y-scroll">
                 {messages.map((msg, index) => (
                   <div className="w-[80%] h-fit mb-8" key={index}>
                     <div className="w-full bg-green_1 rounded-l-[6px] rounded-br-[6px] text-[13px] px-2.5 py-1.5 text-white">

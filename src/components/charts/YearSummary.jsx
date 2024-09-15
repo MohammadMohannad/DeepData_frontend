@@ -11,7 +11,7 @@ import { ChartContainer } from "../ui/chart"; // Assuming ChartContainer is a wr
 
 const formatter = new Intl.NumberFormat("en-US");
 
-const CustomYAxisTick = ({ x, y, payload, type, align }) => {
+const CustomYAxisTick = ({ x, y, payload, type, align = "middle" }) => {
   return (
     <text
       x={x}

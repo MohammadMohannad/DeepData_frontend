@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority";
 import { AlignRight, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const Sheet = SheetPrimitive.Root;
 
@@ -54,6 +55,12 @@ const SheetContent = React.forwardRef(
         className={cn(sheetVariants({ side }), className)}
         {...props}
       >
+        <VisuallyHidden>
+          <SheetTitle>Sheet Content</SheetTitle>
+          <SheetDescription>
+            This is a hidden description for screen readers.
+          </SheetDescription>
+        </VisuallyHidden>
         {children}
         <SheetPrimitive.Close className="absolute  right-4 top-4 bg-secondary w-[40px] h-[40px] rounded-full flex items-center justify-center  ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary">
           <AlignRight className="h-4 w-4 text-primary" />

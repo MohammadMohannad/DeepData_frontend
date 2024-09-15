@@ -8,7 +8,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import { ChartContainer } from "../ui/chart"; // Assuming ChartContainer is a wrapper component
 
 const chartConfig = {
   product: {
@@ -17,11 +17,14 @@ const chartConfig = {
   },
 };
 
+// CustomTooltip function component with default parameter
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 rounded shadow-md text-right">
-        <p className=" text-zinc-500 mb-1">المنتج: {payload[0].payload.product}</p>
+        <p className=" text-zinc-500 mb-1">
+          المنتج: {payload[0].payload.product}
+        </p>
         <p className="text-zinc-500">العدد: {payload[0].value}</p>
       </div>
     );
@@ -30,6 +33,7 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
+// Main component
 export default function BestProducts({ data }) {
   return (
     <ChartContainer config={chartConfig}>
