@@ -8,7 +8,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Check, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  Check,
+  ChevronDown,
+  Edit,
+  MoreHorizontal,
+  Trash,
+  Trash2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,39 +47,87 @@ const data = [
     productRepetition: "شهري",
     productType: "عناية",
     time: "1234",
-    productPrice: 1200,
+    productPrice: 1000,
   },
   {
     id: 2,
-    productName: "صابون",
+    productName: "غسول وجة",
     productRepetition: "شهري",
     productType: "عناية",
-    time: "1234",
-    productPrice: 1200,
+    time: "5678",
+    productPrice: 1100,
   },
   {
     id: 3,
-    productName: "صابون",
+    productName: "عطر",
     productRepetition: "شهري",
     productType: "عناية",
-    time: "1234",
+    time: "9101",
     productPrice: 1200,
   },
   {
     id: 4,
-    productName: "صابون",
+    productName: "معطر",
     productRepetition: "شهري",
     productType: "عناية",
-    time: "1234",
-    productPrice: 1200,
+    time: "1213",
+    productPrice: 1300,
   },
   {
     id: 5,
+    productName: "مرطب",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "1415",
+    productPrice: 1400,
+  },
+  {
+    id: 6,
     productName: "صابون",
     productRepetition: "شهري",
     productType: "عناية",
-    time: "1234",
-    productPrice: 1200,
+    time: "1617",
+    productPrice: 1500,
+  },
+  {
+    id: 7,
+    productName: "صابون",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "1819",
+    productPrice: 1600,
+  },
+  {
+    id: 8,
+    productName: "صابون",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "2020",
+    productPrice: 1700,
+  },
+  {
+    id: 9,
+    productName: "صابون",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "2222",
+    productPrice: 1800,
+  },
+  {
+    id: 10,
+    productName: "صابون",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "2424",
+    productPrice: 1900,
+  },
+  {
+    id: 11,
+    productName: "صابون",
+    productRepetition: "شهري",
+    productType: "عناية",
+    time: "2626",
+    productPrice: 2000,
   },
 ];
 
@@ -111,7 +167,7 @@ const columns = [
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const product = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -120,16 +176,26 @@ const columns = [
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuContent align="start" className="right">
+            <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() =>
+                alert(`Delete ${product.id}: ${product.productName}`)
+              }
+              className="cursor-pointer flex items-center gap-2"
             >
-              Copy payment ID
+              <Edit size={18} />
+              <p>تعديل</p>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                alert(`Delete ${product.id}: ${product.productName}`)
+              }
+              className="cursor-pointer flex items-center gap-2"
+            >
+              <Trash2 size={18} color="red" />
+              <p>حذف</p>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -164,14 +230,14 @@ export function DataTable() {
 
   return (
     <div className="w-full">
-      <div className="w-full h-[100px] flex sm:items-center flex-col items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
+      <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
+          value={table.getColumn("productName")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("productName")?.setFilterValue(event.target.value)
           }
-          className="max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
+          className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

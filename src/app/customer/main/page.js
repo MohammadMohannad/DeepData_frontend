@@ -209,15 +209,16 @@ function Dashboard() {
                     key={index}
                   >
                     <div className="flex items-center gap-4">
-                      <Image
-                        src={item.avatar ? item.avatar : avatar}
-                        alt={`Avatar of ${item.name}`}
-                        width={40}
-                        height={40}
-                        sizes="40"
-                        priority
-                        className="rounded-full"
-                      />
+                      <div className="w-10 h-10 relative overflow-hidden rounded-full">
+                        <Image
+                          src={item.avatar ? item.avatar : avatar}
+                          alt={`Avatar of ${item.name}`}
+                          fill
+                          sizes="(100vw, 100vh)"
+                          priority
+                        />
+                      </div>
+
                       <p className="text-base font-medium">{item.name}</p>
                     </div>
                     <p dir="ltr">+{formatter.format(item.count)}</p>
