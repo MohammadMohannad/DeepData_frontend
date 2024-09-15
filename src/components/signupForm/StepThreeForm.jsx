@@ -1,5 +1,4 @@
 import React from "react";
-import { FileUploader } from "../fileUploader/FileUploader";
 import Button_one from "../customButtons/Button_one";
 import { Input } from "../ui/input";
 
@@ -9,16 +8,13 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
       <Input
         type="password"
         placeholder="كلمة المرور"
-        value={signupInfo.userInfo.passwords.password}
+        value={signupInfo.userInfo.password}
         onChange={(e) =>
           setSignupInfo((prev) => ({
             ...prev,
             userInfo: {
               ...prev.userInfo,
-              passwords: {
-                ...prev.userInfo.passwords,
-                password: e.target.value,
-              },
+              password: e.target.value,
             },
           }))
         }
@@ -28,16 +24,13 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
       <Input
         type="password"
         placeholder="تأكيد كلمة المرور"
-        value={signupInfo.userInfo.passwords.confirmPassword}
+        value={signupInfo.userInfo.confirmPassword}
         onChange={(e) =>
           setSignupInfo((prev) => ({
             ...prev,
             userInfo: {
               ...prev.userInfo,
-              passwords: {
-                ...prev.userInfo.passwords,
-                confirmPassword: e.target.value,
-              },
+              confirmPassword: e.target.value,
             },
           }))
         }
@@ -48,8 +41,10 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
         step={step}
         loading={loading}
         disabled={
-          signupInfo.userInfo.passwords.password !==
-          signupInfo.userInfo.passwords.confirmPassword
+          signupInfo.userInfo.password !==
+            signupInfo.userInfo.confirmPassword ||
+          !signupInfo.userInfo.password ||
+          !signupInfo.userInfo.confirmPassword
         }
       />
     </>

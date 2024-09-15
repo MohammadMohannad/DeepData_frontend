@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
+
 import Image from "next/image";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import img from "@/assets/img.svg";
 import logo from "@/assets/logo.svg";
@@ -50,6 +50,11 @@ function Login() {
       setLoading(false);
     }
   };
+
+import LoginForm from "@/components/loginForm/LoginForm";
+
+function Login() {
+
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
       <div className="bg-background md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
@@ -85,6 +90,7 @@ function Login() {
               />
               <Button_one page="login" loading={loading} />
             </form>
+            <LoginForm />
             <p className="text-[16px] text-right text-zinc-500 mt-6">
               ليس لديك حساب؟{" "}
               <Link href="/customer/signup" className="text-green_1">
