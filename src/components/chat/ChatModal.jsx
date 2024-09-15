@@ -3,6 +3,7 @@ import { ChevronLeft, X } from "lucide-react";
 import { Input } from "../ui/input";
 import ChatImageUploader from "../fileUploader/ChatImageUploader";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function ChatModal({ open, setOpen }) {
   const [message, setMessage] = useState({
@@ -10,26 +11,57 @@ export default function ChatModal({ open, setOpen }) {
     uploadedImage: null,
   });
 
+  // Messages state to keep track of chat history
+  const [messages, setMessages] = useState([]);
+
   useEffect(() => {
-    // Add or remove the overflow-hidden class based on the open state
     if (open) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
-
-    // Cleanup function to ensure the class is removed when the component unmounts
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
 
+  
+  // Handle image upload
   const handleImageUpload = (image) => {
     setMessage({ ...message, uploadedImage: image });
   };
 
-  const sendMessage = () => {
-    console.log(message);
+  // Send message to API
+  const sendMessage = async () => {
+    if (!message.message) return;
+
+    const newMessage = {
+      message: message.message,
+      time: new Date().toLocaleTimeString(), // Add the current time
+    };
+
+    // Optimistically update the UI to show the new message immediately
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    const token = localStorage.getItem('jwtToken');
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    
+    try {
+      // Send the message to the backend API
+      const response = await axios.post("http://127.0.0.1:3002/api/v1/send_message", {
+        message: message.message,
+        uploadedImage: message.uploadedImage,
+      });
+
+      console.log("Message sent successfully:", response.data);
+
+      // Optionally handle response (e.g., update message ID or status)
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Optionally revert the optimistic update in case of failure
+    }
+
+    // Clear the input field
     setMessage({ message: "", uploadedImage: null });
   };
 
@@ -37,27 +69,6 @@ export default function ChatModal({ open, setOpen }) {
     setOpen(!open);
     setMessage({ message: "", uploadedImage: null });
   };
-
-  const messages = [
-    {
-      id: 1,
-      message: "مرحبا بكم في ديب ديتا",
-      time: "10:30 AM",
-    },
-    {
-      id: 2,
-      message:
-        "لوريملوريم ايبسوملوريم ايبسوم لوريم ايبسوم ايبسوم لوريملوريم ايبسوم لوريم ايبسوم لوريم ايبسوم  ايبسوم لوريم ايبسوم ",
-      time: "10:35 AM",
-    },
-    {
-      id: 3,
-      message:
-        "لوريملوريم ايبسوملوريم ايبسوم لوريم ايبسوم ايبسوم لوريملوريم ايبسوم لوريم ايبسوم لوريم ايبسوم  ايبسوم لوريم ايبسوم ",
-
-      time: "10:40 AM",
-    },
-  ];
 
   return (
     <>
@@ -116,6 +127,8 @@ export default function ChatModal({ open, setOpen }) {
                   </div>
                 ))}
               </div>
+
+              {/* input message area */}
               <div className="px-[20px] w-full h-[12%]  overflow-hidden rounded-b-[6px] flex gap-1 flex-row-reverse items-center">
                 {/* handle the message input here */}
                 <Input
@@ -131,7 +144,7 @@ export default function ChatModal({ open, setOpen }) {
                   {/* Image upload */}
                   <ChatImageUploader onImageUpload={handleImageUpload} />
                   <div
-                    onClick={() => message.message && sendMessage()}
+                    onClick={sendMessage}
                     className="w-[35px] h-[35px] rounded-full bg-green_1 flex items-center justify-center"
                   >
                     <ChevronLeft className="text-white" size={20} />

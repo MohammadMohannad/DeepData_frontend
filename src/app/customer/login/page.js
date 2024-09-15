@@ -1,33 +1,55 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import img from "@/assets/img.svg";
 import logo from "@/assets/logo.svg";
 import Button_one from "@/components/customButtons/Button_one";
+import { useRouter } from 'next/navigation';
+import axios from "axios";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Prevent the default form submission
-    if (email && password) {
-      setLoading(true);
-      login();
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+
+    // If token exists, redirect to the main page
+    if (token) {
+      router.push('/customer/main');
+    }
+  }, [router]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Send login request to Next.js API route
+      const response = await axios.post('/api/auth/login', { email, password });
+
+      // Get the token from the response
+      const { token } = response.data;
+
+      // Store the token in local storage (or use cookies if preferred)
+      localStorage.setItem('jwtToken', token);
+
+      // Redirect to the main page
+      router.push('/customer/main');
+      console.log('Logged in successfully');
+    } catch (error) {
+      setError('Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
-
-  const login = () => {
-    // Implement login logic here
-    setTimeout(() => {
-      alert("login");
-      setLoading(false);
-    }, 5000);
-  };
-
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
       <div className="bg-background md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
@@ -44,7 +66,7 @@ function Login() {
               لتسجيل الدخول إلى حسابك.
             </p>
             <form
-              onSubmit={handleSubmit}
+              onSubmit={handleLogin}
               className="flex flex-col items-center"
             >
               <Input
