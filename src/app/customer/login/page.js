@@ -1,10 +1,60 @@
+"use client";
+import { useState, useEffect } from 'react';
+
 import Image from "next/image";
 import Link from "next/link";
 import img from "@/assets/img.svg";
 import logo from "@/assets/logo.svg";
+import Button_one from "@/components/customButtons/Button_one";
+import { useRouter } from 'next/navigation';
+import axios from "axios";
+
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  // Check if the user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+
+    // If token exists, redirect to the main page
+    if (token) {
+      router.push('/customer/main');
+    }
+  }, [router]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Send login request to Next.js API route
+      const response = await axios.post('/api/auth/login', { email, password });
+
+      // Get the token from the response
+      const { token } = response.data;
+
+      // Store the token in local storage (or use cookies if preferred)
+      localStorage.setItem('jwtToken', token);
+
+      // Redirect to the main page
+      router.push('/customer/main');
+      console.log('Logged in successfully');
+    } catch (error) {
+      setError('Invalid email or password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 import LoginForm from "@/components/loginForm/LoginForm";
 
 function Login() {
+
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
       <div className="bg-background md:border rounded flex md:w-5/6 md:max-w-7xl w-full">
@@ -20,6 +70,26 @@ function Login() {
               <br />
               لتسجيل الدخول إلى حسابك.
             </p>
+            <form
+              onSubmit={handleLogin}
+              className="flex flex-col items-center"
+            >
+              <Input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                type="email"
+                placeholder="البريد الألكتروني"
+                className="h-12 p-3 placeholder:text-right text-sm placeholder:text-sm placeholder:text-zinc-400 placeholder:h-6 mb-2"
+              />
+              <Input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type="password"
+                placeholder="كلمة المرور"
+                className="h-12 p-3 placeholder:text-right text-sm placeholder:text-sm placeholder:text-zinc-400 placeholder:h-6 mb-2"
+              />
+              <Button_one page="login" loading={loading} />
+            </form>
             <LoginForm />
             <p className="text-[16px] text-right text-zinc-500 mt-6">
               ليس لديك حساب؟{" "}
