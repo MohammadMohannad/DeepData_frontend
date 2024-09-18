@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { fetchDashboardData } from "@/lib/fakeData"; // Placeholder for backend integration
+import { fetchDashboardData } from "@/lib/fakeData"; 
 import GeneralMainPageCards from "@/components/cards/GeneralMainPageCards";
 import BestProducts from "@/components/charts/BestProducts";
 import avatar from "../../../../public/Avatar.svg";
