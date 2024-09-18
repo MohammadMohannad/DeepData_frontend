@@ -1,10 +1,17 @@
-import AddProductForm from "@/components/addProductForm/AddProductForm";
+import AddProductForm from "@/components/ProductModals/AddProductForm";
 import Container from "@/components/container/Container";
-import { DataTable } from "@/components/dataTable/DataTable";
+import { DataTable } from "@/components/dataTables/ProductsDataTable";
 import { Button } from "@/components/ui/button";
+import { fetchDashboardData } from "@/lib/fakeData"; // Placeholder for backend integration
 import React from "react";
 
-function Products() {
+async function products() {
+  const res = await fetchDashboardData();
+  return res.products;
+}
+
+async function Products() {
+  const data = await products();
   return (
     <>
       <Container className="pb-4">
@@ -17,7 +24,7 @@ function Products() {
             </Button>
           </div>
         </div>
-        <DataTable />
+        <DataTable products={data} />
       </Container>
     </>
   );

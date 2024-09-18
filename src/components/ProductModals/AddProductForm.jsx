@@ -56,7 +56,7 @@ function AddProductForm() {
       <Modal
         open={isOpen}
         setOpen={setIsOpen}
-        className="max-w-[400px] flex items-center justify-center flex-col"
+        className="max-w-[400px] flex items-center justify-center flex-col right"
       >
         <div className="w-full text-right mb-4">
           <h2 className="text-base font-semibold">اضافة منتج</h2>
@@ -64,10 +64,10 @@ function AddProductForm() {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="w-full grid grid-cols-2 text-right gap-2">
-            <label className="col-span-1 mb-1 order-2" htmlFor="productName">
+            <label className="col-span-1 mb-1 order-1" htmlFor="productName">
               اسم المنتج
             </label>
-            <label className="col-span-1 mb-1 order-1" htmlFor="productPrice">
+            <label className="col-span-1 mb-1 order-2" htmlFor="productPrice">
               سعر المنتج
             </label>
             <Input
@@ -76,7 +76,7 @@ function AddProductForm() {
                 setProduct({ ...product, productName: e.target.value })
               }
               id="productName"
-              className="col-span-1 order-4 mb-2"
+              className="col-span-1 order-3 mb-2"
               type="text"
               required
             />
@@ -86,7 +86,7 @@ function AddProductForm() {
                 setProduct({ ...product, productPrice: e.target.value })
               }
               id="productPrice"
-              className="col-span-1 order-3 mb-2"
+              className="col-span-1 order-4 mb-2"
               type="number"
               required
             />
@@ -105,11 +105,11 @@ function AddProductForm() {
             />
             <label
               htmlFor="productRepetition"
-              className="col-span-1 mb-1 order-8"
+              className="col-span-1 mb-1 order-7"
             >
               تكرارية المنتج
             </label>
-            <label htmlFor="time" className="col-span-1 mb-1 order-7">
+            <label htmlFor="time" className="col-span-1 mb-1 order-8">
               المدة
             </label>
             <Input
@@ -118,7 +118,7 @@ function AddProductForm() {
                 setProduct({ ...product, productRepetition: e.target.value })
               }
               id="productRepetition"
-              className="col-span-1 mb-4 order-10"
+              className="col-span-1 mb-4 order-9"
               type="text"
               required
             />
@@ -126,23 +126,12 @@ function AddProductForm() {
               vlaue={product.time}
               onChange={(e) => setProduct({ ...product, time: e.target.value })}
               id="time"
-              className="col-span-1 mb-4 order-9"
+              className="col-span-1 mb-4 order-10"
               type="number"
               required
             />
           </div>
           <div className="w-full h-9 flex-row-reverse flex justify-between items-center">
-            <Button
-              variant="default"
-              type="submit"
-              className={`h-full w-20 transition-all duration-300 ease-in ${
-                loading &&
-                "opacity-50 w-32 flex flex-row-reverse gap-2 cursor-not-allowed"
-              }`}
-            >
-              <span className="block scale-75">{loading && <Loader />}</span>
-              <p className="right transition-all duration-300 ease-in">اضافة</p>
-            </Button>
             <Button
               disabled={loading}
               variant="ghost"
@@ -160,6 +149,17 @@ function AddProductForm() {
               }}
             >
               خروج
+            </Button>
+            <Button
+              variant="default"
+              type="submit"
+              className={`h-full w-20 transition-all duration-300 ease-in ${
+                loading &&
+                "opacity-50 w-32 flex flex-row-reverse gap-2 cursor-not-allowed"
+              }`}
+            >
+              <p className="right transition-all duration-300 ease-in">اضافة</p>
+              <span className="block scale-75">{loading && <Loader />}</span>
             </Button>
           </div>
         </form>

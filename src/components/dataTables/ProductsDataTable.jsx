@@ -8,18 +8,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  Check,
-  ChevronDown,
-  Edit,
-  MoreHorizontal,
-  Trash,
-  Trash2,
-} from "lucide-react";
+import { Check, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -39,100 +30,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
+import EditProductModal from "../ProductModals/EditProductModal";
 
-const data = [
-  {
-    id: 1,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1234",
-    productPrice: 1000,
-  },
-  {
-    id: 2,
-    productName: "غسول وجة",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "5678",
-    productPrice: 1100,
-  },
-  {
-    id: 3,
-    productName: "عطر",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "9101",
-    productPrice: 1200,
-  },
-  {
-    id: 4,
-    productName: "معطر",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1213",
-    productPrice: 1300,
-  },
-  {
-    id: 5,
-    productName: "مرطب",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1415",
-    productPrice: 1400,
-  },
-  {
-    id: 6,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1617",
-    productPrice: 1500,
-  },
-  {
-    id: 7,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1819",
-    productPrice: 1600,
-  },
-  {
-    id: 8,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2020",
-    productPrice: 1700,
-  },
-  {
-    id: 9,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2222",
-    productPrice: 1800,
-  },
-  {
-    id: 10,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2424",
-    productPrice: 1900,
-  },
-  {
-    id: 11,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2626",
-    productPrice: 2000,
-  },
-];
-
-// Define the columns
-const columns = [
+const columns = ({ setProduct, setOpen }) => [
   {
     accessorKey: "productName",
     header: "اسم المنتج",
@@ -179,9 +79,10 @@ const columns = [
           <DropdownMenuContent align="start" className="right">
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
-              }
+              onClick={() => {
+                setProduct(product);
+                setOpen(true);
+              }}
               className="cursor-pointer flex items-center gap-2"
             >
               <Edit size={18} />
@@ -203,15 +104,20 @@ const columns = [
   },
 ];
 
-export function DataTable() {
+export function DataTable({ products }) {
+  const [open, setOpen] = useState(false);
+  const [product, setProduct] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-
+  const data = products;
   const table = useReactTable({
     data,
-    columns,
+    columns: columns({
+      setProduct,
+      setOpen,
+    }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -230,6 +136,9 @@ export function DataTable() {
 
   return (
     <div className="w-full">
+      {open && (
+        <EditProductModal open={open} setOpen={setOpen} product={product} />
+      )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
@@ -274,7 +183,6 @@ export function DataTable() {
       </div>
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">
-          {/* Adjust min-width as necessary */}
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

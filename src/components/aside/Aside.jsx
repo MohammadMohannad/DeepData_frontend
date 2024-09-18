@@ -28,7 +28,7 @@ function Aside() {
       group: "المكتبة",
       items: [
         {
-          link: "#",
+          link: "/customer/main/customers",
           name: "العملاء",
           icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
         },
