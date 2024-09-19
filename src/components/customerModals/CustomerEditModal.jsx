@@ -39,10 +39,12 @@ function CustomerEditModal({ open, setOpen, customer }) {
     const trimmedValue = value.trim();
     if (validatePhoneNumber(trimmedValue)) {
       setErrors(() => ({
+        ...errors,
         [phoneType]: null,
       }));
     } else {
       setErrors(() => ({
+        ...errors,
         [phoneType]: "الرقم الذي ادخلته غير صالح",
       }));
     }
