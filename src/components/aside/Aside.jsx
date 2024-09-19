@@ -33,7 +33,7 @@ function Aside() {
           icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
         },
         {
-          link: "#",
+          link: "/customer/main/orders",
           name: "طلبات العملاء",
           icon: <Folders className="w-5 h-5" strokeWidth={1.5} />,
         },

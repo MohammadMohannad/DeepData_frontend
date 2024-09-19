@@ -143,7 +143,7 @@ function CustomerOrders({ setOpen, prevOrders, open }) {
         open={open}
         setOpen={setOpen}
         className="max-w-full overflow-auto flex-col"
-        layer="50"
+        layer="10"
       >
         <div className="text-xl w-full flex justify-between items-center mb-2 font-bold">
           <X

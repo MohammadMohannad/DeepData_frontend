@@ -48,10 +48,10 @@ function EditProductModal({ product, open, setOpen }) {
       open={open}
       setOpen={setOpen}
       className="max-w-[400px] flex items-center justify-center flex-col right"
-      layer="100"
+      layer="50"
     >
       <div className="w-full text-right mb-4">
-        <h2 className="text-base font-semibold">اضافة منتج</h2>
+        <h2 className="text-base font-semibold">تعديل منتج</h2>
         <p className="text-sm text-muted-foreground">املئ الحقول الاتيه </p>
       </div>
       <form onSubmit={handleSubmit}>

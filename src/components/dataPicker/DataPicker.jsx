@@ -5,16 +5,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { useState } from "react";
 
-export const DataPicker = () => {
+export const DataPicker = ({ withButton = true, className }) => {
   const [date, setDate] = useState(false);
   return (
     <>
-      <Popover>
+      <Popover className={className}>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
-            className={`w-4/6 justify-start flex-row-reverse text-left font-normal ${
+            className={`${className} ${
+              withButton && "w-4/6"
+            } justify-start flex-row-reverse text-left font-normal ${
               !date ? "text-muted-foreground" : ""
             }`}
           >
@@ -44,9 +46,11 @@ export const DataPicker = () => {
           />
         </PopoverContent>
       </Popover>
-      <Button variant="default" className="w-2/6 mr-2 min-h-full">
-        تحميل
-      </Button>
+      {withButton && (
+        <Button variant="default" className="w-2/6 mr-2 min-h-full">
+          تحميل
+        </Button>
+      )}
     </>
   );
 };

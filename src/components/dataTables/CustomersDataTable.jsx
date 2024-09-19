@@ -108,9 +108,9 @@ const columns = ({
     cell: ({ row }) => <div>{row.getValue("joinDate")}</div>,
   },
   {
-    accessorKey: "pointOfReference",
-    header: "اقرب نقطة دالة",
-    cell: ({ row }) => <div>{row.getValue("pointOfReference")}</div>,
+    accessorKey: "country",
+    header: "البلد",
+    cell: ({ row }) => <div>{row.getValue("country")}</div>,
   },
   {
     accessorKey: "city",
@@ -123,7 +123,7 @@ const columns = ({
     cell: ({ row }) => <div>{row.getValue("subCity")}</div>,
   },
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "firstPhoneNumber",
     header: ({ column }) => (
       <Button
         className="hover:bg-transparent"
@@ -135,7 +135,7 @@ const columns = ({
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="pr-3.5">{row.getValue("phoneNumber")}</div>
+      <div className="pr-3.5">{row.getValue("firstPhoneNumber")}</div>
     ),
   },
   {
