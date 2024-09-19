@@ -88,7 +88,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
   }, [open]);
 
   return (
-    <Modal open={open}>
+    <Modal open={open} >
       <div className="w-full text-right mb-4">
         <h2 className="text-base font-semibold">تعديل معلومات العميل</h2>
         <p className="text-sm text-muted-foreground">املئ الحقول الاتيه </p>
@@ -135,14 +135,14 @@ function CustomerEditModal({ open, setOpen, customer }) {
           />
         </div>
 
-        <div className="w-full grid grid-cols-3 gap-2 mb-4">
+        <div className="w-full grid grid-cols-6 gap-2 mb-4">
           <label className="col-span-1 order-1 text-[12px]" htmlFor="age">
             العمر
           </label>
-          <label className="col-span-1 order-2 text-[12px]" htmlFor="gender">
+          <label className="col-span-2 order-2 text-[12px]" htmlFor="gender">
             الجنس
           </label>
-          <label className="col-span-1 order-3 text-[12px]" htmlFor="date">
+          <label className="col-span-3 order-3 text-[12px]" htmlFor="date">
             تاريخ الميلاد
           </label>
           <Input
@@ -163,7 +163,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
             onChange={(e) =>
               setCustomerInfo({ ...customerInfo, gender: e.target.value })
             }
-            className="col-span-1 order-4 border rounded-md p-2 placeholder:p-2 bg-transparent"
+            className="col-span-2 order-4 border rounded-md p-2 placeholder:p-2 bg-transparent"
             id="gender"
             required
           >
@@ -179,7 +179,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
                 dateOfBirth: e.target.value,
               })
             }
-            className="col-span-1 order-5 border rounded-md p-2"
+            className="col-span-3 order-5 border rounded-md p-2 bg-transparent"
             type="date"
             required
           />
