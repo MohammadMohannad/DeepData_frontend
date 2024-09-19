@@ -11,7 +11,7 @@ function Modal({ open, setOpen, children, className, layer = "50", ...props }) {
       {...props}
     >
       <div
-        className={`${className} border bg-background rounded-xl p-6 transform transition-transform duration-300 ${
+        className={`${className} border bg-background rounded-xl p-4 transform transition-transform duration-300 ${
           open ? "scale-100" : "scale-95"
         }`}
       >
