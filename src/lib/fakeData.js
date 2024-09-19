@@ -124,7 +124,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [
           {
             id: 1,
@@ -181,7 +181,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -197,7 +197,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -213,7 +213,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -229,7 +229,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -245,7 +245,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -261,7 +261,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -277,7 +277,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -293,7 +293,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -309,7 +309,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
       {
@@ -325,7 +325,7 @@ export const fetchDashboardData = async () => {
         firstPhoneNumber: "1",
         secondPhoneNumber: "2",
         instagram_user: "@ddd",
-        dateOfBirth: "2000/1/3",
+        dateOfBirth: "2000-03-21",
         orders: [],
       },
     ],
