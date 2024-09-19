@@ -8,9 +8,19 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Check, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  ArrowUpDown,
+  Check,
+  ChevronDown,
+  ChevronsLeftRight,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Trash2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -30,44 +40,83 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import EditProductModal from "../ProductModals/EditProductModal";
+import CustomerOrders from "../customerModals/CustomerOrders";
+import CustomerEditModal from "../customerModals/CustomerEditModal";
+import { Badge } from "../ui/badge";
+import OrderStatus from "../ordersModals/OrderStatus";
 
-const columns = ({ setProduct, setOpen }) => [
+const columns = ({ setOpenOrderStatusModal, setOrder }) => [
   {
-    accessorKey: "productName",
-    header: "اسم المنتج",
-    cell: ({ row }) => <div>{row.getValue("productName")}</div>,
+    id: "select",
+    header: ({ table }) => (
+      <div className="p-4">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="p-4">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    accessorKey: "productRepetition",
-    header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("productRepetition")}</div>,
-  },
-  {
-    accessorKey: "productType",
-    header: "نوع المنتج",
-    cell: ({ row }) => <div>{row.getValue("productType")}</div>,
-  },
-  {
-    accessorKey: "time",
-    header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("time")}</div>,
-  },
-  {
-    accessorKey: "productPrice",
-    header: "سعر المنتج",
+    accessorKey: "name",
+    header: "الاسم كامل",
     cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-
-      return <div>{formatter.format(row.getValue("productPrice"))}</div>;
+      return <div className="cursor-pointer">{row.getValue("name")}</div>;
     },
+  },
+  {
+    accessorKey: "platform",
+    header: "المنصة",
+    cell: ({ row }) => <div>{row.getValue("platform")}</div>,
+  },
+  {
+    accessorKey: "date",
+    header: "التاريخ",
+    cell: ({ row }) => <div>{row.getValue("date")}</div>,
+  },
+  {
+    accessorKey: "city",
+    header: "المحافظة",
+    cell: ({ row }) => <div>{row.getValue("city")}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: "الحالة",
+    cell: ({ row }) => (
+      <div className="w-full h-full text-center">
+        <Badge
+          className={`h-8 px-4 rounded-md ${
+            row.getValue("status") === "ملغى"
+              ? "bg-[#FFE5E7] text-red-500 hover:bg-red-300"
+              : "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
+          }`}
+        >
+          {row.getValue("status")}
+        </Badge>
+      </div>
+    ),
   },
   {
     id: "actions",
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original;
+      const order = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -78,20 +127,22 @@ const columns = ({ setProduct, setOpen }) => [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="right">
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                setProduct(product);
-                setOpen(true);
-              }}
-              className="cursor-pointer flex items-center gap-2"
-            >
+            <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
               <Edit size={18} />
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
-              }
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => {
+                setOrder(order);
+                setOpenOrderStatusModal(true);
+              }}
+            >
+              <ChevronsLeftRight size={18} />
+              <p>تغير حالة الطلب</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => alert(`Delete ${order.id}: ${order.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -104,20 +155,18 @@ const columns = ({ setProduct, setOpen }) => [
   },
 ];
 
-export function DataTable({ products }) {
-  const [open, setOpen] = useState(false);
-  const [product, setProduct] = useState();
+export function DataTable({ orders }) {
+  const data = orders;
+  const [order, setOrder] = useState(null);
+  const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const data = products;
+
   const table = useReactTable({
     data,
-    columns: columns({
-      setProduct,
-      setOpen,
-    }),
+    columns: columns({ setOrder, setOpenOrderStatusModal }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -136,15 +185,19 @@ export function DataTable({ products }) {
 
   return (
     <div className="w-full">
-      {open && (
-        <EditProductModal open={open} setOpen={setOpen} product={product} />
+      {openOrderStatusModal && (
+        <OrderStatus
+          open={openOrderStatusModal}
+          setOpen={setOpenOrderStatusModal}
+          order={order}
+        />
       )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
-          value={table.getColumn("productName")?.getFilterValue() ?? ""}
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("productName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
@@ -175,7 +228,7 @@ export function DataTable({ products }) {
                   <span>{column.columnDef.header}</span>
                   <span>
                     {column.getIsVisible() ? <Check size={16} /> : ""}
-                  </span>
+                  </span>{" "}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
@@ -186,9 +239,16 @@ export function DataTable({ products }) {
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow className="hover:bg-transparent" key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead className="text-right" key={header.id}>
+                    <TableHead
+                      className={`${
+                        header.column.columnDef.accessorKey === "status"
+                          ? "text-center"
+                          : "text-right"
+                      } hover:bg-muted`}
+                      key={header.id}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
