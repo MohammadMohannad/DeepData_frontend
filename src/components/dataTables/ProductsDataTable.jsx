@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import EditProductModal from "../ProductModals/EditProductModal";
+import EditProductModal from "../ProductModals/EditProduct";
 
 const columns = ({ setProduct, setOpen }) => [
   {

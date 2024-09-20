@@ -88,7 +88,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
   }, [open]);
 
   return (
-    <Modal open={open} >
+    <Modal open={open} className={"max-w-[500px] min-w-[200px]"}>
       <div className="w-full text-right mb-4">
         <h2 className="text-base font-semibold">تعديل معلومات العميل</h2>
         <p className="text-sm text-muted-foreground">املئ الحقول الاتيه </p>

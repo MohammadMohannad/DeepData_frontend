@@ -1,4 +1,4 @@
-import AddProductForm from "@/components/ProductModals/AddProductForm";
+import AddProductForm from "@/components/ProductModals/AddProduct";
 import Container from "@/components/container/Container";
 import { DataTable } from "@/components/dataTables/ProductsDataTable";
 import { Button } from "@/components/ui/button";
