@@ -27,6 +27,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import logout from "@/assets/logout-icon.svg";
 import ToggleTheme from "../theme/ToggleTheme";
+import { AvatarPopover } from "../avatarPopover/AvatarPopover";
 
 function Header() {
   const pathname = usePathname(); // Get the current pathname
@@ -70,13 +71,7 @@ function Header() {
       >
         <div className="flex flex-row-reverse justify-start items-center gap-2 h-full">
           <div className="relative w-10 h-10 flex items-center justify-center rounded-full border">
-            <Image
-              src={avatar}
-              alt="avatar"
-              sizes="(100vw, 100vh)"
-              fill
-              priority
-            />
+            <AvatarPopover />
           </div>
           <div className="w-10 h-10 flex items-center justify-center rounded-full border">
             <Bell
