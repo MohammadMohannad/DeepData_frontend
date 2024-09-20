@@ -53,7 +53,7 @@ function Header() {
       icon: <Folders className="w-5 h-5" strokeWidth={1.25} />,
     },
     {
-      link: "#",
+      link: "/customer/main/employees",
       name: "الموظفين",
       icon: <Replace className="w-5 h-5" strokeWidth={1.25} />,
     },

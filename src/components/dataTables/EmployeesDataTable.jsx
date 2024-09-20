@@ -8,19 +8,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  Check,
-  ChevronDown,
-  ChevronsLeftRight,
-  Edit,
-  Eye,
-  MoreHorizontal,
-  Trash2,
-} from "lucide-react";
+import { Check, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -40,83 +30,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import CustomerOrders from "../customerModals/CustomerOrders";
-import CustomerEditModal from "../customerModals/CustomerEdit";
-import { Badge } from "../ui/badge";
-import OrderStatus from "../ordersModals/OrderStatus";
+import EditEmployeeModal from "../employeesModals/EditEmployeeModal";
 
-const columns = ({ setOpenOrderStatusModal, setOrder }) => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="p-4">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="p-4">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+const columns = ({ setEmployee, setOpen }) => [
   {
     accessorKey: "name",
-    header: "الاسم كامل",
-    cell: ({ row }) => {
-      return <div className="cursor-pointer">{row.getValue("name")}</div>;
-    },
+    header: "الاسم",
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "platform",
-    header: "المنصة",
-    cell: ({ row }) => <div>{row.getValue("platform")}</div>,
+    accessorKey: "firstPhoneNumber",
+    header: "رقم الهاتف",
+    cell: ({ row }) => <div>{row.getValue("firstPhoneNumber")}</div>,
   },
   {
-    accessorKey: "date",
-    header: "التاريخ",
-    cell: ({ row }) => <div>{row.getValue("date")}</div>,
-  },
-  {
-    accessorKey: "city",
-    header: "المحافظة",
-    cell: ({ row }) => <div>{row.getValue("city")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "الحالة",
-    cell: ({ row }) => (
-      <div className="w-full h-full text-center">
-        <Badge
-          className={`h-8 px-4 rounded-md ${
-            row.getValue("status") === "ملغى"
-              ? "bg-[#FFE5E7] text-red-500 hover:bg-red-300"
-              : "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
-          }`}
-        >
-          {row.getValue("status")}
-        </Badge>
-      </div>
-    ),
+    accessorKey: "email",
+    header: "البريد الالكتروني",
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
     id: "actions",
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const order = row.original;
+      const employee = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -127,22 +64,20 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="right">
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
-            <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+            <DropdownMenuItem
+              onClick={() => {
+                setEmployee(employee);
+                setOpen(true);
+              }}
+              className="cursor-pointer flex items-center gap-2"
+            >
               <Edit size={18} />
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="cursor-pointer flex items-center gap-2"
-              onClick={() => {
-                setOrder(order);
-                setOpenOrderStatusModal(true);
-              }}
-            >
-              <ChevronsLeftRight size={18} />
-              <p>تغير حالة الطلب</p>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => alert(`Delete ${order.id}: ${order.name}`)}
+              onClick={() =>
+                alert(`Delete ${employee.id}: ${employee.name}`)
+              }
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -155,18 +90,20 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
   },
 ];
 
-export function DataTable({ orders }) {
-  const data = orders;
-  const [order, setOrder] = useState(null);
-  const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
+export function DataTable({ employees }) {
+  const [open, setOpen] = useState(false);
+  const [employee, setEmployee] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-
+  const data = employees;
   const table = useReactTable({
     data,
-    columns: columns({ setOrder, setOpenOrderStatusModal }),
+    columns: columns({
+      setEmployee,
+      setOpen,
+    }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -185,12 +122,8 @@ export function DataTable({ orders }) {
 
   return (
     <div className="w-full">
-      {openOrderStatusModal && (
-        <OrderStatus
-          open={openOrderStatusModal}
-          setOpen={setOpenOrderStatusModal}
-          order={order}
-        />
+      {open && (
+        <EditEmployeeModal open={open} setOpen={setOpen} employee={employee} />
       )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
@@ -228,7 +161,7 @@ export function DataTable({ orders }) {
                   <span>{column.columnDef.header}</span>
                   <span>
                     {column.getIsVisible() ? <Check size={16} /> : ""}
-                  </span>{" "}
+                  </span>
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
@@ -239,16 +172,9 @@ export function DataTable({ orders }) {
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow className="hover:bg-transparent" key={headerGroup.id}>
+                <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead
-                      className={`${
-                        header.column.columnDef.accessorKey === "status"
-                          ? "text-center"
-                          : "text-right"
-                      } hover:bg-muted`}
-                      key={header.id}
-                    >
+                    <TableHead className="text-right" key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(

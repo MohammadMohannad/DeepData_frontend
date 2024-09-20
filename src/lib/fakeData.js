@@ -1,5 +1,39 @@
 export const fetchDashboardData = async () => {
   return {
+    employees: [
+      {
+        id: 1,
+        name: "الامين احمد مليح",
+        firstPhoneNumber: "01234567890",
+        secondPhoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        password: "12345678",
+      },
+      {
+        id: 2,
+        name: "محمد الامين احمد مليح",
+        firstPhoneNumber: "01234567890",
+        secondPhoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        password: "12345678",
+      },
+      {
+        id: 3,
+        name: "محمد الامين مليح",
+        firstPhoneNumber: "01234567890",
+        secondPhoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        password: "12345678",
+      },
+      {
+        id: 4,
+        name: "محمد الامين مليح",
+        firstPhoneNumber: "01234567890",
+        secondPhoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        password: "12345678",
+      },
+    ],
     storeCustomersOrders: [
       {
         id: 1,

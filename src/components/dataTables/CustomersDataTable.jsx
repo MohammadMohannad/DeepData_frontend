@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/table";
 import Container from "../container/Container";
 import CustomerOrders from "../customerModals/CustomerOrders";
-import CustomerEditModal from "../customerModals/CustomerEditModal";
+import CustomerEditModal from "../customerModals/CustomerEdit";
 
 const columns = ({
   setOrders,
