@@ -12,9 +12,10 @@ import {
   ArrowUpDown,
   Check,
   ChevronDown,
+  ChevronsLeftRight,
   Edit,
+  Eye,
   MoreHorizontal,
-  Trash,
   Trash2,
 } from "lucide-react";
 
@@ -39,135 +40,83 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
+import CustomerOrders from "../customerModals/CustomerOrders";
+import CustomerEditModal from "../customerModals/CustomerEdit";
+import { Badge } from "../ui/badge";
+import OrderStatus from "../ordersModals/OrderStatus";
 
-const data = [
+const columns = ({ setOpenOrderStatusModal, setOrder }) => [
   {
-    id: 1,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1234",
-    productPrice: 1000,
+    id: "select",
+    header: ({ table }) => (
+      <div className="p-4">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="p-4">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    id: 2,
-    productName: "غسول وجة",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "5678",
-    productPrice: 1100,
-  },
-  {
-    id: 3,
-    productName: "عطر",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "9101",
-    productPrice: 1200,
-  },
-  {
-    id: 4,
-    productName: "معطر",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1213",
-    productPrice: 1300,
-  },
-  {
-    id: 5,
-    productName: "مرطب",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1415",
-    productPrice: 1400,
-  },
-  {
-    id: 6,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1617",
-    productPrice: 1500,
-  },
-  {
-    id: 7,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "1819",
-    productPrice: 1600,
-  },
-  {
-    id: 8,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2020",
-    productPrice: 1700,
-  },
-  {
-    id: 9,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2222",
-    productPrice: 1800,
-  },
-  {
-    id: 10,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2424",
-    productPrice: 1900,
-  },
-  {
-    id: 11,
-    productName: "صابون",
-    productRepetition: "شهري",
-    productType: "عناية",
-    time: "2626",
-    productPrice: 2000,
-  },
-];
-
-// Define the columns
-const columns = [
-  {
-    accessorKey: "productName",
-    header: "اسم المنتج",
-    cell: ({ row }) => <div>{row.getValue("productName")}</div>,
-  },
-  {
-    accessorKey: "productRepetition",
-    header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("productRepetition")}</div>,
-  },
-  {
-    accessorKey: "productType",
-    header: "نوع المنتج",
-    cell: ({ row }) => <div>{row.getValue("productType")}</div>,
-  },
-  {
-    accessorKey: "time",
-    header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("time")}</div>,
-  },
-  {
-    accessorKey: "productPrice",
-    header: "سعر المنتج",
+    accessorKey: "name",
+    header: "الاسم كامل",
     cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-
-      return <div>{formatter.format(row.getValue("productPrice"))}</div>;
+      return <div className="cursor-pointer">{row.getValue("name")}</div>;
     },
+  },
+  {
+    accessorKey: "platform",
+    header: "المنصة",
+    cell: ({ row }) => <div>{row.getValue("platform")}</div>,
+  },
+  {
+    accessorKey: "date",
+    header: "التاريخ",
+    cell: ({ row }) => <div>{row.getValue("date")}</div>,
+  },
+  {
+    accessorKey: "city",
+    header: "المحافظة",
+    cell: ({ row }) => <div>{row.getValue("city")}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: "الحالة",
+    cell: ({ row }) => (
+      <div className="w-full h-full text-center">
+        <Badge
+          className={`h-8 px-4 rounded-md ${
+            row.getValue("status") === "ملغى"
+              ? "bg-[#FFE5E7] text-red-500 hover:bg-red-300"
+              : "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
+          }`}
+        >
+          {row.getValue("status")}
+        </Badge>
+      </div>
+    ),
   },
   {
     id: "actions",
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original;
+      const order = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -178,19 +127,22 @@ const columns = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="right">
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
-              }
-              className="cursor-pointer flex items-center gap-2"
-            >
+            <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
               <Edit size={18} />
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
-              }
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => {
+                setOrder(order);
+                setOpenOrderStatusModal(true);
+              }}
+            >
+              <ChevronsLeftRight size={18} />
+              <p>تغير حالة الطلب</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => alert(`Delete ${order.id}: ${order.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -203,7 +155,10 @@ const columns = [
   },
 ];
 
-export function DataTable() {
+export function DataTable({ orders }) {
+  const data = orders;
+  const [order, setOrder] = useState(null);
+  const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -211,7 +166,7 @@ export function DataTable() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns({ setOrder, setOpenOrderStatusModal }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -230,12 +185,19 @@ export function DataTable() {
 
   return (
     <div className="w-full">
+      {openOrderStatusModal && (
+        <OrderStatus
+          open={openOrderStatusModal}
+          setOpen={setOpenOrderStatusModal}
+          order={order}
+        />
+      )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
-          value={table.getColumn("productName")?.getFilterValue() ?? ""}
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("productName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
@@ -274,13 +236,19 @@ export function DataTable() {
       </div>
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">
-          {/* Adjust min-width as necessary */}
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow className="hover:bg-transparent" key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead className="text-right" key={header.id}>
+                    <TableHead
+                      className={`${
+                        header.column.columnDef.accessorKey === "status"
+                          ? "text-center"
+                          : "text-right"
+                      } hover:bg-muted`}
+                      key={header.id}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
