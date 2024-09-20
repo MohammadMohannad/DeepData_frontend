@@ -1,28 +1,29 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import img from "@/assets/img.svg";
 import logo from "@/assets/logo.svg";
 import Button_one from "@/components/customButtons/Button_one";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
 
   // Check if the user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
 
     // If token exists, redirect to the main page
     if (token) {
-      router.push('/customer/main');
+      router.push("/customer/main");
     }
   }, [router]);
 
@@ -33,27 +34,23 @@ function Login() {
 
     try {
       // Send login request to Next.js API route
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post("/api/auth/login", { email, password });
 
       // Get the token from the response
       const { token } = response.data;
 
       // Store the token in local storage (or use cookies if preferred)
-      localStorage.setItem('jwtToken', token);
+      localStorage.setItem("jwtToken", token);
 
       // Redirect to the main page
-      router.push('/customer/main');
-      console.log('Logged in successfully');
+      router.push("/customer/main");
+      console.log("Logged in successfully");
     } catch (error) {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     } finally {
       setLoading(false);
     }
   };
-
-import LoginForm from "@/components/loginForm/LoginForm";
-
-function Login() {
 
   return (
     <div className="bg-background min-h-screen flex items-center justify-center">
@@ -70,10 +67,7 @@ function Login() {
               <br />
               لتسجيل الدخول إلى حسابك.
             </p>
-            <form
-              onSubmit={handleLogin}
-              className="flex flex-col items-center"
-            >
+            <form onSubmit={handleLogin} className="flex flex-col items-center">
               <Input
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
@@ -90,7 +84,6 @@ function Login() {
               />
               <Button_one page="login" loading={loading} />
             </form>
-            <LoginForm />
             <p className="text-[16px] text-right text-zinc-500 mt-6">
               ليس لديك حساب؟{" "}
               <Link href="/customer/signup" className="text-green_1">

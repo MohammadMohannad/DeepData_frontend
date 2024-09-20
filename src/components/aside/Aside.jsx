@@ -28,17 +28,17 @@ function Aside() {
       group: "المكتبة",
       items: [
         {
-          link: "#",
+          link: "/customer/main/customers",
           name: "العملاء",
           icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
         },
         {
-          link: "#",
+          link: "/customer/main/orders",
           name: "طلبات العملاء",
           icon: <Folders className="w-5 h-5" strokeWidth={1.5} />,
         },
         {
-          link: "#",
+          link: "/customer/main/employees",
           name: "الموظفين",
           icon: <Replace className="w-5 h-5" strokeWidth={1.5} />,
         },
