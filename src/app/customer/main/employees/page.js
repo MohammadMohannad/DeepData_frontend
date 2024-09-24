@@ -13,7 +13,7 @@ export default async function Employees() {
   return (
     <Container>
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
-        <h3 className="text-3xl font-bold mb-4 sm:mb-0">طلبات العملاء</h3>
+        <h3 className="text-3xl font-bold mb-4 sm:mb-0">الموظفين</h3>
         <div className="min-h-full min-w-full sm:min-w-[120px] flex">
           <AddEmployee />
         </div>
