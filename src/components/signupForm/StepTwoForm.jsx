@@ -49,13 +49,13 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
     <>
       <div className="col-span-6 h-12 flex flex-row-reverse gap-2">
         <Input
-          value={signupInfo.businessInfo.businessName}
+          value={signupInfo.businessInfo.name}
           onChange={(e) =>
             setSignupInfo({
               ...signupInfo,
               businessInfo: {
                 ...signupInfo.businessInfo,
-                businessName: e.target.value,
+                name: e.target.value,
               },
             })
           }
@@ -65,13 +65,13 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
           required
         />
         <Input
-          value={signupInfo.businessInfo.type}
+          value={signupInfo.businessInfo.entity_type}
           onChange={(e) =>
             setSignupInfo({
               ...signupInfo,
               businessInfo: {
                 ...signupInfo.businessInfo,
-                type: e.target.value,
+                entity_type: e.target.value,
               },
             })
           }
@@ -84,25 +84,25 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
       <Input
         type="text"
         maxLength={14}
-        value={signupInfo.businessInfo.phoneNumber}
+        value={signupInfo.businessInfo.entity_phone}
         onChange={(e) => {
-          handleChange(e, "phoneNumber");
+          handleChange(e, "entity_phone");
         }}
         placeholder="هاتف المشروع"
         inputMode="numeric"
         className={`col-span-6 h-12 placeholder:h-6 placeholder:text-right ${
-          errors.phoneNumber && "ring-1 ring-red-500"
+          errors.entity_phone && "ring-1 ring-red-500"
         }`}
         required
       />
       <Input
-        value={signupInfo.businessInfo.instagramLink}
+        value={signupInfo.businessInfo.instagram_user}
         onChange={(e) =>
           setSignupInfo({
             ...signupInfo,
             businessInfo: {
               ...signupInfo.businessInfo,
-              instagramLink: e.target.value,
+              instagram_user: e.target.value,
             },
           })
         }
@@ -134,7 +134,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
             ...signupInfo,
             businessInfo: {
               ...signupInfo.businessInfo,
-              businessLogo: selectedFile,
+              logo: selectedFile,
             },
           })
         }
@@ -143,12 +143,12 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
         step={step}
         loading={loading}
         disabled={
-          errors.phoneNumber ||
-          !signupInfo.businessInfo.businessLogo ||
+          errors.entity_phone ||
+          !signupInfo.businessInfo.logo ||
           !signupInfo.businessInfo.meta_id ||
-          !signupInfo.businessInfo.instagramLink ||
-          !signupInfo.businessInfo.businessName ||
-          !signupInfo.businessInfo.type
+          !signupInfo.businessInfo.instagram_user||
+          !signupInfo.businessInfo.name ||
+          !signupInfo.businessInfo.entity_type
         }
       />
     </>

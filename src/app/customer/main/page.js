@@ -39,6 +39,7 @@ import avatar from "@/assets/Avatar.svg";
 import YearSummary from "@/components/charts/YearSummary";
 import TopCities from "@/components/charts/TopCities";
 import ChatModal from "@/components/chat/ChatModal";
+import withAuth from "@/components/withAuth";
 const formatter = new Intl.NumberFormat("en-US");
 
 function Dashboard() {
