@@ -17,32 +17,25 @@ function Login() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Check if the user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-
-    // If token exists, redirect to the main page
-    if (token) {
-      router.push("/customer/main");
-    }
-  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
-      // Send login request to Next.js API route
-      const response = await axios.post("/api/auth/login", { email, password });
 
-      // Get the token from the response
-      const { token } = response.data;
+      // Send login request to the Rails API
+      const response = await axios.post("http://localhost:3002/api/v1/login", {
+        email,
+        password,
+      }, {
+        withCredentials: true, // This is essential for the cookies to work
+      });
 
-      // Store the token in local storage (or use cookies if preferred)
-      localStorage.setItem("jwtToken", token);
+      console.log(response.data);
 
-      // Redirect to the main page
+      // No need to manually store token
       router.push("/customer/main");
       console.log("Logged in successfully");
     } catch (error) {

@@ -24,14 +24,11 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
       <Input
         type="password"
         placeholder="تأكيد كلمة المرور"
-        value={signupInfo.userInfo.confirmPassword}
+        value={signupInfo.confirmPassword || ""} // Store confirmPassword outside userInfo
         onChange={(e) =>
           setSignupInfo((prev) => ({
             ...prev,
-            userInfo: {
-              ...prev.userInfo,
-              confirmPassword: e.target.value,
-            },
+            confirmPassword: e.target.value, // Store confirmPassword separately
           }))
         }
         className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
@@ -42,9 +39,9 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
         loading={loading}
         disabled={
           signupInfo.userInfo.password !==
-            signupInfo.userInfo.confirmPassword ||
+            signupInfo.confirmPassword ||
           !signupInfo.userInfo.password ||
-          !signupInfo.userInfo.confirmPassword
+          !signupInfo.confirmPassword
         }
       />
     </>
