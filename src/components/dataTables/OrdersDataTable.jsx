@@ -9,12 +9,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  ArrowUpDown,
   Check,
   ChevronDown,
   ChevronsLeftRight,
   Edit,
-  Eye,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
@@ -27,7 +25,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -41,8 +38,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import CustomerOrders from "../customerModals/CustomerOrders";
-import CustomerEditModal from "../customerModals/CustomerEdit";
 import { Badge } from "../ui/badge";
 import OrderStatus from "../ordersModals/OrderStatus";
 import EditOrder from "../ordersModals/EditOrder";
