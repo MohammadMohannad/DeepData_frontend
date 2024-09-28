@@ -1,67 +1,13 @@
 {
-  "name": "DeepData",
-  "short_name": "dD",
-  "theme_color": "#1AB68A",
-  "background_color": "#ffffff",
+  "name": "DeepData Store Manager",
+  "short_name": "DeepData",
+  "theme_color": "#6ABB8F",
+  "background_color": "#6ABB8F",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait",
   "scope": "/",
   "start_url": "/customer/main",
   "icons": [
-    {
-      "src": "/icons/Untitled_design-16.png",
-      "type": "image/png",
-      "sizes": "16x16",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-48.png",
-      "type": "image/png",
-      "sizes": "48x48",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-64.png",
-      "type": "image/png",
-      "sizes": "64x64",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-72.png",
-      "type": "image/png",
-      "sizes": "72x72",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-96.png",
-      "type": "image/png",
-      "sizes": "96x96",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-128.png",
-      "type": "image/png",
-      "sizes": "128x128",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-144.png",
-      "type": "image/png",
-      "sizes": "144x144",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-152.png",
-      "type": "image/png",
-      "sizes": "152x152",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/Untitled_design-180.png",
-      "type": "image/png",
-      "sizes": "180x180",
-      "purpose": "maskable any"
-    },
     {
       "src": "/icons/Untitled_design-192.png",
       "type": "image/png",
