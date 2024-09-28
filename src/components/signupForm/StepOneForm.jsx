@@ -51,11 +51,11 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
   return (
     <>
       <Input
-        value={signupInfo.userInfo.userName || ""}
+        value={signupInfo.userInfo.name || ""}
         onChange={(e) =>
           setSignupInfo({
             ...signupInfo,
-            userInfo: { ...signupInfo.userInfo, userName: e.target.value },
+            userInfo: { ...signupInfo.userInfo, name: e.target.value },
           })
         }
         type="text"
@@ -69,11 +69,11 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           type="text"
           maxLength={14}
           placeholder="رقم الهاتف"
-          value={signupInfo.userInfo.firstPhoneNumber}
-          onChange={(e) => handleChange(e, "firstPhoneNumber")}
+          value={signupInfo.userInfo.phone}
+          onChange={(e) => handleChange(e, "phone")}
           inputMode="numeric"
           className={`h-full placeholder:h-6 placeholder:text-right
-            ${errors.firstPhoneNumber && "ring-1 ring-red-500"}`}
+            ${errors.phone && "ring-1 ring-red-500"}`}
           required
         />
 
@@ -81,11 +81,11 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
           type="text"
           maxLength={14}
           placeholder="رقم الهاتف الثاني"
-          value={signupInfo.userInfo.secondPhoneNumber}
-          onChange={(e) => handleChange(e, "secondPhoneNumber")}
+          value={signupInfo.userInfo.sec_phone}
+          onChange={(e) => handleChange(e, "sec_phone")}
           inputMode="numeric"
           className={`h-full placeholder:h-6 placeholder:text-right
-           ${errors.secondPhoneNumber && "ring-1 ring-red-500"}`}
+           ${errors.sec_phone && "ring-1 ring-red-500"}`}
           required
         />
       </div>
@@ -143,12 +143,12 @@ function StepOneForm({ signupInfo, setSignupInfo, step, loading }) {
         step={step}
         loading={loading}
         disabled={
-          errors.firstPhoneNumber ||
-          errors.secondPhoneNumber ||
+          errors.phone ||
+          errors.sec_phone ||
           !signupInfo.businessInfo.country ||
           !signupInfo.businessInfo.state ||
           !signupInfo.userInfo.email ||
-          !signupInfo.userInfo.userName
+          !signupInfo.userInfo.name
         }
       />
     </>
