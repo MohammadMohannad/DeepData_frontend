@@ -58,7 +58,6 @@ const columns = ({ setProduct, setOpen }) => [
     header: "سعر المنتج",
     cell: ({ row }) => {
       const formatter = new Intl.NumberFormat("en-US");
-
       return <div>{formatter.format(row.getValue("productPrice"))}</div>;
     },
   },

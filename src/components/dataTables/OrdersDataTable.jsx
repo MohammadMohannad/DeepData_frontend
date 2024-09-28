@@ -9,12 +9,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  ArrowUpDown,
   Check,
   ChevronDown,
   ChevronsLeftRight,
   Edit,
-  Eye,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
@@ -40,12 +38,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import CustomerOrders from "../customerModals/CustomerOrders";
-import CustomerEditModal from "../customerModals/CustomerEdit";
 import { Badge } from "../ui/badge";
 import OrderStatus from "../ordersModals/OrderStatus";
+import EditOrder from "../ordersModals/EditOrder";
 
-const columns = ({ setOpenOrderStatusModal, setOrder }) => [
+const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -74,20 +71,31 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
   },
   {
     accessorKey: "name",
-    header: "الاسم كامل",
+    header: "اسم الزبون",
     cell: ({ row }) => {
       return <div className="cursor-pointer">{row.getValue("name")}</div>;
     },
   },
   {
-    accessorKey: "platform",
-    header: "المنصة",
-    cell: ({ row }) => <div>{row.getValue("platform")}</div>,
+    accessorKey: "products",
+    header: "المنتجات",
+    cell: ({ row }) => (
+      <div className="grid grid-cols-2 gap-1">
+        {row.getValue("products").map((product) => (
+          <p className="text-sm col-span-1" key={product.id}>
+            {product.product}
+          </p>
+        ))}
+      </div>
+    ),
   },
   {
-    accessorKey: "date",
-    header: "التاريخ",
-    cell: ({ row }) => <div>{row.getValue("date")}</div>,
+    accessorKey: "price",
+    header: "سعر الطلب",
+    cell: ({ row }) => {
+      const formatter = new Intl.NumberFormat("en-US");
+      return <div>{formatter.format(row.getValue("price"))}</div>;
+    },
   },
   {
     accessorKey: "city",
@@ -95,12 +103,17 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
     cell: ({ row }) => <div>{row.getValue("city")}</div>,
   },
   {
+    accessorKey: "phoneNumber",
+    header: "رقم الهاتف",
+    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
+  },
+  {
     accessorKey: "status",
     header: "الحالة",
     cell: ({ row }) => (
       <div className="w-full h-full text-center">
         <Badge
-          className={`h-8 px-4 rounded-md ${
+          className={`h-8 px-4 rounded-md whitespace-nowrap ${
             row.getValue("status") === "ملغى"
               ? "bg-[#FFE5E7] text-red-500 hover:bg-red-300"
               : "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
@@ -127,7 +140,13 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="right">
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
-            <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+            <DropdownMenuItem
+              onClick={() => {
+                setOrder(order);
+                setOpenEditModal(true);
+              }}
+              className="cursor-pointer flex items-center gap-2"
+            >
               <Edit size={18} />
               <p>تعديل</p>
             </DropdownMenuItem>
@@ -156,17 +175,45 @@ const columns = ({ setOpenOrderStatusModal, setOrder }) => [
 ];
 
 export function DataTable({ orders }) {
-  const data = orders;
+  const [data, setData] = useState(orders);
   const [order, setOrder] = useState(null);
   const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  const [filteredData, setFilteredData] = useState(orders); // Initialize filteredData with orders
+  const [activeStatusFilters, setActiveStatusFilters] = useState([
+    "ملغى",
+    "الطلب مكتمل",
+  ]);
+  // Function to update the filtered data based on active filters
+  const updateFilteredData = (newFilters) => {
+    if (newFilters.length === 0) {
+      setFilteredData(orders); // Show all data if no filters are active
+    } else {
+      setFilteredData(
+        orders.filter((order) => newFilters.includes(order.status))
+      );
+    }
+  };
+
+  // Toggle function for status filters
+  const toggleStatusFilter = (status) => {
+    setActiveStatusFilters((prevFilters) => {
+      const newFilters = prevFilters.includes(status)
+        ? prevFilters.filter((filter) => filter !== status) // Remove filter if it's already active
+        : [...prevFilters, status]; // Add filter if it's not active
+
+      updateFilteredData(newFilters); // Update the filtered data
+      return newFilters;
+    });
+  };
 
   const table = useReactTable({
-    data,
-    columns: columns({ setOrder, setOpenOrderStatusModal }),
+    data: filteredData, // Use filteredData here instead of original orders
+    columns: columns({ setOrder, setOpenOrderStatusModal, setOpenEditModal }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -185,6 +232,13 @@ export function DataTable({ orders }) {
 
   return (
     <div className="w-full">
+      {openEditModal && (
+        <EditOrder
+          open={openEditModal}
+          setOpen={setOpenEditModal}
+          order={order}
+        />
+      )}
       {openOrderStatusModal && (
         <OrderStatus
           open={openOrderStatusModal}
@@ -201,38 +255,82 @@ export function DataTable({ orders }) {
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="focus-visible:ring-secondary focus-visible:ring-offset-0"
-            >
-              عمود <ChevronDown className="mr-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <p className="text-sm text-muted-foreground text-center">
-              تبديل الاعمدة
-            </p>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  <span>{column.columnDef.header}</span>
-                  <span>
-                    {column.getIsVisible() ? <Check size={16} /> : ""}
-                  </span>{" "}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center flex-row-reverse gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="focus-visible:ring-secondary focus-visible:ring-offset-0"
+              >
+                عمود <ChevronDown className="mr-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <p className="text-sm text-muted-foreground text-center">
+                تبديل الاعمدة
+              </p>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    <span>{column.columnDef.header}</span>
+                    <span>
+                      {column.getIsVisible() ? <Check size={16} /> : ""}
+                    </span>
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="focus-visible:ring-secondary focus-visible:ring-offset-0"
+              >
+                الحالة <ChevronDown className="mr-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuCheckboxItem
+                checked={activeStatusFilters.includes("ملغى")}
+                onCheckedChange={() => toggleStatusFilter("ملغى")}
+                className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item text-red-500 focus:text-red-500"
+              >
+                <span>الطلب ملغى</span>
+                <span>
+                  {activeStatusFilters.includes("ملغى") ? (
+                    <Check size={16} />
+                  ) : (
+                    ""
+                  )}
+                </span>
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={activeStatusFilters.includes("الطلب مكتمل")}
+                onCheckedChange={() => toggleStatusFilter("الطلب مكتمل")}
+                className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item text-green-500 focus:text-green-500"
+              >
+                <span>الطلب مكتمل</span>
+                <span>
+                  {activeStatusFilters.includes("الطلب مكتمل") ? (
+                    <Check size={16} />
+                  ) : (
+                    ""
+                  )}
+                </span>
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">
