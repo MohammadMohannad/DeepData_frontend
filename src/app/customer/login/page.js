@@ -25,6 +25,7 @@ function Login() {
   
     try {
 
+
       // Send login request to the Rails API
       const response = await axios.post("http://localhost:3002/api/v1/login", {
         email,
@@ -33,9 +34,7 @@ function Login() {
         withCredentials: true, // This is essential for the cookies to work
       });
 
-      console.log(response.data);
 
-      // No need to manually store token
       router.push("/customer/main");
       console.log("Logged in successfully");
     } catch (error) {
