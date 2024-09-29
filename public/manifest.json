@@ -1,0 +1,30 @@
+{
+  "name": "DeepData Store Manager",
+  "short_name": "DeepData",
+  "theme_color": "#6ABB8F",
+  "background_color": "#6ABB8F",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/customer/main",
+  "icons": [
+    {
+      "src": "/icons/Untitled_design-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/Untitled_design-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/Untitled_design-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable any"
+    }
+  ]
+}
