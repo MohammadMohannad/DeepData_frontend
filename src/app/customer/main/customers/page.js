@@ -2,9 +2,12 @@ import Container from "@/components/container/Container";
 import { DataPicker } from "@/components/dataPicker/DataPicker";
 import { DataTable } from "@/components/dataTables/CustomersDataTable";
 import { fetchDashboardData } from "@/lib/fakeData";
+import axios from "axios";
 
 async function customers() {
-  const res = await fetchDashboardData();
+  const res = await axios.get("http://localhost:3002/api/v1/login", {
+    withCredentials: true, 
+  });;
   return res.storeCustomers;
 }
 

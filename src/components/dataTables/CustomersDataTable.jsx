@@ -118,12 +118,12 @@ const columns = ({
     cell: ({ row }) => <div>{row.getValue("city")}</div>,
   },
   {
-    accessorKey: "subCity",
+    accessorKey: "state",
     header: "المدينة",
-    cell: ({ row }) => <div>{row.getValue("subCity")}</div>,
+    cell: ({ row }) => <div>{row.getValue("state")}</div>,
   },
   {
-    accessorKey: "firstPhoneNumber",
+    accessorKey: "phone",
     header: ({ column }) => (
       <Button
         className="hover:bg-transparent"
@@ -135,7 +135,7 @@ const columns = ({
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="pr-3.5">{row.getValue("firstPhoneNumber")}</div>
+      <div className="pr-3.5">{row.getValue("phone")}</div>
     ),
   },
   {
