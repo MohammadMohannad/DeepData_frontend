@@ -31,33 +31,19 @@ import EditProductModal from "../ProductModals/EditProduct";
 
 const columns = ({ setProduct, setOpenEditProduct }) => [
   {
-    accessorKey: "productName",
-    header: "اسم المنتج",
-    cell: ({ row }) => <div>{row.getValue("productName")}</div>,
+    accessorKey: "products",
+    header: "المنتجات",
+    cell: ({ row }) => <div>{row.getValue("products")}</div>,
   },
   {
-    accessorKey: "productRepetition",
-    header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("productRepetition")}</div>,
+    accessorKey: "amount",
+    header: "سعر الطلب",
+    cell: ({ row }) => <div>{row.getValue("amount")}</div>,
   },
   {
-    accessorKey: "productType",
-    header: "نوع المنتج",
-    cell: ({ row }) => <div>{row.getValue("productType")}</div>,
-  },
-  {
-    accessorKey: "time",
-    header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("time")}</div>,
-  },
-  {
-    accessorKey: "productPrice",
-    header: "سعر المنتج",
-    cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-
-      return <div>{formatter.format(row.getValue("productPrice"))}</div>;
-    },
+    accessorKey: "status",
+    header: "حالة الطلب",
+    cell: ({ row }) => <div>{row.getValue("status")}</div>,
   },
   {
     id: "actions",
@@ -70,7 +56,7 @@ const columns = ({ setProduct, setOpenEditProduct }) => [
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />  
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="right">

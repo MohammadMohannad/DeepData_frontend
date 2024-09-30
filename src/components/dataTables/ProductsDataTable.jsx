@@ -34,32 +34,26 @@ import EditProductModal from "../ProductModals/EditProduct";
 
 const columns = ({ setProduct, setOpen }) => [
   {
-    accessorKey: "productName",
+    accessorKey: "name",
     header: "اسم المنتج",
-    cell: ({ row }) => <div>{row.getValue("productName")}</div>,
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "productRepetition",
+    accessorKey: "periodicity_type",
     header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("productRepetition")}</div>,
+    cell: ({ row }) => <div>{row.getValue("periodicity_type")}</div>,
   },
   {
-    accessorKey: "productType",
-    header: "نوع المنتج",
-    cell: ({ row }) => <div>{row.getValue("productType")}</div>,
-  },
-  {
-    accessorKey: "time",
+    accessorKey: "period_amount",
     header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("time")}</div>,
+    cell: ({ row }) => <div>{row.getValue("period_amount")}</div>,
   },
   {
-    accessorKey: "productPrice",
+    accessorKey: "price",
     header: "سعر المنتج",
     cell: ({ row }) => {
       const formatter = new Intl.NumberFormat("en-US");
-
-      return <div>{formatter.format(row.getValue("productPrice"))}</div>;
+      return <div>{formatter.format(row.getValue("price"))}</div>;
     },
   },
   {

@@ -10,7 +10,7 @@ const withAuth = (WrappedComponent) => {
         const checkAuthStatus = async () => {
           try {
             // Make a request to the backend to validate the token
-            const response = await axios.get('http://127.0.0.1:3002/api/v1/validate_token', {
+            const response = await axios.get('http://localhost:3002/api/v1/validate_token', {
               withCredentials: true,  // Ensure cookies are sent with the request
             });
             console.log('Token valid:', response.data);

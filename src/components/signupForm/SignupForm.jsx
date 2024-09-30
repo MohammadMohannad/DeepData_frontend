@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import Progress from "../signupProgressbar/Progress";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+
 
 function SignupForm() {
 
@@ -14,7 +16,10 @@ function SignupForm() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const [signupInfo, setSignupInfo] = useState({
+
     userInfo: {
       email: "",
       password: "",
@@ -76,9 +81,12 @@ function SignupForm() {
       const response = await axios.post('http://127.0.0.1:3002/api/v1/register', formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // Ensure multipart/form-data for file uploads
-        },
+        }
+      },{
+        withCredentials: true,
       });
   
+      router.push("/customer/login");
       // Successful response handling
       setSuccessMessage("Signup successful! You can now log in.");
       console.log("Signup successful", response.data);

@@ -35,7 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { fetchDashboardData } from "@/lib/fakeData"; 
 import GeneralMainPageCards from "@/components/cards/GeneralMainPageCards";
 import BestProducts from "@/components/charts/BestProducts";
-import avatar from "../../../../public/Avatar.svg";
+import avatar from "@/assets/Avatar.svg";
 import YearSummary from "@/components/charts/YearSummary";
 import TopCities from "@/components/charts/TopCities";
 import ChatModal from "@/components/chat/ChatModal";
@@ -259,4 +259,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default withAuth(Dashboard);
