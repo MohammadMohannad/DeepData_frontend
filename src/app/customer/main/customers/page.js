@@ -32,6 +32,7 @@ function Customers() {
     return <div>Loading...</div>; // Render a loading state while data is being fetched
   }
 
+
   if (error) {
     return <div>Error: {error}</div>; // Render an error message if fetching fails
   }
