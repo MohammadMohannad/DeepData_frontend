@@ -103,9 +103,9 @@ const columns = ({
     cell: ({ row }) => <div>{row.getValue("gender")}</div>,
   },
   {
-    accessorKey: "joinDate",
+    accessorKey: "created_at",
     header: "تاريخ الانضمام",
-    cell: ({ row }) => <div>{row.getValue("joinDate")}</div>,
+    cell: ({ row }) => <div>{row.getValue("created_at")}</div>,
   },
   {
     accessorKey: "country",
