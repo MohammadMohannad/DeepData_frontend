@@ -41,19 +41,19 @@ export default function ChatModal({ open, setOpen }) {
 
     // Optimistically update the UI to show the new message immediately
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    const token = localStorage.getItem("jwtToken");
-
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
+    
     try {
       // Send the message to the backend API
-      const response = await axios.post(
-        "http://127.0.0.1:3002/api/v1/send_message",
-        {
-          message: message.message,
-          uploadedImage: message.uploadedImage,
-        }
-      );
+      const response = await axios.post("http://localhost:3002/api/v1/send_message", {
+        message: message.message,
+        uploadedImage: message.uploadedImage,
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true 
+      });
+
 
       console.log("Message sent successfully:", response.data);
 

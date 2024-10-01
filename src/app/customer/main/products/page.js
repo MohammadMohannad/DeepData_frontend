@@ -1,17 +1,43 @@
+"use client";
 import AddProductForm from "@/components/ProductModals/AddProduct";
 import Container from "@/components/container/Container";
 import { DataTable } from "@/components/dataTables/ProductsDataTable";
 import { Button } from "@/components/ui/button";
-import { fetchDashboardData } from "@/lib/fakeData"; // Placeholder for backend integration
-import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-async function products() {
-  const res = await fetchDashboardData();
-  return res.products;
-}
 
-async function Products() {
-  const data = await products();
+function Products() {
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // Send GET request to the Rails API
+        const response = await axios.get("http://localhost:3002/api/v1/entity_products", {
+          withCredentials: true, // Ensure cookies are included
+        });
+        setProducts(response.data); // Update state with fetched data
+      } catch (error) {
+        setError("Error fetching products data");
+      } finally {
+        setLoading(false); // Mark loading as finished
+      }
+    };
+
+    fetchProducts(); // Fetch customers when the component mounts
+  }, []); // Empty dependency array means this runs once on mount
+
+  if (loading) {
+    return <div>Loading...</div>; // Render a loading state while data is being fetched
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Render an error message if fetching fails
+  }
+  console.log(products)
   return (
     <>
       <Container className="pb-4">
@@ -24,7 +50,7 @@ async function Products() {
             </Button>
           </div>
         </div>
-        <DataTable products={data} />
+        <DataTable products={products.products} />
       </Container>
     </>
   );

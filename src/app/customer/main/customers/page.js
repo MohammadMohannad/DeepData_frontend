@@ -1,15 +1,42 @@
+"use client";
+import { useState, useEffect } from "react";
 import Container from "@/components/container/Container";
 import { DataPicker } from "@/components/dataPicker/DataPicker";
 import { DataTable } from "@/components/dataTables/CustomersDataTable";
-import { fetchDashboardData } from "@/lib/fakeData";
+import axios from "axios";
 
-async function customers() {
-  const res = await fetchDashboardData();
-  return res.storeCustomers;
-}
+function Customers() {
+  const [customers, setCustomers] = useState([]); // State for customers data
+  const [error, setError] = useState(null); // State for error handling
+  const [loading, setLoading] = useState(true); // State for loading status
 
-async function Customers() {
-  const data = await customers();
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        // Send GET request to the Rails API
+        const response = await axios.get("http://localhost:3002/api/v1/entity_customers", {
+          withCredentials: true, // Ensure cookies are included
+        });
+        setCustomers(response.data); // Update state with fetched data
+      } catch (error) {
+        setError("Error fetching customers data");
+      } finally {
+        setLoading(false); // Mark loading as finished
+      }
+    };
+
+    fetchCustomers(); // Fetch customers when the component mounts
+  }, []); // Empty dependency array means this runs once on mount
+
+  if (loading) {
+    return <div>Loading...</div>; // Render a loading state while data is being fetched
+  }
+
+
+  if (error) {
+    return <div>Error: {error}</div>; // Render an error message if fetching fails
+  }
+  console.log(customers)
   return (
     <Container>
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
@@ -18,7 +45,7 @@ async function Customers() {
           <DataPicker />
         </div>
       </div>
-      <DataTable customers={data} />
+      <DataTable customers={customers.customers} /> {/* Pass the fetched customers data to DataTable */}
     </Container>
   );
 }
