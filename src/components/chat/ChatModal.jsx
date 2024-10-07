@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import ChatImageUploader from "../fileUploader/ChatImageUploader";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { toast } from 'react-toastify';
 export default function ChatModal({ open, setOpen }) {
   const [message, setMessage] = useState({
     message: "",
@@ -42,9 +42,7 @@ export default function ChatModal({ open, setOpen }) {
 
     // Optimistically update the UI to show the new message immediately
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    const token = localStorage.getItem('jwtToken');
-    console.log(token);
-    
+   
     try {
       // Send the message to the backend API
       const response = await axios.post("http://localhost:3002/api/v1/send_message", {
@@ -57,11 +55,12 @@ export default function ChatModal({ open, setOpen }) {
         withCredentials: true 
       });
 
-      console.log("Message sent successfully:", response.data);
+      toast.success('تم ارسال الرسالة وحفظ البيانات بنجاح');
 
       // Optionally handle response (e.g., update message ID or status)
     } catch (error) {
-      console.error("Error sending message:", error);
+      toast.error(error);
+
       // Optionally revert the optimistic update in case of failure
     }
 
