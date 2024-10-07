@@ -83,18 +83,18 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
       <div className="grid grid-cols-2 gap-1">
         {row.getValue("products").map((product) => (
           <p className="text-sm col-span-1" key={product.id}>
-            {product.product}
+            {product}
           </p>
         ))}
       </div>
     ),
   },
   {
-    accessorKey: "price",
+    accessorKey: "amount",
     header: "سعر الطلب",
     cell: ({ row }) => {
       const formatter = new Intl.NumberFormat("en-US");
-      return <div>{formatter.format(row.getValue("price"))}</div>;
+      return <div>{formatter.format(row.getValue("amount"))}</div>;
     },
   },
   {
@@ -103,9 +103,9 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
     cell: ({ row }) => <div>{row.getValue("city")}</div>,
   },
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "phone",
     header: "رقم الهاتف",
-    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
+    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
   },
   {
     accessorKey: "status",
