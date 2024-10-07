@@ -5,51 +5,8 @@ import { usePathname } from "next/navigation";
 import { Command, CommandItem, CommandList } from "../ui/command";
 import { House, Box, Users, Folders, Replace, PhoneCall } from "lucide-react";
 
-function Aside() {
+function Aside({ menuList }) {
   const pathname = usePathname(); // Get the current pathname
-
-  const menuList = [
-    {
-      group: "اكتشف",
-      items: [
-        {
-          link: "/customer/main",
-          name: "الرئيسية",
-          icon: <House className="w-5 h-5" strokeWidth={1.5} />,
-        },
-        {
-          link: "/customer/main/products",
-          name: "المنتجات",
-          icon: <Box className="w-5 h-5" strokeWidth={1.5} />,
-        },
-      ],
-    },
-    {
-      group: "المكتبة",
-      items: [
-        {
-          link: "/customer/main/customers",
-          name: "العملاء",
-          icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
-        },
-        {
-          link: "/customer/main/orders",
-          name: "طلبات العملاء",
-          icon: <Folders className="w-5 h-5" strokeWidth={1.5} />,
-        },
-        {
-          link: "/customer/main/employees",
-          name: "الموظفين",
-          icon: <Replace className="w-5 h-5" strokeWidth={1.5} />,
-        },
-        {
-          link: "#",
-          name: "الدعم",
-          icon: <PhoneCall className="w-5 h-5" strokeWidth={1.5} />,
-        },
-      ],
-    },
-  ];
 
   return (
     <aside className="border-l fixed text-right flex flex-col min-h-screen p-4 lg:w-auto lg:min-w-[222px] gap-6">
