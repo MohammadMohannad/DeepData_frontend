@@ -1,9 +1,9 @@
 "use client";
 import Container from "@/components/container/Container";
-import { DataTable } from "@/components/dataTables/OrdersDataTable";
-import { DataPicker } from "@/components/dataPicker/DataPicker";
+import { DataTable } from "@/components/dataTables/OrdersDataTable";import { DataPicker } from "@/components/dataPicker/DataPicker";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { fetchDashboardData } from "@/lib/fakeCustomerData";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);

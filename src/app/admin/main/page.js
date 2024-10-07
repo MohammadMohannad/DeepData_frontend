@@ -16,7 +16,6 @@ import {
   CreditCard,
   DollarSign,
   Layers,
-  MessageCirclePlus,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -32,23 +31,18 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { fetchDashboardData } from "@/lib/fakeCustomerData";
+import { fetchDashboardData } from "@/lib/fakeAdminData";
 import GeneralMainPageCards from "@/components/cards/GeneralMainPageCards";
 import BestProducts from "@/components/charts/BestProducts";
 import avatar from "@/assets/Avatar.svg";
 import YearSummary from "@/components/charts/YearSummary";
 import TopCities from "@/components/charts/TopCities";
-import ChatModal from "@/components/chat/ChatModal";
 import withAuth from "@/components/withAuth";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 const formatter = new Intl.NumberFormat("en-US");
 
 function Dashboard() {
   const [date, setDate] = useState(null);
   const [dashboardData, setDashboardData] = useState({});
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -61,17 +55,6 @@ function Dashboard() {
 
   return (
     <>
-      <ChatModal open={open} setOpen={setOpen} />
-      <Button
-        variant="default"
-        className="dropShadow p-0 w-[55px] h-[55px] sm:w-[70px] sm:h-[70px] lg:h-[55px] lg:w-[55px] rounded-full bg-green_1 fixed bottom-3 right-3 sm:bottom-6 sm:left-10 lg:bottom-5 hover:bg-green_1 z-30"
-        onClick={() => setOpen(true)}
-      >
-        <MessageCirclePlus
-          strokeWidth={1.25}
-          className="w-[25px] h-[25px] sm:h-6 sm:w-6"
-        />
-      </Button>
       <Container className={"pb-4"}>
         <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
           <h3 className="text-3xl font-bold mb-4 sm:mb-0">لوحة التحكم</h3>
@@ -148,42 +131,56 @@ function Dashboard() {
           />
           <GeneralMainPageCards
             className={"order-3 sm:order-2"}
-            title="المنتجات"
+            title="الحسابات الفعالة"
             value={`512+`}
             icon={Layers}
           />
           <GeneralMainPageCards
             className={"order-2 sm:order-3"}
-            title="الطلبات"
+            title="الحسابات الملغاة"
             value={`5473+`}
             description={`201+ منذ اليوم السابق`}
             icon={CreditCard}
           />
           <GeneralMainPageCards
             className={"order-1 sm:order-4"}
-            title="إجمالي الإيرادات"
-            value={`IQD ${formatter.format(45231.89)}`}
-            description={`+20.1% from last month`}
+            title="الحسابات التجريبية"
+            value={`2135+`}
             icon={DollarSign}
           />
         </div>
-
+        <div className="w-full mt-2.5 grid grid-cols-2 gap-4 right">
+          <GeneralMainPageCards
+            className={"order-4 sm:order-1"}
+            title="اجمالي الايرادات"
+            value={`IQD ${formatter.format(982231.89)}`}
+            description={`+20.1% from last month`}
+            icon={DollarSign}
+          />
+          <GeneralMainPageCards
+            className={"order-1 sm:order-4"}
+            title="المبالغ المعلقة"
+            value={`IQD ${formatter.format(787831.89)}`}
+            description="+180.1% عن الشهر الماضي"
+            icon={Users}
+          />
+        </div>
         <div className="w-full mt-4 grid grid-cols-3 gap-4">
-          {/* top products chart */}
+          {/* top admins*/}
           <Card className="order-2 sm:order-2 col-span-4 sm:col-span-1 min-h-[444px]">
             <div className="flex items-center gap-1.5 p-3">
               <ChartColumnBig className="w-[15px] h-[15px] text-zinc-500" />
-              <p className="text-[13px] text-zinc-500">المنتجات الاكثر طلبا</p>
+              <p className="text-[13px] text-zinc-500">مهام المشرفين</p>
             </div>
             <Separator />
             <CardHeader className="pb-8">
               <CardTitle className="text-base">
-                مخطط بياني يوضح المنتجات الاكثر طلبا
+                مخطط بياني يوضح عدد مهام المشرفين
               </CardTitle>
               <CardDescription>Sep - Aug 2024</CardDescription>
             </CardHeader>
             <CardContent className="pb-8">
-              <BestProducts data={dashboardData.topProducts || []} />
+              <BestProducts type="admin" data={dashboardData.topAdmins || []} />
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 items-start font-medium leading-none">
@@ -191,23 +188,23 @@ function Dashboard() {
                 <TrendingUp className="h-4 w-4 scale-x-[-1]" />
               </div>
               <div className="leading-none text-muted-foreground">
-                إظهار إجمالي عدد طلبات المنتجات خلال هذا الشهر
+                إظهار إجمالي عدد مهام المشرفين خلال هذا الشهر{" "}
               </div>
             </CardFooter>
           </Card>
-          {/* top customers */}
+          {/* disabled accounts */}
           <Card className="order-1 sm:order-2 col-span-4 sm:col-span-2 min-h-[444px]">
             <CardHeader>
               <CardTitle className="text-base font-semibold">
-                أفضل الزبائن
+                المتاجر المعلقة
               </CardTitle>
               <CardDescription className="text-base">
-                العملاء الذين قاموا بأعلى عدد من عمليات الشراء
+                العملاء الذين علقت حساباتهم بسبب عدم دفع الاشتراك
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-7">
-              {dashboardData.customers &&
-                dashboardData.customers.map((item, index) => (
+              {dashboardData.disabledAccounts &&
+                dashboardData.disabledAccounts.map((item, index) => (
                   <div
                     className="flex items-center justify-between"
                     key={index}
@@ -225,7 +222,7 @@ function Dashboard() {
 
                       <p className="text-base font-medium">{item.name}</p>
                     </div>
-                    <p dir="ltr">+{formatter.format(item.count)}</p>
+                    <p dir="ltr">+{formatter.format(item.fees)}</p>
                   </div>
                 ))}
             </CardContent>
@@ -245,7 +242,7 @@ function Dashboard() {
           <Card className="order-1 sm:order-2 col-span-3 sm:col-span-1 h-full ">
             <div className="flex items-center gap-1.5 p-3">
               <ChartPie className="w-[15px] h-[15px] text-zinc-500" />
-              <p className="text-[13px] text-zinc-500">المحافظات الاكثر طلبا</p>
+              <p className="text-[13px] text-zinc-500">انواع الاشتراكات</p>
             </div>
             <Separator />
             <CardContent className="pt-8">
@@ -258,8 +255,6 @@ function Dashboard() {
           </Card>
         </div>
       </Container>
-    <ToastContainer position="bottom-center" autoClose={3000} />
-
     </>
   );
 }
