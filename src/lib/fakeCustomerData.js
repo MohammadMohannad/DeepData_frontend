@@ -506,12 +506,12 @@ export const fetchDashboardData = async () => {
       },
     ],
     topProducts: [
-      { product: "صابون", count: 186 },
-      { product: "غسول وجه", count: 237 },
-      { product: "عطر", count: 305 },
-      { product: "مكياج", count: 73 },
-      { product: "شامبو", count: 209 },
-      { product: "حمرة", count: 214 },
+      { name: "صابون", count: 186 },
+      { name: "غسول وجه", count: 237 },
+      { name: "عطر", count: 305 },
+      { name: "مكياج", count: 73 },
+      { name: "شامبو", count: 209 },
+      { name: "حمرة", count: 214 },
     ],
     yearSummary: [
       { month: "January", income: 1860 },
@@ -528,11 +528,11 @@ export const fetchDashboardData = async () => {
       { month: "December", income: 2140 },
     ],
     topCities: [
-      { city: "بغداد", count: 275 },
-      { city: "بابل", count: 200 },
-      { city: "اربيل", count: 187 },
-      { city: "ديوانية", count: 173 },
-      { city: "بصرة", count: 90 },
+      { name: "بغداد", count: 275 },
+      { name: "بابل", count: 200 },
+      { name: "اربيل", count: 187 },
+      { name: "ديوانية", count: 173 },
+      { name: "بصرة", count: 90 },
     ],
     customers: [
       {
