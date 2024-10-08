@@ -353,7 +353,11 @@ export function DataTable({ stores }) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    <span>{column.columnDef.header}</span>
+                    <span>
+                      {typeof column.columnDef.header === "string"
+                        ? column.columnDef.header
+                        : "رقم الهاتف"}
+                    </span>
                     <span>
                       {column.getIsVisible() ? <Check size={16} /> : ""}
                     </span>

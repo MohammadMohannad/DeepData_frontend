@@ -2,6 +2,7 @@ import Aside from "@/components/aside/Aside";
 import Header from "@/components/header/Header";
 import { Box, Folders, House, PhoneCall, Replace, Users } from "lucide-react";
 
+
 export default function RootLayout({ children }) {
   const menuList = [
     {
