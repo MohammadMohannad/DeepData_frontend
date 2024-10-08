@@ -8,15 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArchiveRestore,
-  Check,
-  ChevronDown,
-  Edit,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { Check, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,25 +30,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import AddTrainer from "../adminTrainersModal/AddTrainer";
-import EditTrainer from "../adminTrainersModal/EditTrainer";
-import ReviewStores from "../adminTrainersModal/ReviewStores";
+import EditEmployeeModal from "../employeesModals/EditEmployeeModal";
 
-const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
+const columns = ({ setEmployee, setOpen }) => [
   {
     accessorKey: "name",
-    header: "الاسم كامل",
+    header: "الاسم",
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "firstPhoneNumber",
     header: "رقم الهاتف",
-    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
-  },
-  {
-    accessorKey: "date",
-    header: "التاريخ",
-    cell: ({ row }) => <div>{row.getValue("date")}</div>,
+    cell: ({ row }) => <div>{row.getValue("firstPhoneNumber")}</div>,
   },
   {
     accessorKey: "email",
@@ -64,20 +49,11 @@ const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
     cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "stores",
-    header: "عدد المتاجر",
-    cell: ({ row }) => {
-      const stores = row.getValue("stores");
-      const storesCount = Array.isArray(stores) ? stores.length : 0;
-      return <div>{storesCount}</div>;
-    },
-  },
-  {
     id: "actions",
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const trainer = row.original;
+      const employee = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -90,8 +66,8 @@ const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                setTrainer(trainer);
-                setOpenEditTrainer(true);
+                setEmployee(employee);
+                setOpen(true);
               }}
               className="cursor-pointer flex items-center gap-2"
             >
@@ -99,17 +75,7 @@ const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
-                setTrainer(trainer);
-                setOpenReviewStores(true);
-              }}
-              className="cursor-pointer flex items-center gap-2"
-            >
-              <ArchiveRestore size={18} />
-              <p>اضافة متجر</p>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => alert(`Delete ${trainer.id}: ${trainer.name}`)}
+              onClick={() => alert(`Delete ${employee.id}: ${employee.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -122,23 +88,19 @@ const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
   },
 ];
 
-export function DataTable({ trainers, allStores }) {
+export function DataTable({ employees }) {
   const [open, setOpen] = useState(false);
-  const [openEditTrainer, setOpenEditTrainer] = useState(false);
-  const [openReviewStores, setOpenReviewStores] = useState(false);
-  const [trainer, setTrainer] = useState();
+  const [employee, setEmployee] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const data = trainers;
+  const data = employees;
   const table = useReactTable({
     data,
     columns: columns({
-      setTrainer,
+      setEmployee,
       setOpen,
-      setOpenEditTrainer,
-      setOpenReviewStores,
     }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -158,22 +120,9 @@ export function DataTable({ trainers, allStores }) {
 
   return (
     <div className="w-full">
-      {openReviewStores && (
-        <ReviewStores
-          open={openReviewStores}
-          setOpen={setOpenReviewStores}
-          trainer={trainer}
-          allStoresData={allStores}
-        />
+      {open && (
+        <EditEmployeeModal open={open} setOpen={setOpen} employee={employee} />
       )}
-      {openEditTrainer && (
-        <EditTrainer
-          open={openEditTrainer}
-          setOpen={setOpenEditTrainer}
-          trainer={trainer}
-        />
-      )}
-      {open && <AddTrainer open={open} setOpen={setOpen} />}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
@@ -183,49 +132,38 @@ export function DataTable({ trainers, allStores }) {
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={setOpen}
-            className="flex items-center bg-green_1 text-white"
-          >
-            <Plus color="white" />
-            <p>اضافة مدرب</p>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="focus-visible:ring-secondary focus-visible:ring-offset-0"
-              >
-                عمود <ChevronDown className="mr-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <p className="text-sm text-muted-foreground text-center">
-                تبديل الاعمدة
-              </p>
-              <DropdownMenuSeparator />
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    <span>{column.columnDef.header}</span>
-                    <span>
-                      {column.getIsVisible() ? <Check size={16} /> : ""}
-                    </span>
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="focus-visible:ring-secondary focus-visible:ring-offset-0"
+            >
+              عمود <ChevronDown className="mr-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <p className="text-sm text-muted-foreground text-center">
+              تبديل الاعمدة
+            </p>
+            <DropdownMenuSeparator />
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  <span>{column.columnDef.header}</span>
+                  <span>
+                    {column.getIsVisible() ? <Check size={16} /> : ""}
+                  </span>
+                </DropdownMenuCheckboxItem>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">

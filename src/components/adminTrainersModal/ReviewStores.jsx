@@ -2,20 +2,20 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../modal/Modal";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
+import { Check, ChevronDown, Loader } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-function ReviewStores({ open, setOpen, trainer }) {
+function ReviewStores({ open, setOpen, trainer, allStoresData }) {
   const [loading, setLoading] = useState(false);
-  const [stores, setStores] = useState(trainer.stores);
+  const [trainerStoresToReview, setTrainerStoresToReview] = useState(
+    trainer.stores.map((store) => store.id)
+  );
+  const [allStores, setAllStores] = useState(allStoresData);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -52,25 +52,53 @@ function ReviewStores({ open, setOpen, trainer }) {
       </div>
       <form onSubmit={handleSubmit}>
         <div className="w-full my-8">
-          <Select dir="rtl" onValueChange={(value) => setStores(value)}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="حدد المتاجر لمراجعتها" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>المتاجر المتاحة</SelectLabel>
-                {stores.map((store, index) => (
-                  <SelectItem
-                    key={index}
-                    value={store.store_id}
-                    className="cursor-pointer"
-                  >
-                    {store.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-[280px] focus-visible:ring-secondary focus-visible:ring-offset-0 flex items-center justify-between"
+              >
+                <p> حدد المتاجر لمراجعتها</p>
+                <ChevronDown className="mr-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[280px] max-h-[300px] overflow-y-auto scrollbar-hide"
+              align="start"
+            >
+              <p className="text-sm font-semibold text-muted-foreground text-right pr-2 min-h-8 pt-1.5">
+                المتاجر المتاحة
+              </p>
+              {allStores.map((store, index) => (
+                <DropdownMenuCheckboxItem
+                  key={index}
+                  className="flex items-center justify-end gap-2 text-right py-2 px-1 custom-checkbox-item"
+                  checked={trainerStoresToReview.includes(store.id)}
+                  onCheckedChange={(value) => {
+                    if (value) {
+                      setTrainerStoresToReview((prev) =>
+                        prev.includes(store.id)
+                          ? prev.filter((id) => id !== store.id)
+                          : [...prev, store.id]
+                      );
+                    } else {
+                      setTrainerStoresToReview((prev) =>
+                        prev.filter((id) => id !== store.id)
+                      );
+                    }
+                  }}
+                >
+                  <span>{store.name}</span>
+                  {/* This span holds space for the checkmark */}
+                  <span className="w-5 text-center">
+                    {trainerStoresToReview.includes(store.id) && (
+                      <Check size={16} />
+                    )}
+                  </span>
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div className="w-full h-9 flex-row-reverse flex justify-between items-center">
           <Button
@@ -79,15 +107,15 @@ function ReviewStores({ open, setOpen, trainer }) {
             type="button"
             className="h-full w-20"
             onClick={() => {
-              setOpen(false); // Close the modal
-              setStores([]);
+              setOpen(false);
+              setTrainerStoresToReview([]);
             }}
           >
             خروج
           </Button>
           <Button
             variant="default"
-            disabled={stores == trainer.stores || loading}
+            disabled={trainerStoresToReview == trainer.stores || loading}
             type="submit"
             className={`h-full w-20 transition-all duration-300 ease-in ${
               loading &&

@@ -1,5 +1,113 @@
 export const fetchDashboardData = async () => {
   return {
+    employees: [{}],
+    allStores: [
+      {
+        id: 1,
+        name: "متجر السعادة",
+      },
+      {
+        id: 2,
+        name: "متجر السعادة",
+      },
+      {
+        id: 3,
+        name: "متجر السعادة",
+      },
+      {
+        id: 4,
+        name: "متجر السعادة",
+      },
+      {
+        id: 5,
+        name: "متجر السعادة",
+      },
+      {
+        id: 6,
+        name: "متجر السعادة",
+      },
+      {
+        id: 7,
+        name: "متجر السعادة",
+      },
+      {
+        id: 8,
+        name: "متجر السعادة",
+      },
+      {
+        id: 9,
+        name: "متجر السعادة",
+      },
+      {
+        id: 10,
+        name: "متجر السعادة",
+      },
+      {
+        id: 11,
+        name: "متجر السعادة",
+      },
+      {
+        id: 12,
+        name: "متجر السعادة",
+      },
+      {
+        id: 13,
+        name: "متجر السعادة",
+      },
+      {
+        id: 14,
+        name: "متجر السعادة",
+      },
+      {
+        id: 15,
+        name: "متجر السعادة",
+      },
+      {
+        id: 16,
+        name: "متجر السعادة",
+      },
+      {
+        id: 17,
+        name: "متجر السعادة",
+      },
+      {
+        id: 18,
+        name: "متجر السعادة",
+      },
+      {
+        id: 19,
+        name: "متجر السعادة",
+      },
+      {
+        id: 20,
+        name: "متجر السعادة",
+      },
+      {
+        id: 21,
+        name: "متجر السعادة",
+      },
+      {
+        id: 22,
+        name: "متجر السعادة",
+      },
+      {
+        id: 23,
+        name: "متجر السعادة",
+      },
+      {
+        id: 24,
+        name: "متجر السعادة",
+      },
+      {
+        id: 25,
+        name: "متجر السعادة",
+      },
+      {
+        id: 26,
+        name: "متجر السعادة",
+      },
+    ],
+
     trainers: [
       {
         id: 1,
@@ -42,15 +150,15 @@ export const fetchDashboardData = async () => {
         confirmPassword: "12345678",
         stores: [
           {
-            id: 1,
+            id: 6,
             name: "متجر السعادة",
           },
           {
-            id: 2,
+            id: 7,
             name: "متجر السعادة",
           },
           {
-            id: 3,
+            id: 8,
             name: "متجر السعادة",
           },
         ],
@@ -65,11 +173,11 @@ export const fetchDashboardData = async () => {
         confirmPassword: "12345678",
         stores: [
           {
-            id: 1,
+            id: 10,
             name: "متجر السعادة",
           },
           {
-            id: 2,
+            id: 12,
             name: "متجر السعادة",
           },
         ],
@@ -84,7 +192,7 @@ export const fetchDashboardData = async () => {
         confirmPassword: "12345678",
         stores: [
           {
-            id: 1,
+            id: 15,
             name: "متجر السعادة",
           },
         ],
@@ -99,7 +207,7 @@ export const fetchDashboardData = async () => {
         confirmPassword: "12345678",
         stores: [
           {
-            id: 1,
+            id: 20,
             name: "متجر السعادة",
           },
         ],
