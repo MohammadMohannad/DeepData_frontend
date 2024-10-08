@@ -1,5 +1,110 @@
 export const fetchDashboardData = async () => {
   return {
+    trainers: [
+      {
+        id: 1,
+        name: "الامين احمد مليح",
+        phoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        date: "2022/10/10",
+        password: "12345678",
+        confirmPassword: "12345678",
+        stores: [
+          {
+            id: 1,
+            name: "متجر السعادة",
+          },
+          {
+            id: 2,
+            name: "متجر السعادة",
+          },
+          {
+            id: 3,
+            name: "متجر السعادة",
+          },
+          {
+            id: 4,
+            name: "متجر السعادة",
+          },
+          {
+            id: 5,
+            name: "متجر السعادة",
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "محمد الامين احمد مليح",
+        phoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        date: "2022/10/10",
+        password: "12345678",
+        confirmPassword: "12345678",
+        stores: [
+          {
+            id: 1,
+            name: "متجر السعادة",
+          },
+          {
+            id: 2,
+            name: "متجر السعادة",
+          },
+          {
+            id: 3,
+            name: "متجر السعادة",
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: "محمد الامين مليح",
+        phoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        date: "2022/10/10",
+        password: "12345678",
+        confirmPassword: "12345678",
+        stores: [
+          {
+            id: 1,
+            name: "متجر السعادة",
+          },
+          {
+            id: 2,
+            name: "متجر السعادة",
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: "محمد الامين مليح",
+        phoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        date: "2022/10/10",
+        password: "12345678",
+        confirmPassword: "12345678",
+        stores: [
+          {
+            id: 1,
+            name: "متجر السعادة",
+          },
+        ],
+      },
+      {
+        id: 5,
+        name: "محمد الامين مليح",
+        phoneNumber: "01234567890",
+        email: "0gWZy@example.com",
+        date: "2022/10/10",
+        password: "12345678",
+        confirmPassword: "12345678",
+        stores: [
+          {
+            id: 1,
+            name: "متجر السعادة",
+          },
+        ],
+      },
+    ],
     disabledAccounts: [
       { id: 1, name: "متجر السعادة", fees: "1000" },
       { id: 2, name: "النور ستور", fees: "34500" },
