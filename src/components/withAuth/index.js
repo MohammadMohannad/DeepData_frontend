@@ -11,7 +11,7 @@ const withAuth = (WrappedComponent, requiredRole = null) => {
       const checkAuthStatus = async () => {
         try {
           // Validate the token and get user information (including roles)
-          const response = await axios.get('http://localhost:3002/api/v1/validate_token', {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/validate_token`, {
             withCredentials: true,  // Ensure cookies are sent with the request
           });
 

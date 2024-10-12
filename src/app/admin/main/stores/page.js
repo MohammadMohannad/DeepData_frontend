@@ -15,7 +15,7 @@ export default function Entities() {
     const fetchOrders = async () => {
       try {
         // Send GET request to the Rails API
-        const response = await axios.get("http://localhost:3002/api/v1/entities", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entities`, {
           withCredentials: true, // Ensure cookies are included
         });
 

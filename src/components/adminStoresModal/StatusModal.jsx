@@ -20,7 +20,7 @@ function StatusModal({ open, setOpen, store }) {
     setLoading(true);
     
     try {
-      const response = await axios.patch(`http://localhost:3002/api/v1/entities/${store.id}`, {
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entities/${store.id}`, {
         status: storeStatus,
       },{
         withCredentials: true

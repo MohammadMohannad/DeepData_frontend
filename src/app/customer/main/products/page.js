@@ -16,7 +16,7 @@ function Products() {
     const fetchProducts = async () => {
       try {
         // Send GET request to the Rails API
-        const response = await axios.get("http://localhost:3002/api/v1/entity_products", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_products`, {
           withCredentials: true, // Ensure cookies are included
         });
         setProducts(response.data); // Update state with fetched data

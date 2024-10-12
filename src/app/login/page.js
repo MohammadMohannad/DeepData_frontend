@@ -29,7 +29,7 @@ function Login() {
 
 
       // Send login request to the Rails API
-      const response = await axios.post("http://localhost:3002/api/v1/login", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`, {
         email,
         password,
       }, {

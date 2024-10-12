@@ -23,7 +23,7 @@ function AddProductForm() {
     setLoading(true);
     
     try {
-      const response = await axios.post("http://localhost:3002/api/v1/templates", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates`, {
      
           name: template.name,
           content: template.content,
