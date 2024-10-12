@@ -43,7 +43,7 @@ export default function ChatModal({ open, setOpen }) {
     
     try {
       // Send the message to the backend API
-      const response = await axios.post("http://localhost:3002/api/v1/send_message", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/send_message`, {
         message: message.message,
         uploadedImage: message.uploadedImage,
       }, {

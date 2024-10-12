@@ -4,7 +4,7 @@ import axios from 'axios';
 export const handleLogout = async (router) => {
 
   try {
-    const response = await axios.delete(`http://localhost:3002/api/v1/logout`, {
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/logout`, {
       withCredentials: true,  // Include cookies in the request
     });
 

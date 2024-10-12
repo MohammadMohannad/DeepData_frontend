@@ -12,6 +12,7 @@ export default function Trainers() {
       const res = await fetchDashboardData();
       setData(res.trainers);
       setStores(res.allStores);
+
     };
     fetchData();
   }, []);

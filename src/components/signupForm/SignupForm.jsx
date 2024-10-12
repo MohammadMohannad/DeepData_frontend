@@ -78,7 +78,7 @@ function SignupForm() {
       });
   
       // Axios POST request
-      const response = await axios.post('http://127.0.0.1:3002/api/v1/register', formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // Ensure multipart/form-data for file uploads
         }
