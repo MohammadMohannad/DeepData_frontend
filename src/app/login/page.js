@@ -36,11 +36,17 @@ function Login() {
         withCredentials: true, // This is essential for the cookies to work
       });
 
-
-      router.push("/customer/main");
+      if(response.data.user.role === 'admin'){
+        router.push("/admin/main");
       console.log("Logged in successfully");
       toast.success('تم تسجيل الدحول بنجاح');
-       
+      }
+      else{
+      router.push("/customer/main");
+      console.log("Logged in successfully");
+      console.log(response.data.user.role);
+      toast.success('تم تسجيل الدحول بنجاح');
+      }
     } catch (error) {
       toast.error("Invalid email or password");
     } finally {

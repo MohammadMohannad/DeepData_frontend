@@ -12,8 +12,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Dot } from "lucide-react";
+import { handleLogout } from "../logout";
+import { useRouter } from "next/navigation";
 
 export function AvatarPopover({ img }) {
+const router = useRouter();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -50,9 +54,10 @@ export function AvatarPopover({ img }) {
           </div>
         </div>
         <Link
-          href={"/customer/login"}
-          onClick={() => {
-            localStorage.removeItem("jwtToken");
+          href="#"
+          onClick={async (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            await handleLogout(router); // Call the Axios logout function
           }}
           className="w-full rounded-md bg-red-100 text-red-500 flex items-center justify-center p-2 gap-2"
         >

@@ -5,39 +5,55 @@ import Loader from "../loader/Loader";
 import { Button } from "../ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "../ui/label";
+import axios from "axios";
 
 function NewTemplate({ open = true, setOpen, store }) {
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState({
-    entity_id: store.entity_id,
+    entity_id: store.id,
     name: store.tempName,
     content: store.tempContent,
   });
-  const handleSubmit = (event) => {
-    //integration start here
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("template added successfully");
-      console.log(template);
+    
+    try {
+      const response = await axios.post("http://localhost:3002/api/v1/templates", {
+     
+          name: template.name,
+          content: template.content,
+          entity_id: template.entity_id, // Include this if necessary
+        
+      },{
+        withCredentials: true
+      });
+      
+      console.log("Response:", response.data);
+      alert("Template added successfully");
+      setTemplate({ entity_id: store.entity_id, name: "", content: "" }); // Reset the form
+      setOpen(false); // Close the modal
+    } catch (error) {
+      console.error("Error adding template:", error);
+      alert("Failed to add template");
+    } finally {
       setLoading(false);
-      setOpen(false);
-    }, 5000);
+    }
   };
-
+  
   useEffect(() => {
-    // Add or remove the overflow-hidden class based on the open state
     if (open) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
 
-    // Cleanup function to ensure the class is removed when the component unmounts
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
+
   return (
     <Modal open={open} className={"max-w-[500px] min-w-[300px]"}>
       <div className="w-full text-right mb-4">
@@ -79,7 +95,7 @@ function NewTemplate({ open = true, setOpen, store }) {
             type="button"
             className="h-full w-20"
             onClick={() => {
-              setTemplate({});
+              setTemplate({ entity_id: store.entity_id, name: "", content: "" }); // Reset the form
               setOpen(false); // Close the modal
             }}
           >

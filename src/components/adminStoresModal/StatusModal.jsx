@@ -9,31 +9,46 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import axios from "axios";
 
 function StatusModal({ open, setOpen, store }) {
   const [storeStatus, setStoreStatus] = useState(store.status);
   const [arrowTracker, setArrowTracker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleStatusChange = () => {
-    console.log(storeStatus);
-    setArrowTracker(false);
-    setOpen(false);
-    alert("تم تغيير حالة المتجر الى : " + storeStatus);
+  const handleStatusChange = async () => {
+    setLoading(true);
+    
+    try {
+      const response = await axios.patch(`http://localhost:3002/api/v1/entities/${store.id}`, {
+        status: storeStatus,
+      },{
+        withCredentials: true
+      });
+      
+      console.log("Response:", response.data);
+      alert("تم تغيير حالة المتجر الى : " + storeStatus);
+      setOpen(false); // Close the modal
+    } catch (error) {
+      console.error("Error changing store status:", error);
+      alert("فشل في تغيير حالة المتجر");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    // Add or remove the overflow-hidden class based on the open state
     if (open) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
 
-    // Cleanup function to ensure the class is removed when the component unmounts
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
+
   return (
     <Modal open={open} className={"max-w-[500px] min-w-[200px]"}>
       <div className="w-full text-right mb-4">
@@ -88,7 +103,7 @@ function StatusModal({ open, setOpen, store }) {
           className="w-[60px] h-[35px] text-base"
           variant="ghost"
           onClick={() => {
-            setStoreStatus(null);
+            setStoreStatus(store.status); // Reset to original status
             setOpen(false);
           }}
         >
@@ -97,8 +112,9 @@ function StatusModal({ open, setOpen, store }) {
         <Button
           onClick={handleStatusChange}
           className="w-[60px] h-[35px] text-sm"
+          disabled={loading}
         >
-          تأكيد
+          {loading ? "جارٍ التحديث..." : "تأكيد"}
         </Button>
       </div>
     </Modal>
