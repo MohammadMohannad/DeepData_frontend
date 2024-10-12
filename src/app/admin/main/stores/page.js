@@ -1,15 +1,43 @@
+"use client";
 import Container from "@/components/container/Container";
 import { DataPicker } from "@/components/dataPicker/DataPicker";
 import { DataTable } from "@/components/dataTables/StoresDataTable";
 import { fetchDashboardData } from "@/lib/fakeAdminData";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-async function stores() {
-  const res = await fetchDashboardData();
-  return res.stores;
-}
+export default function Entities() {
+  const [entities, setEntities] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function Orders() {
-  const data = await stores();
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        // Send GET request to the Rails API
+        const response = await axios.get("http://localhost:3002/api/v1/entities", {
+          withCredentials: true, // Ensure cookies are included
+        });
+
+        console.log(response);
+        setEntities(response.data); // Update state with fetched data
+      } catch (error) {
+        setError("Error fetching products data");
+      } finally {
+        setLoading(false); // Mark loading as finished
+      }
+    };
+
+    fetchOrders(); // Fetch customers when the component mounts
+  }, []); // Empty dependency array means this runs once on mount
+
+  if (loading) {
+    return <div>Loading...</div>; // Render a loading state while data is being fetched
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Render an error message if fetching fails
+  }
   return (
     <Container>
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
@@ -18,7 +46,7 @@ export default async function Orders() {
           <DataPicker withButton={false} className="w-full h-12" />
         </div>
       </div>
-      <DataTable stores={data} />
+      <DataTable stores={entities.entities} />
     </Container>
   );
 }

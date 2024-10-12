@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import ChatImageUploader from "../fileUploader/ChatImageUploader";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { toast } from 'react-toastify';
 export default function ChatModal({ open, setOpen }) {
   const [message, setMessage] = useState({
     message: "",
@@ -24,7 +24,6 @@ export default function ChatModal({ open, setOpen }) {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
-
   // Handle image upload
   const handleImageUpload = (image) => {
     setMessage({ ...message, uploadedImage: image });
@@ -54,12 +53,14 @@ export default function ChatModal({ open, setOpen }) {
         withCredentials: true 
       });
 
+      toast.success('تم ارسال الرسالة وحفظ البيانات بنجاح');
 
       console.log("Message sent successfully:", response.data);
 
       // Optionally handle response (e.g., update message ID or status)
     } catch (error) {
-      console.error("Error sending message:", error);
+      toast.error(error);
+
       // Optionally revert the optimistic update in case of failure
     }
 

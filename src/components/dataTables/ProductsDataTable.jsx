@@ -84,7 +84,7 @@ const columns = ({ setProduct, setOpen }) => [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
+                alert(`Delete ${product.id}: ${product.name}`)
               }
               className="cursor-pointer flex items-center gap-2"
             >
@@ -136,9 +136,9 @@ export function DataTable({ products }) {
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
-          value={table.getColumn("productName")?.getFilterValue() ?? ""}
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("productName")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
