@@ -3,17 +3,21 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Command, CommandItem, CommandList } from "../ui/command";
-import { House, Box, Users, Folders, Replace, PhoneCall } from "lucide-react";
+import { Poppins } from "next/font/google";
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+});
 
 function Aside({ menuList }) {
   const pathname = usePathname(); // Get the current pathname
 
   return (
     <aside className="border-l fixed text-right flex flex-col min-h-screen p-4 lg:w-auto lg:min-w-[222px] gap-6">
-      <div className="py-3 pb-4">
-        <h2 className="text-[34px] font-medium text-primary">
-          <span className="text-green-600 font-bold">D</span>eep
-          <span className="text-green-600 font-bold">D</span>ata
+      <div className={`${poppins.className} py-3 pb-4`}>
+        <h2 className="text-[34px] font-semibold text-primary">
+          <span className="text-green-600">D</span>eep
+          <span className="text-green-600">D</span>ata
         </h2>
       </div>
       <Command>
