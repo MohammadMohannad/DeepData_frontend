@@ -83,16 +83,12 @@ const columns = ({
   },
   {
     accessorKey: "name",
-    header: "اسم المالك",
+    header: "اسم المتجر",
     cell: ({ row }) => {
       return <div className="cursor-pointer">{row.getValue("name")}</div>;
     },
   },
-  {
-    accessorKey: "businessName",
-    header: "اسم المشروع",
-    cell: ({ row }) => <div>{row.getValue("businessName")}</div>,
-  },
+ ,
   {
     accessorKey: "joinDate",
     header: "تاريخ الانضمام",
@@ -101,9 +97,9 @@ const columns = ({
     },
   },
   {
-    accessorKey: "endDate",
+    accessorKey: "created_at",
     header: "تاريخ الانتهاء",
-    cell: ({ row }) => <div>{row.getValue("endDate")}</div>,
+    cell: ({ row }) => <div>{row.getValue("created_at")}</div>,
   },
   {
     accessorKey: "country",
@@ -121,12 +117,12 @@ const columns = ({
     cell: ({ row }) => <div>{row.getValue("city")}</div>,
   },
   {
-    accessorKey: "email",
-    header: "البريد الالكترونى",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    accessorKey: "instagram_user",
+    header: "معرف الانستغرام",
+    cell: ({ row }) => <div>{row.getValue("instagram_user")}</div>,
   },
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "entity_phone",
     header: ({ column }) => (
       <Button
         className="hover:bg-transparent"
@@ -138,7 +134,7 @@ const columns = ({
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="pr-3.5">{row.getValue("phoneNumber")}</div>
+      <div className="pr-3.5">{row.getValue("entity_phone")}</div>
     ),
   },
   {

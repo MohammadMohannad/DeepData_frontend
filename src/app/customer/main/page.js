@@ -40,6 +40,9 @@ import YearSummary from "@/components/charts/YearSummary";
 import TopCities from "@/components/charts/TopCities";
 import ChatModal from "@/components/chat/ChatModal";
 import withAuth from "@/components/withAuth";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const formatter = new Intl.NumberFormat("en-US");
 
 function Dashboard() {
@@ -255,8 +258,10 @@ function Dashboard() {
           </Card>
         </div>
       </Container>
+    <ToastContainer position="bottom-center" autoClose={3000} />
+
     </>
   );
 }
 
-export default withAuth(Dashboard);
+export default withAuth(Dashboard,'customer');

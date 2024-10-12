@@ -28,10 +28,12 @@ import { Button } from "../ui/button";
 import logout from "@/assets/logout-icon.svg";
 import ToggleTheme from "../theme/ToggleTheme";
 import { AvatarPopover } from "../avatarPopover/AvatarPopover";
+import { handleLogout } from "../logout";
+import { useRouter } from "next/navigation";
 
 function Header({headerMenuList}) {
   const pathname = usePathname(); // Get the current pathname
-
+  const router = useRouter();
   return (
     <header className="border-b h-16 px-2.5 sm:p-5 right">
       <Container
@@ -96,8 +98,9 @@ function Header({headerMenuList}) {
               </Command>
               <SheetFooter>
                 <Button
-                  onClick={() => {
-                    window.location.href = "/customer/login";
+                  onClick={async (e) => {
+                    e.preventDefault(); // Prevent default link behavior
+                    await handleLogout(router); // Call the Axios logout function
                   }}
                   variant="destructive"
                   className="w-full flex flex-row-reverse gap-4 px-4 py-2 h-[45px] bg-[#FFE5E7] text-[#FF5757] rounded-[8px] cursor-pointer focus-visible:ring-transparent"
