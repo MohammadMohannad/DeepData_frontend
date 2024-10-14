@@ -44,9 +44,9 @@ const columns = ({ setProduct, setOpen }) => [
     cell: ({ row }) => <div>{row.getValue("periodicity_type")}</div>,
   },
   {
-    accessorKey: "period_amount",
+    accessorKey: "priod_amount",
     header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("period_amount")}</div>,
+    cell: ({ row }) => <div>{row.getValue("priod_amount")}</div>,
   },
   {
     accessorKey: "price",
