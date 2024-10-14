@@ -86,7 +86,7 @@ function SignupForm() {
         withCredentials: true,
       });
   
-      router.push("/customer/login");
+      router.push("/login");
       // Successful response handling
       setSuccessMessage("Signup successful! You can now log in.");
       console.log("Signup successful", response.data);
@@ -164,7 +164,7 @@ function SignupForm() {
             }
           >
             لديك حساب بالفعل ؟{" "}
-            <Link href="/customer/login" className="text-green_1">
+            <Link href="/login" className="text-green_1">
               تسجيل دخول
             </Link>
           </p>
