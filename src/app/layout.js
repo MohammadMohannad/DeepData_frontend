@@ -25,7 +25,7 @@ export const metadata = {
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
   viewport:
-    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 
 export default function RootLayout({ children }) {

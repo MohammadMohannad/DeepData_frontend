@@ -6,16 +6,19 @@ import Modal from "../modal/Modal";
 import { Input } from "../ui/input";
 import Loader from "../loader/Loader";
 import axios from "axios";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
 
 function AddProductForm() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [product, setProduct] = useState({
     name: "",
-    productRepetition: "",
-    productType: "",
-    time: "",
-    productPrice: "",
+    periodicity_type: "",
+    priod_amount: "",
+    price: "",
   });
 
   const handleSubmit = async (event) => {
@@ -23,23 +26,24 @@ function AddProductForm() {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`, {
      
-          name: template.name,
-          content: template.content,
-          entity_id: template.entity_id, // Include this if necessary
+          name: product.name,
+          price: product.price,
+          periodicity_type: product.periodicity_type,
+          priod_amount: product.priod_amount, // Include this if necessary
         
       },{
         withCredentials: true
       });
       
       console.log("Response:", response.data);
-      alert("Template added successfully");
-      setTemplate({ entity_id: store.entity_id, name: "", content: "" }); // Reset the form
-      setOpen(false); // Close the modal
+      toast.success('Product added successfully');
+      setProduct({ name:"" , price:"", periodicity_type:"", priod_amount:"" }); // Reset the form
+      setIsOpen(false); // Close the modal
     } catch (error) {
       console.error("Error adding template:", error);
-      alert("Failed to add template");
+      toast.error('Failed to add product');
     } finally {
       setLoading(false);
     }
@@ -83,7 +87,7 @@ function AddProductForm() {
             <label className="col-span-1 mb-1 order-1" htmlFor="name">
               اسم المنتج
             </label>
-            <label className="col-span-1 mb-1 order-2" htmlFor="productPrice">
+            <label className="col-span-1 mb-1 order-2" htmlFor="price">
               سعر المنتج
             </label>
             <Input
@@ -101,47 +105,34 @@ function AddProductForm() {
               onChange={(e) =>
                 setProduct({ ...product, price: e.target.value })
               }
-              id="productPrice"
+              id="price"
               className="col-span-1 order-4 mb-2"
               type="number"
               required
             />
-            <label htmlFor="productType" className="col-span-2 mb-1 order-5">
-              نوع المنتج
-            </label>
-            <Input
-              vlaue={product.productType}
-              onChange={(e) =>
-                setProduct({ ...product, productType: e.target.value })
-              }
-              id="productType"
-              className="col-span-2 mb-4 order-6"
-              type="text"
-              required
-            />
             <label
-              htmlFor="productRepetition"
+              htmlFor="periodicity_type"
               className="col-span-1 mb-1 order-7"
             >
               تكرارية المنتج
             </label>
-            <label htmlFor="time" className="col-span-1 mb-1 order-8">
+            <label htmlFor="priod_amount" className="col-span-1 mb-1 order-8">
               المدة
             </label>
             <Input
-              vlaue={product.productRepetition}
+              vlaue={product.periodicity_type}
               onChange={(e) =>
-                setProduct({ ...product, productRepetition: e.target.value })
+                setProduct({ ...product, periodicity_type: e.target.value })
               }
-              id="productRepetition"
+              id="periodicity_type"
               className="col-span-1 mb-4 order-9"
               type="text"
               required
             />
             <Input
-              vlaue={product.time}
-              onChange={(e) => setProduct({ ...product, time: e.target.value })}
-              id="time"
+              vlaue={product.priod_amount}
+              onChange={(e) => setProduct({ ...product, priod_amount: e.target.value })}
+              id="priod_amount"
               className="col-span-1 mb-4 order-10"
               type="number"
               required
@@ -157,10 +148,9 @@ function AddProductForm() {
                 setIsOpen(false); // Close the modal
                 setProduct({
                   name: "",
-                  productPrice: "",
-                  productType: "",
-                  productRepetition: "",
-                  time: "",
+                  price: "",
+                  periodicity_type: "",
+                  priod_amount: "",
                 });
               }}
             >
