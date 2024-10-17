@@ -36,14 +36,13 @@ export function FileUploader({ className, onFileChange, file, ...props }) {
         {/* Hidden file input */}
         <Input
           ref={fileInputRef}
-          accept="image/*"
+          accept="image/*,.heic,.heif"
           id="picture"
           type="file"
           onChange={handleFileChange}
           className="hidden"
         />
         <p className="text-base">Choose File</p>
-        {/* Display selected file name */}
         <p className="text-sm">{fileName || "No file chosen"}</p>
       </div>
     </div>
