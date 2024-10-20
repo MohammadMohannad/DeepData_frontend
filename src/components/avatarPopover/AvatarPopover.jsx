@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import logout from "@/assets/logout-icon.svg";
 import avatar from "@/assets/Avatar.svg";
+import axios from 'axios';
+import React, { useState, useEffect } from "react";
 
 import {
   Popover,
@@ -16,7 +18,45 @@ import { handleLogout } from "../logout";
 import { useRouter } from "next/navigation";
 
 export function AvatarPopover({ img }) {
-const router = useRouter();
+  const router = useRouter();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  // Fetch user data from the API
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user_data`, {
+        withCredentials: true,  // Include credentials if necessary
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch user data
+        const userDataResponse = await fetchUserData();
+        setUserData(userDataResponse);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;  // Loading UI
+
+  if (error) return <div>Error: {error.message || "An error occurred"}</div>;  // Error handling
 
   return (
     <Popover>
@@ -47,10 +87,9 @@ const router = useRouter();
             />
           </div>
           <div className="text-center">
-            <p className="text-sm">احمد محسن</p>
+            <p className="text-sm">{userData ? userData.name : "User"}</p>
             <p className="text-[9px] text-muted-foreground">
-              dhulfiqarali7@gmail.com
-            </p>
+            {userData ? userData.email : "N/A"}            </p>
           </div>
         </div>
         <Link
@@ -68,3 +107,4 @@ const router = useRouter();
     </Popover>
   );
 }
+export default AvatarPopover;
