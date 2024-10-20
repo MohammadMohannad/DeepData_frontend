@@ -46,40 +46,103 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const formatter = new Intl.NumberFormat("en-US");
+const useDateFilter = () => {
+  const [date, setDate] = useState({ from: null, to: null });
+  const [selectedFilter, setSelectedFilter] = useState("day"); // Default filter
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
+    const now = new Date();
+    let startDate;
+
+    switch (filter) {
+      case "day":
+        startDate = new Date(now.setHours(0, 0, 0, 0)); // Start of today
+        setDate({ from: startDate, to: null });
+        break;
+      case "week":
+        startDate = new Date(now.setDate(now.getDate() - 7)); // Start of last week
+        setDate({ from: startDate, to: null });
+        break;
+      case "month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of this month
+        setDate({ from: startDate, to: null });
+        break;
+      case "year":
+        startDate = new Date(now.getFullYear(), 0, 1); // Start of this year
+        setDate({ from: startDate, to: null });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleDateSelect = (selectedDate) => {
+    if (selectedDate.length === 2) {
+      setDate({ from: selectedDate[0], to: selectedDate[1] }); // Update with selected range
+    }
+  };
+
+  return {
+    date,
+    selectedFilter,
+    handleFilterChange,
+    handleDateSelect,
+  };
+};
 
 function Dashboard() {
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState({ from: null, to: null });
+  // const [fromDate, setFromDate] = useState(null);
+  // const [toDate, setToDate] = useState(null);
+
   const [customerCount, setCustomerCount] = useState(null);
   const [orderCount, setOrderCount] = useState(null);
   const [productCount, setProductCount] = useState(null);
   const [topProducts, setTopProducts] = useState([]);
   const [revenue, setRevenue] = useState(null);
+  const [topCities, setTopCities] = useState([]);
+  const [yearSummary, setYearSummary] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [dashboardData, setDashboardData] = useState({});
   const [open, setOpen] = useState(false);
   
-  const fetchEntityData = async () => {
+  const fetchEntityData = async (fromDate, toDate) => {
     try {
+      // Construct the query parameters
+      const params = {
+        from_date: fromDate ? new Date(fromDate).toISOString() : undefined,
+        to_date: toDate ? new Date(toDate).toISOString() : undefined,
+      };
+  
+      // Make the API call with query parameters
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_customer_count`, {
         withCredentials: true,  // Include credentials if necessary
+        params,  // Include query parameters
       });
+  
       console.log(response.data);
       return response.data;  // Return the customer count from the response
     } catch (err) {
       throw err;  // Rethrow error to be handled in the useEffect
     }
   };
-  useEffect(() => {
+   useEffect(() => {
     const loadDashboardData = async () => {
       try {
         setLoading(true);  // Start loading state
-
+        const fromDate = '2024-01-01';  // Example start date
+        const toDate = '2024-09-31';    // Example end date
+        
+        // Process entity data and update state as needed
+  
         // Fetch both customer count and other dashboard data concurrently
         const [dashboardDataResponse, entityData] = await Promise.all([
           fetchDashboardData(),
-          fetchEntityData(),
+          fetchEntityData(fromDate, toDate),
         ]);
         setDashboardData(dashboardDataResponse);
         setCustomerCount(entityData.customer_count);
@@ -87,6 +150,10 @@ function Dashboard() {
         setProductCount(entityData.product_count);
         setRevenue(entityData.revenue);
         setTopProducts(entityData.topProducts);
+        setTopCities(entityData.topCities);
+        setYearSummary(entityData.yearSummary);
+        setTopCustomers(entityData.topCustomers);
+
       } catch (err) {
         setError(err.message);  // Set error message if something goes wrong
       } finally {
@@ -98,7 +165,25 @@ function Dashboard() {
 
 
 
-  }, []);
+  }, [date]);  // Re-run the effect when the fromDate or toDate changes
+  const handleDateChange = (selectedDate) => {
+    if (selectedDate.length === 2) {
+      setDate({
+        from: selectedDate[0],
+        to: selectedDate[1],
+      });
+    }
+  };
+  const handleFetchData = () => {
+    fetchEntityData(date.from, date.to);
+  };
+  // const handleFromDateChange = (filter) => {
+  //   setFromDate(filter);
+  // };
+  // const handleToDateChange = (filter) => {
+  //   setToDate(filter);  
+  // };
+
   if (loading) return <div>Loading...</div>;  // Loading state UI
   if (error) return <div>Error: {error}</div>;  // Error state UI
 
@@ -154,10 +239,12 @@ function Dashboard() {
                 />
               </PopoverContent>
             </Popover>
-            <Button variant="default" className="w-2/6 mr-2 min-h-full">
-              تحميل
-            </Button>
-          </div>
+
+        {/* Fetch Data Button */}
+        <Button variant="default" className="w-2/6 mr-2 min-h-full" onClick={handleFetchData}>
+          تحميل
+        </Button>
+</div>
         </div>
 
         <Tabs
@@ -249,8 +336,8 @@ function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-7">
-              {dashboardData.customers &&
-                dashboardData.customers.map((item, index) => (
+              {topCustomers &&
+                topCustomers.map((item, index) => (
                   <div
                     className="flex items-center justify-between"
                     key={index}
@@ -281,7 +368,8 @@ function Dashboard() {
               ملخص العام
             </CardHeader>
             <CardContent>
-              <YearSummary data={dashboardData.yearSummary || []} />
+
+              <YearSummary data={yearSummary || []} />
             </CardContent>
           </Card>
           {/* top cities */}
@@ -292,7 +380,7 @@ function Dashboard() {
             </div>
             <Separator />
             <CardContent className="pt-8">
-              <TopCities data={dashboardData.topCities || []} />
+              <TopCities data={topCities || []} />
             </CardContent>
             <div className="flex gap-2 items-center justify-center px-2 mb-4 font-medium leading-none">
               ارتفاع بنسبة {5.2}% هذا الشهر{" "}
