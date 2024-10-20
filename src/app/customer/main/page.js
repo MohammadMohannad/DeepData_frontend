@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Container from "@/components/container/Container";
 import { Button } from "@/components/ui/button";
+import axios from 'axios';
+
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -20,7 +22,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -47,17 +49,58 @@ const formatter = new Intl.NumberFormat("en-US");
 
 function Dashboard() {
   const [date, setDate] = useState(null);
+  const [customerCount, setCustomerCount] = useState(null);
+  const [orderCount, setOrderCount] = useState(null);
+  const [productCount, setProductCount] = useState(null);
+  const [topProducts, setTopProducts] = useState([]);
+  const [revenue, setRevenue] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [dashboardData, setDashboardData] = useState({});
   const [open, setOpen] = useState(false);
-
+  
+  const fetchEntityData = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_customer_count`, {
+        withCredentials: true,  // Include credentials if necessary
+      });
+      console.log(response.data);
+      return response.data;  // Return the customer count from the response
+    } catch (err) {
+      throw err;  // Rethrow error to be handled in the useEffect
+    }
+  };
   useEffect(() => {
     const loadDashboardData = async () => {
-      const data = await fetchDashboardData(); // This should be an API call
-      setDashboardData(data);
+      try {
+        setLoading(true);  // Start loading state
+
+        // Fetch both customer count and other dashboard data concurrently
+        const [dashboardDataResponse, entityData] = await Promise.all([
+          fetchDashboardData(),
+          fetchEntityData(),
+        ]);
+        setDashboardData(dashboardDataResponse);
+        setCustomerCount(entityData.customer_count);
+        setOrderCount(entityData.orders_count);
+        setProductCount(entityData.product_count);
+        setRevenue(entityData.revenue);
+        setTopProducts(entityData.topProducts);
+      } catch (err) {
+        setError(err.message);  // Set error message if something goes wrong
+      } finally {
+        setLoading(false);  // Stop loading state
+      }
     };
 
-    loadDashboardData();
+    loadDashboardData();  // Call the function on component mount
+
+
+
   }, []);
+  if (loading) return <div>Loading...</div>;  // Loading state UI
+  if (error) return <div>Error: {error}</div>;  // Error state UI
 
   return (
     <>
@@ -137,36 +180,36 @@ function Dashboard() {
             </TabsTrigger>
           </TabsList>
         </Tabs>
-
         <div className="w-full mt-2.5 grid grid-cols-4 gap-4 right">
-          <GeneralMainPageCards
-            className={"order-4 sm:order-1"}
-            title="الزبائن"
-            value={`2135+`}
-            description="+180.1% عن الشهر الماضي"
-            icon={Users}
-          />
-          <GeneralMainPageCards
-            className={"order-3 sm:order-2"}
-            title="المنتجات"
-            value={`512+`}
-            icon={Layers}
-          />
-          <GeneralMainPageCards
-            className={"order-2 sm:order-3"}
-            title="الطلبات"
-            value={`5473+`}
-            description={`201+ منذ اليوم السابق`}
-            icon={CreditCard}
-          />
-          <GeneralMainPageCards
-            className={"order-1 sm:order-4"}
-            title="إجمالي الإيرادات"
-            value={`IQD ${formatter.format(45231.89)}`}
-            description={`+20.1% from last month`}
-            icon={DollarSign}
-          />
-        </div>
+  <GeneralMainPageCards
+    className={"order-4 sm:order-1"}
+    title="الزبائن"
+    value={`${customerCount !== null ? customerCount : 'N/A'}+`}  // Dynamically display customer count
+    description="+180.1% عن الشهر الماضي"
+    icon={Users}
+  />
+  <GeneralMainPageCards
+    className={"order-3 sm:order-2"}
+    title="المنتجات"
+    value={`${productCount !== null ? productCount : 'N/A'}+`}  // Dynamically display product count
+    icon={Layers}
+  />
+  <GeneralMainPageCards
+    className={"order-2 sm:order-3"}
+    title="الطلبات"
+    value={`${orderCount !== null ? orderCount : 'N/A'}+`}  // Dynamically display order count
+    description={`201+ منذ اليوم السابق`}
+    icon={CreditCard}
+  />
+  <GeneralMainPageCards
+    className={"order-1 sm:order-4"}
+    title="إجمالي الإيرادات"
+    value={`IQD ${revenue !== null ? formatter.format(revenue) : 'N/A'}`}  // Dynamically display revenue
+    description={`+20.1% from last month`}
+    icon={DollarSign}
+  />
+</div>
+
 
         <div className="w-full mt-4 grid grid-cols-3 gap-4">
           {/* top products chart */}
@@ -183,7 +226,7 @@ function Dashboard() {
               <CardDescription>Sep - Aug 2024</CardDescription>
             </CardHeader>
             <CardContent className="pb-8">
-              <BestProducts data={dashboardData.topProducts || []} />
+              <BestProducts data={topProducts || []} />
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div className="flex gap-2 items-start font-medium leading-none">
