@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import Modal from "../modal/Modal";
@@ -11,14 +12,14 @@ function AddEmployee() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [errors, setErrors] = useState({
-    firstPhoneNumber: null,
-    secondPhoneNumber: null,
+    phone: null,
+    sec_phone: null,
   });
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
-    firstPhoneNumber: "",
-    secondPhoneNumber: "",
+    phone: "",
+    sec_phone: "",
     password: "",
   });
 
@@ -32,13 +33,13 @@ function AddEmployee() {
   const handlePhoneNumberChange = debounce((value, phoneType) => {
     const trimmedValue = value.trim();
     if (validatePhoneNumber(trimmedValue)) {
-      setErrors(() => ({
-        ...errors,
+      setErrors((prevErrors) => ({
+        ...prevErrors,
         [phoneType]: null,
       }));
     } else {
-      setErrors(() => ({
-        ...errors,
+      setErrors((prevErrors) => ({
+        ...prevErrors,
         [phoneType]: "الرقم الذي ادخلته غير صالح",
       }));
     }
@@ -55,17 +56,31 @@ function AddEmployee() {
     handlePhoneNumberChange(numericValue, phoneType);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(employee); //add the fetch here
-
     setLoading(true);
 
-    setTimeout(() => {
-      alert("Product added successfully");
+    try {
+      // Send the POST request to the backend
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_users`, employee, {withCredentials:true});
+
+      alert("Employee added successfully");
       setLoading(false);
-      setIsOpen(false);
-    }, 2000);
+      setIsOpen(false); // Close modal after success
+
+      // Reset form fields
+      setEmployee({
+        name: "",
+        email: "",
+        phone: "",
+        sec_phone: "",
+        password: "",
+      });
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("Failed to add employee");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -117,33 +132,33 @@ function AddEmployee() {
 
             <div className="mb-3 w-full grid grid-cols-2 gap-1.5">
               <label
-                htmlFor="firstPhoneNumber"
+                htmlFor="phone"
                 className="col-span-1 text-[14px] block w-full order-1"
               >
                 رقم الهاتف الاول
               </label>
               <label
-                htmlFor="secondPhoneNumber"
+                htmlFor="sec_phone"
                 className="col-span-1 text-[14px] block w-full order-2"
               >
                 رقم الهاتف الثاني
               </label>
               <Input
-                id="firstPhoneNumber"
+                id="phone"
                 type="text"
-                value={employee.firstPhoneNumber}
-                onChange={(e) => handleChange(e, "firstPhoneNumber")}
+                value={employee.phone}
+                onChange={(e) => handleChange(e, "phone")}
                 className={`col-span-1 order-3 ${
-                  errors.firstPhoneNumber && "ring-1 ring-red-500"
+                  errors.phone && "ring-1 ring-red-500"
                 }`}
               />
               <Input
-                id="secondPhoneNumber"
+                id="sec_phone"
                 type="text"
-                value={employee.secondPhoneNumber}
-                onChange={(e) => handleChange(e, "secondPhoneNumber")}
+                value={employee.sec_phone}
+                onChange={(e) => handleChange(e, "sec_phone")}
                 className={`col-span-1 order-4 ${
-                  errors.secondPhoneNumber && "ring-1 ring-red-500"
+                  errors.sec_phone && "ring-1 ring-red-500"
                 }`}
               />
             </div>
@@ -187,8 +202,8 @@ function AddEmployee() {
                   id: "",
                   name: "",
                   email: "",
-                  firstPhoneNumber: "",
-                  secondPhoneNumber: "",
+                  phone: "",
+                  sec_phone: "",
                   password: "",
                 });
               }}
@@ -198,8 +213,8 @@ function AddEmployee() {
             <Button
               variant="default"
               disabled={
-                errors.firstPhoneNumber ||
-                errors.secondPhoneNumber ||
+                errors.phone ||
+                errors.sec_phone ||
                 !employee.name ||
                 !employee.email ||
                 !employee.password

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios"; // Import Axios
 import {
   flexRender,
   getCoreRowModel,
@@ -47,6 +48,7 @@ const columns = ({
   setOpenOrdersModal,
   setCustomer,
   setOpenEditModal,
+  handleDelete, // Pass the handleDelete function
 }) => [
   {
     id: "select",
@@ -175,7 +177,7 @@ const columns = ({
               <p>مشاهدة الطلبات</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => alert(`Delete ${customer.id}: ${customer.name}`)}
+              onClick={() => handleDelete(customer)} // Call handleDelete here
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -189,7 +191,7 @@ const columns = ({
 ];
 
 export function DataTable({ customers }) {
-  const [customer, setCustomer] = useState(); //for customer edit
+  const [customer, setCustomer] = useState(); // for customer edit
   const [openEditModal, setOpenEditModal] = useState(false);
   const data = customers;
   const [orders, setOrders] = useState([]);
@@ -199,6 +201,22 @@ export function DataTable({ customers }) {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
 
+  // Function to handle customer deletion
+  const handleDelete = async (customer) => {
+    const confirmDelete = confirm(`Are you sure you want to delete ${customer.name}?`);
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/customers/${customer.id}`,{withCredentials:true});
+        alert("Customer deleted successfully");
+        // Optionally, refresh the customer list or update the state to remove the deleted customer
+      } catch (error) {
+        console.error("Error deleting customer:", error);
+        alert("Failed to delete the customer");
+      }
+    }
+  };
+
   const table = useReactTable({
     data,
     columns: columns({
@@ -206,6 +224,7 @@ export function DataTable({ customers }) {
       setOrders,
       setCustomer,
       setOpenEditModal,
+      handleDelete, // Pass handleDelete to the columns
     }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

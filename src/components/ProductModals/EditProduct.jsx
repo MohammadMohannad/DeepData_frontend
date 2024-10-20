@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
 import Modal from "../modal/Modal";
 import { Input } from "../ui/input";
 import Loader from "../loader/Loader";
@@ -9,25 +9,29 @@ import Loader from "../loader/Loader";
 function EditProductModal({ product, open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [newProduct, setNewProduct] = useState({
-    name: "",
-    productRepetition: "",
-    productType: "",
-    time: "",
-    productPrice: "",
-    ...product,
+    name: product?.name || "",
+    periodicity_type: product?.periodicity_type || "",
+    priod: product?.priod || "",
+    price: product?.price || "",
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(newProduct); //add the fetch here
-
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      // PATCH request to update the product
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${product.id}`, newProduct, {withCredentials:true});
+      console.log('Product updated successfully:', response.data);
+
       alert("Product updated successfully");
       setLoading(false);
-      setOpen(false);
-    }, 4000);
+      setOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Error updating product:", error);
+      alert("Failed to update product");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -59,7 +63,7 @@ function EditProductModal({ product, open, setOpen }) {
           <label className="col-span-1 mb-1 order-1" htmlFor="name">
             اسم المنتج
           </label>
-          <label className="col-span-1 mb-1 order-2" htmlFor="productPrice">
+          <label className="col-span-1 mb-1 order-2" htmlFor="price">
             سعر المنتج
           </label>
           <Input
@@ -73,59 +77,43 @@ function EditProductModal({ product, open, setOpen }) {
             required
           />
           <Input
-            value={newProduct.productPrice || ""}
+            value={newProduct.price || ""}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, productPrice: e.target.value })
+              setNewProduct({ ...newProduct, price: e.target.value })
             }
-            id="productPrice"
+            id="price"
             className="col-span-1 order-4 mb-2"
             type="number"
-            required
-          />
-          <label htmlFor="productType" className="col-span-2 mb-1 order-5">
-            نوع المنتج
-          </label>
-          <Input
-            value={newProduct.productType || ""}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, productType: e.target.value })
-            }
-            id="productType"
-            className="col-span-2 mb-4 order-6"
-            type="text"
-            required
           />
           <label
-            htmlFor="productRepetition"
+            htmlFor="periodicity_type"
             className="col-span-1 mb-1 order-7"
           >
             تكرارية المنتج
           </label>
-          <label htmlFor="time" className="col-span-1 mb-1 order-8">
+          <label htmlFor="priod" className="col-span-1 mb-1 order-8">
             المدة
           </label>
           <Input
-            value={newProduct.productRepetition || ""}
+            value={newProduct.periodicity_type || ""}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
-                productRepetition: e.target.value,
+                periodicity_type: e.target.value,
               })
             }
-            id="productRepetition"
+            id="periodicity_type"
             className="col-span-1 mb-4 order-9"
             type="text"
-            required
           />
           <Input
-            value={newProduct.time || ""}
+            value={newProduct.priod || ""}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, time: e.target.value })
+              setNewProduct({ ...newProduct, priod: e.target.value })
             }
-            id="time"
+            id="priod"
             className="col-span-1 mb-4 order-10"
             type="number"
-            required
           />
         </div>
         <div className="w-full h-9 flex-row-reverse flex justify-between items-center">
@@ -137,11 +125,10 @@ function EditProductModal({ product, open, setOpen }) {
             onClick={() => {
               setOpen(false); // Close the modal
               setNewProduct({
-                productName: "",
-                productPrice: "",
-                productType: "",
-                productRepetition: "",
-                time: "",
+                name: "",
+                price: "",
+                periodicity_type: "",
+                priod: "",
               });
             }}
           >

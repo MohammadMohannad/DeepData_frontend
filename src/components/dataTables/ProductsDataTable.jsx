@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios"; // Import Axios
 import {
   flexRender,
   getCoreRowModel,
@@ -32,7 +33,7 @@ import {
 import Container from "../container/Container";
 import EditProductModal from "../ProductModals/EditProduct";
 
-const columns = ({ setProduct, setOpen }) => [
+const columns = ({ setProduct, setOpen, handleDelete }) => [
   {
     accessorKey: "name",
     header: "اسم المنتج",
@@ -83,9 +84,7 @@ const columns = ({ setProduct, setOpen }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.name}`)
-              }
+              onClick={() => handleDelete(product)} // Call handleDelete function
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -106,11 +105,29 @@ export function DataTable({ products }) {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const data = products;
+
+  // Function to handle product deletion
+  const handleDelete = async (product) => {
+    const confirmDelete = confirm(`Are you sure you want to delete ${product.name}?`);
+    
+    if (confirmDelete) {
+      try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${product.id}`, {withCredentials:true});
+        alert("Product deleted successfully");
+        // Optionally, trigger a reload or update state here to remove the deleted product from the table
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete the product");
+      }
+    }
+  };
+
   const table = useReactTable({
     data,
     columns: columns({
       setProduct,
       setOpen,
+      handleDelete, // Pass handleDelete function to columns
     }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
