@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios"; // Axios import
 import Modal from "../modal/Modal";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -8,24 +9,24 @@ import { debounce } from "lodash";
 
 function CustomerEditModal({ open, setOpen, customer }) {
   const [customerInfo, setCustomerInfo] = useState({
-    id: "",
-    name: "",
-    age: "",
-    gender: "",
-    city: "",
-    subCity: "",
-    country: "",
-    location: "",
-    firstPhoneNumber: "",
-    secondPhoneNumber: "",
-    instagram_user: "",
-    dateOfBirth: "",
-    ...customer,
+    id: customer?.id || "",
+    name: customer?.name || "",
+    age: customer?.age || "",
+    gender: customer?.gender || "",
+    city: customer?.city || "",
+    state: customer?.state || "",
+    country: customer?.country || "",
+    location: customer?.location || "",
+    phone: customer?.phone || "",
+    sec_phone: customer?.sec_phone || "",
+    instagram_user: customer?.instagram_user || "",
+    date_of_birth: customer?.date_of_birth || "",
   });
+  
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
-    firstPhoneNumber: null,
-    secondPhoneNumber: null,
+    phone: null,
+    sec_phone: null,
   });
 
   // Validation function for phone numbers
@@ -61,16 +62,24 @@ function CustomerEditModal({ open, setOpen, customer }) {
     handlePhoneNumberChange(numericValue, phoneType);
   };
 
-  const handleSubmit = (event) => {
-    //integration start here
+  // PATCH request using Axios
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("update customer");
-      console.log(customerInfo);
+
+    try {
+      // Make the PATCH request to update the customer
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/customers/${customerInfo.id}`, customerInfo, {withCredentials: true});
+      console.log('Customer updated successfully:', response.data);
+
+      alert("Customer updated successfully");
       setLoading(false);
-      setOpen(false);
-    }, 5000);
+      setOpen(false); // Close modal after success
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      alert("Failed to update customer");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -131,7 +140,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
             id="insta"
             className="col-span-1 order-4"
             type="text"
-            required
+            
           />
         </div>
 
@@ -156,7 +165,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
             }
             className="col-span-1 order-3"
             type="number"
-            required
+            
           />
           <select
             defaultValue={customerInfo.gender || ""}
@@ -165,23 +174,21 @@ function CustomerEditModal({ open, setOpen, customer }) {
             }
             className="col-span-2 order-4 border rounded-md p-2 placeholder:p-2 bg-transparent"
             id="gender"
-            required
           >
             <option value="ذكر">ذكر</option>
             <option value="انثى">انثى</option>
           </select>
           <input
             id="date"
-            value={customerInfo.dateOfBirth || ""}
+            value={customerInfo.date_of_birth || ""}
             onChange={(e) =>
               setCustomerInfo({
                 ...customerInfo,
-                dateOfBirth: e.target.value,
+                date_of_birth: e.target.value,
               })
             }
             className="col-span-3 order-5 border rounded-md p-2 bg-transparent"
             type="date"
-            required
           />
         </div>
         <label
@@ -210,7 +217,7 @@ function CustomerEditModal({ open, setOpen, customer }) {
           <label className="col-span-1 order-2 text-[12px]" htmlFor="city">
             المحافظة
           </label>
-          <label className="col-span-1 order-3 text-[12px]" htmlFor="subCity">
+          <label className="col-span-1 order-3 text-[12px]" htmlFor="state">
             المدينة
           </label>
           <Input
@@ -224,7 +231,6 @@ function CustomerEditModal({ open, setOpen, customer }) {
             id="country"
             className="w-full order-4"
             type="text"
-            required
           />
           <Input
             id="city"
@@ -237,55 +243,52 @@ function CustomerEditModal({ open, setOpen, customer }) {
             }
             className="col-span-1 order-5"
             type="text"
-            required
           />
           <Input
-            id="subCity"
-            value={customerInfo.subCity || ""}
+            id="state"
+            value={customerInfo.state || ""}
             onChange={(e) =>
               setCustomerInfo({
                 ...customerInfo,
-                subCity: e.target.value,
+                state: e.target.value,
               })
             }
             className="col-span-1 order-6"
             type="text"
-            required
           />
         </div>
 
         <div className="w-full grid grid-cols-2 mb-4 gap-2">
           <label
-            htmlFor="firstPhoneNumber"
+            htmlFor="phone"
             className="col-span-1 block text-right order-1 text-[12px]"
           >
             رقم الهاتف الاول
           </label>
           <label
-            htmlFor="secondPhoneNumber"
+            htmlFor="sec_phone"
             className="col-span-1 block text-right order-2 text-[12px]"
           >
             رقم الهاتف الثاني
           </label>
           <Input
             id="phone"
-            value={customerInfo.firstPhoneNumber || ""}
-            onChange={(e) => handleChange(e, "firstPhoneNumber")}
+            value={customerInfo.phone || ""}
+            onChange={(e) => handleChange(e, "phone")}
             className={`col-span-1 order-3 ${
-              errors.firstPhoneNumber && "ring-1 ring-red-500"
+              errors.phone && "ring-1 ring-red-500"
             }`}
             type="text"
             required
           />
           <Input
-            id="phone"
-            value={customerInfo.secondPhoneNumber || ""}
-            onChange={(e) => handleChange(e, "secondPhoneNumber")}
+            id="sec_phone"
+            value={customerInfo.sec_phone || ""}
+            onChange={(e) => handleChange(e, "sec_phone")}
             className={`col-span-1 order-4 ${
-              errors.secondPhoneNumber && "ring-1 ring-red-500"
+              errors.sec_phone && "ring-1 ring-red-500"
             }`}
             type="text"
-            required
           />
         </div>
 
@@ -310,17 +313,10 @@ function CustomerEditModal({ open, setOpen, customer }) {
             }`}
             disabled={
               loading ||
-              errors.firstPhoneNumber ||
-              errors.secondPhoneNumber ||
+              errors.phone ||
+              errors.sec_phone ||
               !customerInfo.name ||
-              !customerInfo.age ||
-              !customerInfo.gender ||
-              !customerInfo.city ||
-              !customerInfo.subCity ||
-              !customerInfo.country ||
-              !customerInfo.dateOfBirth ||
-              !customerInfo.location ||
-              !customerInfo.instagram_user
+              !customerInfo.location
             }
           >
             <p className="right transition-all duration-300 ease-in">اضافة</p>

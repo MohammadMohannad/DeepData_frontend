@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Modal from "../modal/Modal";
 import { Input } from "../ui/input";
@@ -5,27 +6,38 @@ import { debounce } from "lodash";
 import { Button } from "../ui/button";
 import Loader from "../loader/Loader";
 import { FileUploader } from "../fileUploader/FileUploader";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function AddStore({ open, setOpen }) {
-  const [store, setStore] = useState({
-    name: "",
-    businessName: "",
-    joinDate: "",
-    endDate: "",
-    state: "",
-    city: "",
-    email: "",
-    country: "",
-    phoneNumber: "",
-    sec_phone: "",
-    businessPhoneNumber: "",
-    instagram_username: "",
-    meta_id: "",
-    plan: "",
-    status: "",
-  });
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const router = useRouter();
+
+  // State structure similar to signupInfo in SignupForm
+  const [storeInfo, setStoreInfo] = useState({
+    userInfo: {
+      name: "",
+      email: "",
+      phone: "",
+      sec_phone: "",
+      password: "",
+    },
+    businessInfo: {
+      name: "",
+      businessPhoneNumber: "",
+      instagram_user: "",
+      meta_id: "",
+      logo: null,
+      country: "",
+      state: "",
+      type: "",
+    },
+    confirmPassword: "",
+  });
+
   const [errors, setErrors] = useState({
     phoneNumber: null,
     sec_phone: null,
@@ -42,51 +54,96 @@ function AddStore({ open, setOpen }) {
   const handlePhoneNumberChange = debounce((value, phoneType) => {
     const trimmedValue = value.trim();
     if (validatePhoneNumber(trimmedValue)) {
-      setErrors(() => ({
-        ...errors,
+      setErrors((prevErrors) => ({
+        ...prevErrors,
         [phoneType]: null,
       }));
     } else {
-      setErrors(() => ({
-        ...errors,
+      setErrors((prevErrors) => ({
+        ...prevErrors,
         [phoneType]: "الرقم الذي ادخلته غير صالح",
       }));
     }
   }, 300);
 
   // Handle input change and validation
-  const handleChange = (e, phoneType) => {
+  const handleChange = (e, phoneType, section) => {
     const { value } = e.target;
     const numericValue = value.replace(/\D/g, "");
-    setStore((prevState) => ({
+    setStoreInfo((prevState) => ({
       ...prevState,
-      [phoneType]: numericValue,
+      [section]: {
+        ...prevState[section],
+        [phoneType]: numericValue,
+      },
     }));
     handlePhoneNumberChange(numericValue, phoneType);
   };
 
-  const handleSubmit = (event) => {
-    //integration start here
-    event.preventDefault();
+  // Handle Form Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
     setLoading(true);
-    setTimeout(() => {
-      alert("update store");
-      console.log(store);
+    setErrorMessage(null);
+
+    if (step === 2) {
+      try {
+        const formData = new FormData();
+
+        // Append userInfo fields
+        Object.keys(storeInfo.userInfo).forEach((key) => {
+          formData.append(`userInfo[${key}]`, storeInfo.userInfo[key]);
+        });
+
+        // Append businessInfo fields, including the logo if present
+        Object.keys(storeInfo.businessInfo).forEach((key) => {
+          if (key === "logo" && storeInfo.businessInfo.logo) {
+            formData.append("businessInfo[logo]", storeInfo.businessInfo.logo);
+          } else {
+            formData.append(`businessInfo[${key}]`, storeInfo.businessInfo[key]);
+          }
+        });
+
+        // Append passwords
+        
+
+        // Axios POST request
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+          }
+        );
+
+        // Redirect to login page on success
+        router.push("/login");
+        setSuccessMessage("Signup successful! You can now log in.");
+      } catch (error) {
+        console.error("Error during signup:", error);
+        setErrorMessage(
+          error.response?.data?.error || "Signup failed. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setStep(step + 1);
       setLoading(false);
-      setOpen(false);
-    }, 5000);
+    }
   };
 
-
   useEffect(() => {
-    // Add or remove the overflow-hidden class based on the open state
     if (open) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
 
-    // Cleanup function to ensure the class is removed when the component unmounts
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
@@ -108,42 +165,37 @@ function AddStore({ open, setOpen }) {
             <Input
               label="الاسم الكامل"
               type="text"
-              value={store.name}
-              onChange={(e) => setStore({ ...store, name: e.target.value })}
+              value={storeInfo.userInfo.name}
+              onChange={(e) =>
+                setStoreInfo((prev) => ({
+                  ...prev,
+                  userInfo: { ...prev.userInfo, name: e.target.value },
+                }))
+              }
               required
               id="name"
               className="mb-4"
             />
             <div className="w-full grid grid-cols-2 gap-2 mb-4">
-              <label
-                htmlFor="number"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
+              <label htmlFor="number" className="mb-1 col-span-1 block text-right text-[12px]">
                 رقم الهاتف
               </label>
-              <label
-                htmlFor="number2"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
+              <label htmlFor="number2" className="mb-1 col-span-1 block text-right text-[12px]">
                 رقم الهاتف الثاني
               </label>
               <Input
-                value={store.phoneNumber || ""}
-                onChange={(e) => handleChange(e, "phoneNumber")}
-                className={`col-span-1 ${
-                  errors.phoneNumber && "ring-1 ring-red-500"
-                }`}
+                value={storeInfo.userInfo.phone || ""}
+                onChange={(e) => handleChange(e, "phone", "userInfo")}
+                className={`col-span-1 ${errors.phone && "ring-1 ring-red-500"}`}
                 id="number"
                 type="text"
                 required
               />
               <Input
-                value={store.sec_phone || ""}
-                onChange={(e) => handleChange(e, "sec_phone")}
-                className={`col-span-1 ${
-                  errors.sec_phone && "ring-1 ring-red-500"
-                }`}
-                id="number"
+                value={storeInfo.userInfo.sec_phone || ""}
+                onChange={(e) => handleChange(e, "sec_phone", "userInfo")}
+                className={`col-span-1 ${errors.sec_phone && "ring-1 ring-red-500"}`}
+                id="number2"
                 type="text"
                 required
               />
@@ -154,76 +206,17 @@ function AddStore({ open, setOpen }) {
             <Input
               label="البريد الالكترونى"
               type="text"
-              value={store.email}
-              onChange={(e) => setStore({ ...store, email: e.target.value })}
+              value={storeInfo.userInfo.email}
+              onChange={(e) =>
+                setStoreInfo((prev) => ({
+                  ...prev,
+                  userInfo: { ...prev.userInfo, email: e.target.value },
+                }))
+              }
               required
               id="email"
               className="mb-4"
             />
-            <div className="w-full grid grid-cols-2 gap-2 mb-4">
-              <label
-                htmlFor="country"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
-                البلد
-              </label>
-              <label
-                htmlFor="state"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
-                المحافظة
-              </label>
-              <Input
-                value={store.country || ""}
-                onChange={(e) =>
-                  setStore({ ...store, country: e.target.value })
-                }
-                className={"col-span-1"}
-                id="country"
-                type="text"
-                required
-              />
-              <Input
-                value={store.state || ""}
-                onChange={(e) => setStore({ ...store, state: e.target.value })}
-                className={"col-span-1"}
-                id="state"
-                type="text"
-                required
-              />
-            </div>
-            <div className="w-full grid grid-cols-2 gap-2 mb-4">
-              <label
-                htmlFor="businessName"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
-                اسم المشروع
-              </label>
-              <label
-                htmlFor="type"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
-                النوع
-              </label>
-              <Input
-                value={store.businessName || ""}
-                onChange={(e) =>
-                  setStore({ ...store, businessName: e.target.value })
-                }
-                className={"col-span-1"}
-                id="businessName"
-                type="bname"
-                required
-              />
-              <Input
-                value={store.type || ""}
-                onChange={(e) => setStore({ ...store, type: e.target.value })}
-                className={"col-span-1"}
-                id="type"
-                type="text"
-                required
-              />
-            </div>
           </>
         )}
 
@@ -233,8 +226,10 @@ function AddStore({ open, setOpen }) {
               هاتف المشروع
             </label>
             <Input
-              value={store.businessPhoneNumber || ""}
-              onChange={(e) => handleChange(e, "businessPhoneNumber")}
+              value={storeInfo.businessInfo.businessPhoneNumber || ""}
+              onChange={(e) =>
+                handleChange(e, "businessPhoneNumber", "businessInfo")
+              }
               className={`mb-4 w-full ${
                 errors.businessPhoneNumber && "ring-1 ring-red-500"
               }`}
@@ -243,22 +238,19 @@ function AddStore({ open, setOpen }) {
               required
             />
             <div className="w-full grid grid-cols-2 gap-2 mb-4">
-              <label
-                htmlFor="face"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
+              <label htmlFor="face" className="mb-1 col-span-1 block text-right text-[12px]">
                 رابط الفيسبوك
               </label>
-              <label
-                htmlFor="insta"
-                className="mb-1 col-span-1 block text-right text-[12px]"
-              >
+              <label htmlFor="insta" className="mb-1 col-span-1 block text-right text-[12px]">
                 رابط الانستغرام
               </label>
               <Input
-                value={store.meta_id || ""}
+                value={storeInfo.businessInfo.meta_id || ""}
                 onChange={(e) =>
-                  setStore({ ...store, meta_id: e.target.value })
+                  setStoreInfo((prev) => ({
+                    ...prev,
+                    businessInfo: { ...prev.businessInfo, meta_id: e.target.value },
+                  }))
                 }
                 className={"col-span-1"}
                 id="face"
@@ -266,9 +258,12 @@ function AddStore({ open, setOpen }) {
                 required
               />
               <Input
-                value={store.instagram_user || ""}
+                value={storeInfo.businessInfo.instagram_user || ""}
                 onChange={(e) =>
-                  setStore({ ...store, instagram_user: e.target.value })
+                  setStoreInfo((prev) => ({
+                    ...prev,
+                    businessInfo: { ...prev.businessInfo, instagram_user: e.target.value },
+                  }))
                 }
                 className={"col-span-1"}
                 id="insta"
@@ -276,36 +271,31 @@ function AddStore({ open, setOpen }) {
                 required
               />
             </div>
-            <label htmlFor="picture" className="text-sm block mb-2 text-right">
-              ارفع شعار المتجر
-            </label>
             <FileUploader
               onFileChange={(selectedFile) =>
-                setStore({
-                  ...store,
-                  logo: selectedFile,
-                })
+                setStoreInfo((prev) => ({
+                  ...prev,
+                  businessInfo: { ...prev.businessInfo, logo: selectedFile },
+                }))
               }
             />
-            <label
-              htmlFor="password"
-              className="text-sm
-            mt-6 block mb-2 text-right"
-            >
+            <label htmlFor="password" className="text-sm mt-6 block mb-2 text-right">
               كلمة المرور
             </label>
             <Input
               type="password"
               id="password"
               required
-              onChange={(e) => setStore({ ...store, password: e.target.value })}
-              value={store.password || ""}
+              onChange={(e) =>
+                setStoreInfo((prev) => ({
+                  ...prev,
+                  userInfo: { ...prev.userInfo, password: e.target.value },
+                }))
+              }
+              value={storeInfo.password || ""}
               className={"mb-4 w-full"}
             />
-            <label
-              htmlFor="cpassword"
-              className="text-sm block mb-2 text-right"
-            >
+            <label htmlFor="cpassword" className="text-sm block mb-2 text-right">
               تأكيد كلمة المرور
             </label>
             <Input
@@ -313,9 +303,12 @@ function AddStore({ open, setOpen }) {
               id="cpassword"
               required
               onChange={(e) =>
-                setStore({ ...store, confirmPassword: e.target.value })
+                setStoreInfo((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
               }
-              value={store.confirmPassword || ""}
+              value={storeInfo.confirmPassword || ""}
               className={"mb-4 w-full"}
             />
           </>
@@ -328,20 +321,27 @@ function AddStore({ open, setOpen }) {
             type="button"
             className="h-full w-20"
             onClick={() => {
-              setStore({
-                name: "",
-                businessName: "",
-                joinDate: "",
-                endDate: "",
-                state: "",
-                city: "",
-                email: "",
-                country: "",
-                phoneNumber: "",
-                plan: "",
-                status: "",
+              setStoreInfo({
+                userInfo: {
+                  name: "",
+                  email: "",
+                  phone: "",
+                  sec_phone: "",
+                },
+                businessInfo: {
+                  name: "",
+                  businessPhoneNumber: "",
+                  instagram_user: "",
+                  meta_id: "",
+                  logo: null,
+                  country: "",
+                  state: "",
+                  type: "",
+                },
+                password: "",
+                confirmPassword: "",
               });
-              setOpen(false); // Close the modal
+              setOpen(false);
             }}
           >
             خروج
@@ -360,21 +360,20 @@ function AddStore({ open, setOpen }) {
             }}
             disabled={
               step === 1
-                ? errors.phoneNumber ||
+                ? errors.phone ||
                   errors.sec_phone ||
-                  !store.name ||
-                  !store.state ||
-                  !store.country ||
-                  !store.businessName ||
-                  !store.type ||
-                  !store.email
+                  !storeInfo.userInfo.name ||
+                  !storeInfo.userInfo.email ||
+                  !storeInfo.businessInfo.name ||
+                  !storeInfo.businessInfo.type ||
+                  !storeInfo.businessInfo.country ||
+                  !storeInfo.businessInfo.state
                 : errors.businessPhoneNumber ||
-                  !store.instagram_user ||
-                  !store.meta_id ||
-                  !store.logo ||
-                  !store.password ||
-                  !store.confirmPassword ||
-                  store.password !== store.confirmPassword
+                  !storeInfo.businessInfo.instagram_user ||
+                  !storeInfo.businessInfo.meta_id ||
+                  !storeInfo.password ||
+                  !storeInfo.confirmPassword ||
+                  storeInfo.password !== storeInfo.confirmPassword
             }
           >
             <p className="right transition-all duration-300 ease-in">

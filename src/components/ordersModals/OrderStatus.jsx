@@ -10,16 +10,33 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import axios from "axios";
 
 function OrderStatus({ open, setOpen, order }) {
   const [orderStatus, setOrderStatus] = useState(order.status);
   const [arrowTracker, setArrowTracker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleStatusChange = () => {
-    console.log(orderStatus);
-    setArrowTracker(false);
-    setOpen(false);
-    alert("تم تغيير حالة الطلب الى : " + orderStatus);
+
+  const handleStatusChange = async () => {
+    setLoading(true);
+    
+    try {
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders/${order.id}`, {
+        status: orderStatus,
+      },{
+        withCredentials: true
+      });
+      
+      console.log("Response:", response.data);
+      alert("تم تغيير حالة المتجر الى : " + orderStatus);
+      setOpen(false); // Close the modal
+    } catch (error) {
+      console.error("Error changing order status:", error);
+      alert("فشل في تغيير حالة الطلب");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
