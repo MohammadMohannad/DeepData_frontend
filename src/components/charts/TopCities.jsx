@@ -21,8 +21,8 @@ const colorPalette = [
 // Create a mapping of cities to colors
 const cityColorMapping = (cities) => {
   const mapping = {};
-  cities.forEach((city, index) => {
-    mapping[city] = colorPalette[index % colorPalette.length]; // Cycle through colors for each city
+  cities.forEach((name, index) => {
+    mapping[name] = colorPalette[index % colorPalette.length]; // Cycle through colors for each city
   });
   return mapping;
 };
@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload }) => {
           style={{ backgroundColor: payload[0].payload.fill }}
         ></div>
         <div className="flex items-center">
-          <p className="text-zinc-500">{payload[0].payload.city}</p>
+          <p className="text-zinc-500">{payload[0].payload.name}</p>
           <p className="text-zinc-500">
             : {formatter.format(payload[0].value)}
           </p>
@@ -48,25 +48,25 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function TopCities({ data }) {
-  const cities = data.map((d) => d.city); // Extract city names from data
+  const cities = data.map((d) => d.name); // Extract city names from data
   const colorMapping = cityColorMapping(cities); // Map cities to colors
 
   // Assign colors to data based on the city-color mapping
   const coloredData = data.map((entry) => ({
     ...entry,
-    fill: colorMapping[entry.city],
+    fill: colorMapping[entry.name],
   }));
 
   return (
     <ChartContainer
-      config={{ city: { label: "city" } }}
+      config={{ city: { label: "name" } }}
       className="mx-auto aspect-square min-w-full min-h-full"
     >
       <PieChart>
         <Tooltip content={<CustomTooltip />} />
         <Pie data={coloredData} dataKey="count">
           <LabelList
-            dataKey="city"
+            dataKey="name"
             className="fill-background"
             stroke="none"
             fontSize={12}

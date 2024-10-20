@@ -1,12 +1,13 @@
 "use client";
 import Container from "@/components/container/Container";
-import { DataTable } from "@/components/dataTables/OrdersDataTable";import { DataPicker } from "@/components/dataPicker/DataPicker";
+import { DataPicker } from "@/components/dataPicker/DataPicker";
+import { DataTable } from "@/components/dataTables/StoresDataTable";
+import { fetchDashboardData } from "@/lib/fakeAdminData";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { fetchDashboardData } from "@/lib/fakeCustomerData";
 
-export default function Orders() {
-  const [orders, setOrders] = useState([]);
+export default function Entities() {
+  const [entities, setEntities] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,10 +15,12 @@ export default function Orders() {
     const fetchOrders = async () => {
       try {
         // Send GET request to the Rails API
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_orders`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entities`, {
           withCredentials: true, // Ensure cookies are included
         });
-        setOrders(response.data); // Update state with fetched data
+
+        console.log(response);
+        setEntities(response.data); // Update state with fetched data
       } catch (error) {
         setError("Error fetching products data");
       } finally {
@@ -35,16 +38,15 @@ export default function Orders() {
   if (error) {
     return <div>Error: {error}</div>; // Render an error message if fetching fails
   }
-  console.log(orders)
   return (
     <Container>
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
-        <h3 className="text-3xl font-bold mb-4 sm:mb-0">طلبات العملاء</h3>
+        <h3 className="text-3xl font-bold mb-4 sm:mb-0">المتاجر</h3>
         <div className="min-h-full min-w-full sm:min-w-[260px] flex">
           <DataPicker withButton={false} className="w-full h-12" />
         </div>
       </div>
-      <DataTable orders={orders.orders} />
+      <DataTable stores={entities.entities} />
     </Container>
   );
 }

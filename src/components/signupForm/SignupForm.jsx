@@ -78,7 +78,7 @@ function SignupForm() {
       });
   
       // Axios POST request
-      const response = await axios.post('http://127.0.0.1:3002/api/v1/register', formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // Ensure multipart/form-data for file uploads
         }
@@ -86,7 +86,7 @@ function SignupForm() {
         withCredentials: true,
       });
   
-      router.push("/customer/login");
+      router.push("/login");
       // Successful response handling
       setSuccessMessage("Signup successful! You can now log in.");
       console.log("Signup successful", response.data);
@@ -164,7 +164,7 @@ function SignupForm() {
             }
           >
             لديك حساب بالفعل ؟{" "}
-            <Link href="/customer/login" className="text-green_1">
+            <Link href="/login" className="text-green_1">
               تسجيل دخول
             </Link>
           </p>

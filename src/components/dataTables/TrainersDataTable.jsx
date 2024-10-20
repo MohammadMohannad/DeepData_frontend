@@ -8,7 +8,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Check, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  ArchiveRestore,
+  Check,
+  ChevronDown,
+  Edit,
+  MoreHorizontal,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,30 +38,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import EditProductModal from "../ProductModals/EditProduct";
+import AddTrainer from "../adminTrainersModal/AddTrainer";
+import EditTrainer from "../adminTrainersModal/EditTrainer";
+import ReviewStores from "../adminTrainersModal/ReviewStores";
 
-const columns = ({ setProduct, setOpen }) => [
+const columns = ({ setTrainer, setOpenEditTrainer, setOpenReviewStores }) => [
   {
     accessorKey: "name",
-    header: "اسم المنتج",
+    header: "الاسم كامل",
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "periodicity_type",
-    header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("periodicity_type")}</div>,
+    accessorKey: "phoneNumber",
+    header: "رقم الهاتف",
+    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
   },
   {
-    accessorKey: "priod_amount",
-    header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("priod_amount")}</div>,
+    accessorKey: "date",
+    header: "التاريخ",
+    cell: ({ row }) => <div>{row.getValue("date")}</div>,
   },
   {
-    accessorKey: "price",
-    header: "سعر المنتج",
+    accessorKey: "email",
+    header: "البريد الالكتروني",
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+  },
+  {
+    accessorKey: "stores",
+    header: "عدد المتاجر",
     cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-      return <div>{formatter.format(row.getValue("price"))}</div>;
+      const stores = row.getValue("stores");
+      const storesCount = Array.isArray(stores) ? stores.length : 0;
+      return <div>{storesCount}</div>;
     },
   },
   {
@@ -61,7 +77,7 @@ const columns = ({ setProduct, setOpen }) => [
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original;
+      const trainer = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,8 +90,8 @@ const columns = ({ setProduct, setOpen }) => [
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                setProduct(product);
-                setOpen(true);
+                setTrainer(trainer);
+                setOpenEditTrainer(true);
               }}
               className="cursor-pointer flex items-center gap-2"
             >
@@ -83,9 +99,17 @@ const columns = ({ setProduct, setOpen }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.name}`)
-              }
+              onClick={() => {
+                setTrainer(trainer);
+                setOpenReviewStores(true);
+              }}
+              className="cursor-pointer flex items-center gap-2"
+            >
+              <ArchiveRestore size={18} />
+              <p>اضافة متجر</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => alert(`Delete ${trainer.id}: ${trainer.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -98,19 +122,23 @@ const columns = ({ setProduct, setOpen }) => [
   },
 ];
 
-export function DataTable({ products }) {
+export function DataTable({ trainers, allStores }) {
   const [open, setOpen] = useState(false);
-  const [product, setProduct] = useState();
+  const [openEditTrainer, setOpenEditTrainer] = useState(false);
+  const [openReviewStores, setOpenReviewStores] = useState(false);
+  const [trainer, setTrainer] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const data = products;
+  const data = trainers;
   const table = useReactTable({
     data,
     columns: columns({
-      setProduct,
+      setTrainer,
       setOpen,
+      setOpenEditTrainer,
+      setOpenReviewStores,
     }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -130,9 +158,22 @@ export function DataTable({ products }) {
 
   return (
     <div className="w-full">
-      {open && (
-        <EditProductModal open={open} setOpen={setOpen} product={product} />
+      {openReviewStores && (
+        <ReviewStores
+          open={openReviewStores}
+          setOpen={setOpenReviewStores}
+          trainer={trainer}
+          allStoresData={allStores}
+        />
       )}
+      {openEditTrainer && (
+        <EditTrainer
+          open={openEditTrainer}
+          setOpen={setOpenEditTrainer}
+          trainer={trainer}
+        />
+      )}
+      {open && <AddTrainer open={open} setOpen={setOpen} />}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
@@ -142,38 +183,49 @@ export function DataTable({ products }) {
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="focus-visible:ring-secondary focus-visible:ring-offset-0"
-            >
-              عمود <ChevronDown className="mr-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <p className="text-sm text-muted-foreground text-center">
-              تبديل الاعمدة
-            </p>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  <span>{column.columnDef.header}</span>
-                  <span>
-                    {column.getIsVisible() ? <Check size={16} /> : ""}
-                  </span>
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={setOpen}
+            className="flex items-center bg-green_1 text-white"
+          >
+            <Plus color="white" />
+            <p>اضافة مدرب</p>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="focus-visible:ring-secondary focus-visible:ring-offset-0"
+              >
+                عمود <ChevronDown className="mr-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <p className="text-sm text-muted-foreground text-center">
+                تبديل الاعمدة
+              </p>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    <span>{column.columnDef.header}</span>
+                    <span>
+                      {column.getIsVisible() ? <Check size={16} /> : ""}
+                    </span>
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">

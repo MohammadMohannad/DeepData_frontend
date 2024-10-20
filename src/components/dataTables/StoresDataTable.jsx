@@ -9,11 +9,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
+  ArrowUpDown,
+  BadgeCheck,
   Check,
   ChevronDown,
-  ChevronsLeftRight,
+  CopyPlus,
   Edit,
   MoreHorizontal,
+  Plus,
   Trash2,
 } from "lucide-react";
 
@@ -41,8 +44,17 @@ import Container from "../container/Container";
 import { Badge } from "../ui/badge";
 import OrderStatus from "../ordersModals/OrderStatus";
 import EditOrder from "../ordersModals/EditOrder";
+import StatusModal from "../adminStoresModal/StatusModal";
+import AddStore from "../adminStoresModal/AddStore";
+import EditStore from "../adminStoresModal/EditStore";
+import NewTemplate from "../adminStoresModal/NewTemplate";
 
-const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
+const columns = ({
+  setOpenStoreStatusModal,
+  setStore,
+  setOpenEditModal,
+  setOpenTemplate,
+}) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -71,41 +83,59 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
   },
   {
     accessorKey: "name",
-    header: "اسم الزبون",
+    header: "اسم المتجر",
     cell: ({ row }) => {
       return <div className="cursor-pointer">{row.getValue("name")}</div>;
     },
   },
+ ,
   {
-    accessorKey: "products",
-    header: "المنتجات",
-    cell: ({ row }) => (
-      <div className="grid grid-cols-2 gap-1">
-        {row.getValue("products").map((product) => (
-          <p className="text-sm col-span-1" key={product.id}>
-            {product}
-          </p>
-        ))}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "amount",
-    header: "سعر الطلب",
+    accessorKey: "joinDate",
+    header: "تاريخ الانضمام",
     cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-      return <div>{formatter.format(row.getValue("amount"))}</div>;
+      return <div>{row.getValue("joinDate")}</div>;
     },
   },
   {
-    accessorKey: "city",
+    accessorKey: "created_at",
+    header: "تاريخ الانتهاء",
+    cell: ({ row }) => <div>{row.getValue("created_at")}</div>,
+  },
+  {
+    accessorKey: "country",
+    header: "البلد",
+    cell: ({ row }) => <div>{row.getValue("country")}</div>,
+  },
+  {
+    accessorKey: "state",
     header: "المحافظة",
+    cell: ({ row }) => <div>{row.getValue("state")}</div>,
+  },
+  {
+    accessorKey: "city",
+    header: "المدينة",
     cell: ({ row }) => <div>{row.getValue("city")}</div>,
   },
   {
-    accessorKey: "phone",
-    header: "رقم الهاتف",
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+    accessorKey: "instagram_user",
+    header: "معرف الانستغرام",
+    cell: ({ row }) => <div>{row.getValue("instagram_user")}</div>,
+  },
+  {
+    accessorKey: "entity_phone",
+    header: ({ column }) => (
+      <Button
+        className="hover:bg-transparent"
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+        رقم الهاتف
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="pr-3.5">{row.getValue("entity_phone")}</div>
+    ),
   },
   {
     accessorKey: "status",
@@ -114,12 +144,18 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
       <div className="w-full h-full text-center">
         <Badge
           className={`h-8 px-4 rounded-md whitespace-nowrap ${
-            row.getValue("status") === "ملغى"
+            row.getValue("status") === "inactive"
               ? "bg-[#FFE5E7] text-red-500 hover:bg-red-300"
-              : "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
+              : row.getValue("status") === "active"
+              ? "bg-[#C8FFE1] text-[#00B112] hover:bg-green-300"
+              : "bg-[#FFF6DB] text-[#D75300] hover:bg-[#FFF1C9]"
           }`}
         >
-          {row.getValue("status")}
+          {row.getValue("status") === "active"
+            ? "فعال"
+            : row.getValue("status") === "inactive"
+            ? "غير فعال"
+            : "قيد الانتظار"}
         </Badge>
       </div>
     ),
@@ -129,7 +165,7 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const order = row.original;
+      const store = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -142,7 +178,7 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                setOrder(order);
+                setStore(store);
                 setOpenEditModal(true);
               }}
               className="cursor-pointer flex items-center gap-2"
@@ -151,17 +187,27 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="cursor-pointer flex items-center gap-2"
               onClick={() => {
-                setOrder(order);
-                setOpenOrderStatusModal(true);
+                setStore(store);
+                setOpenTemplate(true);
               }}
+              className="cursor-pointer flex items-center gap-2"
             >
-              <ChevronsLeftRight size={18} />
-              <p>تغير حالة الطلب</p>
+              <CopyPlus size={18} />
+              <p>اضافة قالب</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => alert(`Delete ${order.id}: ${order.name}`)}
+              className="cursor-pointer flex items-center gap-2"
+              onClick={() => {
+                setStore(store);
+                setOpenStoreStatusModal(true);
+              }}
+            >
+              <BadgeCheck size={18} />
+              <p>الحالة</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => alert(`Delete ${store.id}: ${store.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -174,27 +220,33 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
   },
 ];
 
-export function DataTable({ orders }) {
-  const [data, setData] = useState(orders);
-  const [order, setOrder] = useState(null);
-  const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
+export function DataTable({ stores }) {
+  const [openAddStore, setOpenAddStore] = useState(false);
+  const [store, setStore] = useState(null);
+  const [openStoreStatusModal, setOpenStoreStatusModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [openTemplate, setOpenTemplate] = useState(null);
+  const [columnVisibility, setColumnVisibility] = useState({
+    country: false,
+    city: false,
+    joinDate: false,
+  });
   const [rowSelection, setRowSelection] = useState({});
-  const [filteredData, setFilteredData] = useState(orders); // Initialize filteredData with orders
+  const [filteredData, setFilteredData] = useState(stores);
   const [activeStatusFilters, setActiveStatusFilters] = useState([
-    "ملغى",
-    "الطلب مكتمل",
+    "غير فعال",
+    "فعال",
+    "قيد الانتظار",
   ]);
   // Function to update the filtered data based on active filters
   const updateFilteredData = (newFilters) => {
     if (newFilters.length === 0) {
-      setFilteredData(orders); // Show all data if no filters are active
+      setFilteredData(stores); // Show all data if no filters are active
     } else {
       setFilteredData(
-        orders.filter((order) => newFilters.includes(order.status))
+        stores.filter((store) => newFilters.includes(store.status))
       );
     }
   };
@@ -204,16 +256,21 @@ export function DataTable({ orders }) {
     setActiveStatusFilters((prevFilters) => {
       const newFilters = prevFilters.includes(status)
         ? prevFilters.filter((filter) => filter !== status) // Remove filter if it's already active
-        : [...prevFilters, status]; // Add filter if it's not active
+        : [...prevFilters, status];
 
-      updateFilteredData(newFilters); // Update the filtered data
+      updateFilteredData(newFilters);
       return newFilters;
     });
   };
 
   const table = useReactTable({
-    data: filteredData, // Use filteredData here instead of original orders
-    columns: columns({ setOrder, setOpenOrderStatusModal, setOpenEditModal }),
+    data: filteredData,
+    columns: columns({
+      setStore,
+      setOpenStoreStatusModal,
+      setOpenEditModal,
+      setOpenTemplate,
+    }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -232,18 +289,28 @@ export function DataTable({ orders }) {
 
   return (
     <div className="w-full">
-      {openEditModal && (
-        <EditOrder
-          open={openEditModal}
-          setOpen={setOpenEditModal}
-          order={order}
+      {openTemplate && (
+        <NewTemplate
+          open={openTemplate}
+          setOpen={setOpenTemplate}
+          store={store}
         />
       )}
-      {openOrderStatusModal && (
-        <OrderStatus
-          open={openOrderStatusModal}
-          setOpen={setOpenOrderStatusModal}
-          order={order}
+      {openEditModal && (
+        <EditStore
+          open={openEditModal}
+          setOpen={setOpenEditModal}
+          store={store}
+        />
+      )}
+      {openAddStore && (
+        <AddStore open={openAddStore} setOpen={setOpenAddStore} />
+      )}
+      {openStoreStatusModal && (
+        <StatusModal
+          open={openStoreStatusModal}
+          setOpen={setOpenStoreStatusModal}
+          store={store}
         />
       )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
@@ -282,7 +349,11 @@ export function DataTable({ orders }) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    <span>{column.columnDef.header}</span>
+                    <span>
+                      {typeof column.columnDef.header === "string"
+                        ? column.columnDef.header
+                        : "رقم الهاتف"}
+                    </span>
                     <span>
                       {column.getIsVisible() ? <Check size={16} /> : ""}
                     </span>
@@ -301,13 +372,13 @@ export function DataTable({ orders }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuCheckboxItem
-                checked={activeStatusFilters.includes("ملغى")}
-                onCheckedChange={() => toggleStatusFilter("ملغى")}
+                checked={activeStatusFilters.includes("inactive")}
+                onCheckedChange={() => toggleStatusFilter("inactive")}
                 className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item text-red-500 focus:text-red-500"
               >
-                <span>الطلب ملغى</span>
+                <span>غير فعال</span>
                 <span>
-                  {activeStatusFilters.includes("ملغى") ? (
+                  {activeStatusFilters.includes("inactive") ? (
                     <Check size={16} />
                   ) : (
                     ""
@@ -315,13 +386,27 @@ export function DataTable({ orders }) {
                 </span>
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
-                checked={activeStatusFilters.includes("الطلب مكتمل")}
-                onCheckedChange={() => toggleStatusFilter("الطلب مكتمل")}
+                checked={activeStatusFilters.includes("active")}
+                onCheckedChange={() => toggleStatusFilter("active")}
                 className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item text-green-500 focus:text-green-500"
               >
-                <span>الطلب مكتمل</span>
+                <span>فعال</span>
                 <span>
-                  {activeStatusFilters.includes("الطلب مكتمل") ? (
+                  {activeStatusFilters.includes("active") ? (
+                    <Check size={16} />
+                  ) : (
+                    ""
+                  )}
+                </span>
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={activeStatusFilters.includes("pending")}
+                onCheckedChange={() => toggleStatusFilter("pending")}
+                className="flex items-center justify-end gap-2 text-right py-2 px-5 custom-checkbox-item text-[#ffe08c] focus:text-[#ffe08c]"
+              >
+                <span>قيد الانتظار</span>
+                <span>
+                  {activeStatusFilters.includes("pending") ? (
                     <Check size={16} />
                   ) : (
                     ""
@@ -330,6 +415,10 @@ export function DataTable({ orders }) {
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button className="text-white bg-green_1" onClick={setOpenAddStore}>
+            <Plus />
+            <p>اضافة متجر</p>
+          </Button>
         </div>
       </div>
       <Container className="overflow-x-auto">

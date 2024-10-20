@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-
+import { toast } from 'react-toastify';
 import Image from "next/image";
 import Link from "next/link";
 import img from "@/assets/img.svg";
@@ -9,6 +9,8 @@ import Button_one from "@/components/customButtons/Button_one";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -27,18 +29,26 @@ function Login() {
 
 
       // Send login request to the Rails API
-      const response = await axios.post("http://localhost:3002/api/v1/login", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`, {
         email,
         password,
       }, {
         withCredentials: true, // This is essential for the cookies to work
       });
 
-
+      if(response.data.user.role === 'admin'){
+        router.push("/admin/main");
+      console.log("Logged in successfully");
+      toast.success('تم تسجيل الدحول بنجاح');
+      }
+      else{
       router.push("/customer/main");
       console.log("Logged in successfully");
+      console.log(response.data.user.role);
+      toast.success('تم تسجيل الدحول بنجاح');
+      }
     } catch (error) {
-      setError("Invalid email or password");
+      toast.error("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -100,6 +110,7 @@ function Login() {
           </p>
         </div>
       </div>
+    <ToastContainer position="bottom-center" autoClose={3000} />
     </div>
   );
 }

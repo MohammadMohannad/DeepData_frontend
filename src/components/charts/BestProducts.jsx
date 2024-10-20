@@ -18,12 +18,12 @@ const chartConfig = {
 };
 
 // CustomTooltip function component with default parameter
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, type }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 rounded shadow-md text-right">
         <p className=" text-zinc-500 mb-1">
-          المنتج: {payload[0].payload.product}
+          {type === "product" ? "المنتج" : "المشرف"}: {payload[0].payload.name}
         </p>
         <p className="text-zinc-500">العدد: {payload[0].value}</p>
       </div>
@@ -34,7 +34,7 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 // Main component
-export default function BestProducts({ data }) {
+export default function BestProducts({ data, type = "product" }) {
   return (
     <ChartContainer config={chartConfig}>
       <RechartsBarChart
@@ -45,7 +45,7 @@ export default function BestProducts({ data }) {
       >
         <CartesianGrid horizontal={false} />
         <YAxis
-          dataKey="product"
+          dataKey="name"
           type="category"
           tickLine={false}
           tickMargin={10}
@@ -53,10 +53,10 @@ export default function BestProducts({ data }) {
           hide
         />
         <XAxis dataKey="count" type="number" hide />
-        <Tooltip content={<CustomTooltip />} />
+        <Tooltip content={<CustomTooltip type={type} />} />
         <RechartsBar dataKey="count" fill="#1AB68A" radius={4} barSize={26}>
           <LabelList
-            dataKey="product"
+            dataKey="name"
             position="left"
             offset={-8}
             className="fill-white"

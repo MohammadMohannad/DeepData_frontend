@@ -30,38 +30,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Container from "../container/Container";
-import EditProductModal from "../ProductModals/EditProduct";
+import EditEmployeeModal from "../employeesModals/EditEmployeeModal";
 
-const columns = ({ setProduct, setOpen }) => [
+const columns = ({ setEmployee, setOpen }) => [
   {
     accessorKey: "name",
-    header: "اسم المنتج",
+    header: "الاسم",
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "periodicity_type",
-    header: "تكرارية المنتج",
-    cell: ({ row }) => <div>{row.getValue("periodicity_type")}</div>,
+    accessorKey: "firstPhoneNumber",
+    header: "رقم الهاتف",
+    cell: ({ row }) => <div>{row.getValue("firstPhoneNumber")}</div>,
   },
   {
-    accessorKey: "priod_amount",
-    header: "المدة",
-    cell: ({ row }) => <div>{row.getValue("priod_amount")}</div>,
-  },
-  {
-    accessorKey: "price",
-    header: "سعر المنتج",
-    cell: ({ row }) => {
-      const formatter = new Intl.NumberFormat("en-US");
-      return <div>{formatter.format(row.getValue("price"))}</div>;
-    },
+    accessorKey: "email",
+    header: "البريد الالكتروني",
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
     id: "actions",
     header: "الاجراءات",
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original;
+      const employee = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,7 +66,7 @@ const columns = ({ setProduct, setOpen }) => [
             <DropdownMenuLabel>الاجراءات</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                setProduct(product);
+                setEmployee(employee);
                 setOpen(true);
               }}
               className="cursor-pointer flex items-center gap-2"
@@ -83,9 +75,7 @@ const columns = ({ setProduct, setOpen }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                alert(`Delete ${product.id}: ${product.name}`)
-              }
+              onClick={() => alert(`Delete ${employee.id}: ${employee.name}`)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -98,18 +88,18 @@ const columns = ({ setProduct, setOpen }) => [
   },
 ];
 
-export function DataTable({ products }) {
+export function DataTable({ employees }) {
   const [open, setOpen] = useState(false);
-  const [product, setProduct] = useState();
+  const [employee, setEmployee] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const data = products;
+  const data = employees;
   const table = useReactTable({
     data,
     columns: columns({
-      setProduct,
+      setEmployee,
       setOpen,
     }),
     onSortingChange: setSorting,
@@ -131,7 +121,7 @@ export function DataTable({ products }) {
   return (
     <div className="w-full">
       {open && (
-        <EditProductModal open={open} setOpen={setOpen} product={product} />
+        <EditEmployeeModal open={open} setOpen={setOpen} employee={employee} />
       )}
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input

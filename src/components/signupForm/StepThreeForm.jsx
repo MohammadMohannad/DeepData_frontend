@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Button_one from "../customButtons/Button_one";
 import { Input } from "../ui/input";
@@ -9,6 +10,7 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
         type="password"
         placeholder="كلمة المرور"
         value={signupInfo.userInfo.password}
+        minLength={8}
         onChange={(e) =>
           setSignupInfo((prev) => ({
             ...prev,
@@ -23,6 +25,7 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
       />
       <Input
         type="password"
+        minLength={8}
         placeholder="تأكيد كلمة المرور"
         value={signupInfo.confirmPassword || ""} // Store confirmPassword outside userInfo
         onChange={(e) =>
@@ -38,8 +41,7 @@ function StepThreeForm({ signupInfo, setSignupInfo, step, loading }) {
         step={step}
         loading={loading}
         disabled={
-          signupInfo.userInfo.password !==
-            signupInfo.confirmPassword ||
+          signupInfo.userInfo.password !== signupInfo.confirmPassword ||
           !signupInfo.userInfo.password ||
           !signupInfo.confirmPassword
         }

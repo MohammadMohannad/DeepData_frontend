@@ -28,42 +28,12 @@ import { Button } from "../ui/button";
 import logout from "@/assets/logout-icon.svg";
 import ToggleTheme from "../theme/ToggleTheme";
 import { AvatarPopover } from "../avatarPopover/AvatarPopover";
+import { handleLogout } from "../logout";
+import { useRouter } from "next/navigation";
 
-function Header() {
+function Header({headerMenuList}) {
   const pathname = usePathname(); // Get the current pathname
-
-  const menuList = [
-    {
-      link: "/customer/main",
-      name: "الرئيسية",
-      icon: <House className="w-5 h-5" strokeWidth={1.25} />,
-    },
-    {
-      link: "/customer/main/products",
-      name: "المنتجات",
-      icon: <Box className="w-5 h-5" strokeWidth={1.25} />,
-    },
-    {
-      link: "/customer/main/customers",
-      name: "العملاء",
-      icon: <Users className="w-5 h-5" strokeWidth={1.25} />,
-    },
-    {
-      link: "/customer/main/orders",
-      name: "طلبات العملاء",
-      icon: <Folders className="w-5 h-5" strokeWidth={1.25} />,
-    },
-    {
-      link: "/customer/main/employees",
-      name: "الموظفين",
-      icon: <Replace className="w-5 h-5" strokeWidth={1.25} />,
-    },
-    {
-      link: "#",
-      name: "الدعم",
-      icon: <PhoneCall className="w-5 h-5" strokeWidth={1.25} />,
-    },
-  ];
+  const router = useRouter();
   return (
     <header className="border-b h-16 px-2.5 sm:p-5 right">
       <Container
@@ -100,7 +70,7 @@ function Header() {
             <div className="h-[74vh] w-full flex flex-col justify-between">
               <Command className="flex items-end h-[300px]">
                 <CommandList className="w-full pl-5 gap-1 mt-8">
-                  {menuList.map((item, i) => {
+                  {headerMenuList.map((item, i) => {
                     const isActive = pathname === item.link;
                     return (
                       <SheetClose asChild key={i}>
@@ -128,8 +98,9 @@ function Header() {
               </Command>
               <SheetFooter>
                 <Button
-                  onClick={() => {
-                    window.location.href = "/customer/login";
+                  onClick={async (e) => {
+                    e.preventDefault(); // Prevent default link behavior
+                    await handleLogout(router); // Call the Axios logout function
                   }}
                   variant="destructive"
                   className="w-full flex flex-row-reverse gap-4 px-4 py-2 h-[45px] bg-[#FFE5E7] text-[#FF5757] rounded-[8px] cursor-pointer focus-visible:ring-transparent"

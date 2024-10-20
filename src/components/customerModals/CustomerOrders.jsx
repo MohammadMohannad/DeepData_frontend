@@ -73,7 +73,7 @@ const columns = ({ setProduct, setOpenEditProduct }) => [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                alert(`Delete ${product.id}: ${product.productName}`)
+                alert(`Delete ${product.id}: ${product.name}`)
               }
               className="cursor-pointer flex items-center gap-2"
             >

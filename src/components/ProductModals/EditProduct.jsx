@@ -9,7 +9,7 @@ import Loader from "../loader/Loader";
 function EditProductModal({ product, open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [newProduct, setNewProduct] = useState({
-    productName: "",
+    name: "",
     productRepetition: "",
     productType: "",
     time: "",
@@ -56,18 +56,18 @@ function EditProductModal({ product, open, setOpen }) {
       </div>
       <form onSubmit={handleSubmit}>
         <div className="w-full grid grid-cols-2 text-right gap-2">
-          <label className="col-span-1 mb-1 order-1" htmlFor="productName">
+          <label className="col-span-1 mb-1 order-1" htmlFor="name">
             اسم المنتج
           </label>
           <label className="col-span-1 mb-1 order-2" htmlFor="productPrice">
             سعر المنتج
           </label>
           <Input
-            value={newProduct.productName || ""}
+            value={newProduct.name || ""}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, productName: e.target.value })
+              setNewProduct({ ...newProduct, name: e.target.value })
             }
-            id="productName"
+            id="name"
             className="col-span-1 order-3 mb-2"
             type="text"
             required

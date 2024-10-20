@@ -4,7 +4,7 @@ import { Input } from "../ui/input";
 import ChatImageUploader from "../fileUploader/ChatImageUploader";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { toast } from 'react-toastify';
 export default function ChatModal({ open, setOpen }) {
   const [message, setMessage] = useState({
     message: "",
@@ -24,8 +24,6 @@ export default function ChatModal({ open, setOpen }) {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
-
-  
   // Handle image upload
   const handleImageUpload = (image) => {
     setMessage({ ...message, uploadedImage: image });
@@ -42,12 +40,10 @@ export default function ChatModal({ open, setOpen }) {
 
     // Optimistically update the UI to show the new message immediately
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    const token = localStorage.getItem('jwtToken');
-    console.log(token);
     
     try {
       // Send the message to the backend API
-      const response = await axios.post("http://localhost:3002/api/v1/send_message", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/send_message`, {
         message: message.message,
         uploadedImage: message.uploadedImage,
       }, {
@@ -57,11 +53,14 @@ export default function ChatModal({ open, setOpen }) {
         withCredentials: true 
       });
 
+      toast.success('تم ارسال الرسالة وحفظ البيانات بنجاح');
+
       console.log("Message sent successfully:", response.data);
 
       // Optionally handle response (e.g., update message ID or status)
     } catch (error) {
-      console.error("Error sending message:", error);
+      toast.error(error);
+
       // Optionally revert the optimistic update in case of failure
     }
 
@@ -77,9 +76,12 @@ export default function ChatModal({ open, setOpen }) {
   return (
     <>
       {open && (
-        <div className="fixed top-0 left-0 w-full h-full z-50" dir="ltr">
+        <div
+          className="fixed top-0 left-0 w-full backdrop-blur-sm bg-black bg-opacity-50 sm:bg-opacity-0 sm:backdrop-blur-none h-full z-50"
+          dir="ltr"
+        >
           <div className="w-full h-full relative sm:block flex items-center justify-center">
-            <div className="max-w-[450px]  max-h-[580px] bg-background border-[3px] sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
+            <div className="max-w-full flex flex-col justify-between min-w-[96%] sm:min-w-[400px] h-[calc(100vh-200px)] sm:h-fit sm:max-h-[680px] bg-background border sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
               <div className="hidden sm:block w-full h-2/5 gradient relative overflow-hidden rounded-t-[6px]">
                 <div className="w-full h-full relative overflow-hidden before:absolute before:inset-0 before:backdrop-blur-2xl before:z-0 p-[20px]">
                   <div className="w-full flex flex-col justify-between h-full relative z-10">
@@ -116,7 +118,18 @@ export default function ChatModal({ open, setOpen }) {
               </div>
 
               {/* old messages */}
-              <div className="w-full h-3/5  border-b right px-[20px] pt-4 overflow-y-scroll">
+              <div className="w-full h-fit sm:max-h-[250px] min-h-[250px] right px-[20px] pt-4 overflow-y-scroll">
+                <div className="w-[80%] h-fit mb-8">
+                  <div className="w-full bg-green_1 rounded-l-[6px] rounded-br-[6px] text-[13px] px-2.5 py-1.5 text-white">
+                    مرحبا بك مرة اخرى
+                  </div>
+                  <div
+                    dir="ltr"
+                    className="text-center text-[10px] text-[#98A2B3]"
+                  >
+                    Now
+                  </div>
+                </div>
                 {messages.map((msg, index) => (
                   <div className="w-[80%] h-fit mb-8" key={index}>
                     <div className="w-full bg-green_1 rounded-l-[6px] rounded-br-[6px] text-[13px] px-2.5 py-1.5 text-white">
@@ -131,9 +144,8 @@ export default function ChatModal({ open, setOpen }) {
                   </div>
                 ))}
               </div>
-
               {/* input message area */}
-              <div className="px-[20px] w-full h-[12%]  overflow-hidden rounded-b-[6px] flex gap-1 flex-row-reverse items-center">
+              <div className="px-[20px] w-full h-[12%] border-t overflow-hidden rounded-b-[6px] flex gap-1 flex-row-reverse items-center">
                 {/* handle the message input here */}
                 <Input
                   type="text"
