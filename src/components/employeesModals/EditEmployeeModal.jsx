@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
 import { Button } from "../ui/button";
 import Modal from "../modal/Modal";
 import { Input } from "../ui/input";
@@ -9,17 +10,16 @@ import { debounce } from "lodash";
 function EditEmployeeModal({ employee, open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
-    firstPhoneNumber: null,
-    secondPhoneNumber: null,
+    phone: null,
+    sec_phone: null,
   });
   const [newEmployee, setNewEmployee] = useState({
-    id: "",
-    name: "",
-    email: "",
-    firstPhoneNumber: "",
-    secondPhoneNumber: "",
-    password: "",
-    ...employee,
+    id: employee?.id || "",
+    name: employee?.name || "",
+    email: employee?.email || "",
+    phone: employee?.phone || "",
+    sec_phone: employee?.sec_phone || "",
+    password: employee?.password || "",
   });
 
   // Validation function for phone numbers
@@ -55,17 +55,41 @@ function EditEmployeeModal({ employee, open, setOpen }) {
     handlePhoneNumberChange(numericValue, phoneType);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(newEmployee); //add the fetch here
+  // Function to get the updated fields only
+  const getUpdatedFields = () => {
+    const updatedFields = {};
+    for (const key in newEmployee) {
+      if (newEmployee[key] !== employee[key] && newEmployee[key] !== "") {
+        updatedFields[key] = newEmployee[key];
+      }
+    }
+    return updatedFields;
+  };
 
+  // PATCH request using Axios (sending only updated fields)
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      alert("Product updated successfully");
+    const updatedFields = getUpdatedFields();
+    if (Object.keys(updatedFields).length === 0) {
+      alert("No changes detected");
       setLoading(false);
-      setOpen(false);
-    }, 4000);
+      return;
+    }
+
+    try {
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${newEmployee.id}`, updatedFields, {withCredentials:true});
+      console.log("Employee updated successfully:", response.data);
+
+      alert("Employee updated successfully");
+      setLoading(false);
+      setOpen(false); // Close the modal on success
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      alert("Failed to update employee");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -81,6 +105,7 @@ function EditEmployeeModal({ employee, open, setOpen }) {
       document.body.classList.remove("overflow-hidden");
     };
   }, [open]);
+
   return (
     <Modal
       open={open}
@@ -108,33 +133,33 @@ function EditEmployeeModal({ employee, open, setOpen }) {
 
           <div className="mb-3 w-full grid grid-cols-2 gap-1.5">
             <label
-              htmlFor="firstPhoneNumber"
+              htmlFor="phone"
               className="col-span-1 text-[14px] block w-full order-1"
             >
               رقم الهاتف الاول
             </label>
             <label
-              htmlFor="secondPhoneNumber"
+              htmlFor="sec_phone"
               className="col-span-1 text-[14px] block w-full order-2"
             >
               رقم الهاتف الثاني
             </label>
             <Input
-              id="firstPhoneNumber"
+              id="phone"
               type="text"
-              value={newEmployee.firstPhoneNumber}
-              onChange={(e) => handleChange(e, "firstPhoneNumber")}
+              value={newEmployee.phone}
+              onChange={(e) => handleChange(e, "phone")}
               className={`col-span-1 order-3 ${
-                errors.firstPhoneNumber && "ring-1 ring-red-500"
+                errors.phone && "ring-1 ring-red-500"
               }`}
             />
             <Input
-              id="secondPhoneNumber"
+              id="sec_phone"
               type="text"
-              value={newEmployee.secondPhoneNumber}
-              onChange={(e) => handleChange(e, "secondPhoneNumber")}
+              value={newEmployee.sec_phone}
+              onChange={(e) => handleChange(e, "sec_phone")}
               className={`col-span-1 order-4 ${
-                errors.secondPhoneNumber && "ring-1 ring-red-500"
+                errors.sec_phone && "ring-1 ring-red-500"
               }`}
             />
           </div>
@@ -175,8 +200,8 @@ function EditEmployeeModal({ employee, open, setOpen }) {
                 id: "",
                 name: "",
                 email: "",
-                firstPhoneNumber: "",
-                secondPhoneNumber: "",
+                phone: "",
+                sec_phone: "",
                 password: "",
               });
             }}
@@ -185,13 +210,7 @@ function EditEmployeeModal({ employee, open, setOpen }) {
           </Button>
           <Button
             variant="default"
-            disabled={
-              errors.firstPhoneNumber ||
-              errors.secondPhoneNumber ||
-              !newEmployee.name ||
-              !newEmployee.email ||
-              !newEmployee.password
-            }
+            disabled={loading || !Object.keys(getUpdatedFields()).length}
             type="submit"
             className={`h-full w-20 transition-all duration-300 ease-in ${
               loading &&

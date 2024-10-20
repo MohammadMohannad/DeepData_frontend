@@ -39,9 +39,9 @@ const columns = ({ setEmployee, setOpen }) => [
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "firstPhoneNumber",
+    accessorKey: "phone",
     header: "رقم الهاتف",
-    cell: ({ row }) => <div>{row.getValue("firstPhoneNumber")}</div>,
+    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
   },
   {
     accessorKey: "email",
