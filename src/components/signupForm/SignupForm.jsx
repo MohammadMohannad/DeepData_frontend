@@ -32,7 +32,6 @@ function SignupForm() {
       entity_phone: "",
       instagram_user: "",
       meta_id: "",
-      logo: null,
       entity_type: "",
       country: "",
       state: ""
@@ -70,11 +69,7 @@ function SignupForm() {
   
       // Append businessInfo fields, including the logo if present
       Object.keys(signupInfo.businessInfo).forEach(key => {
-        if (key === 'logo' && signupInfo.businessInfo.logo) {
-          formData.append('businessInfo[logo]', signupInfo.businessInfo.logo);
-        } else {
-          formData.append(`businessInfo[${key}]`, signupInfo.businessInfo[key]);
-        }
+        formData.append(`businessInfo[${key}]`, signupInfo.businessInfo[key]);
       });
   
       // Axios POST request
