@@ -4,6 +4,7 @@ import {
   CircleDollarSign,
   House,
   Store,
+  StretchHorizontal,
   TicketPlus,
   Users,
   UserSearch,
@@ -40,6 +41,11 @@ export default function RootLayout({ children }) {
           icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
         },
         {
+          link: "/admin/main/plans",
+          name: "خطط الاشتراك",
+          icon: <StretchHorizontal className="w-5 h-5" strokeWidth={1.5} />,
+        },
+        {
           link: "/admin/main/payments",
           name: "المدفوعات",
           icon: <CircleDollarSign className="w-5 h-5" strokeWidth={1.5} />,
@@ -72,6 +78,11 @@ export default function RootLayout({ children }) {
       link: "/admin/main/employees",
       name: "الموظفين",
       icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
+    },
+    {
+      link: "/admin/main/plans",
+      name: "خطط الاشتراك",
+      icon: <StretchHorizontal className="w-5 h-5" strokeWidth={1.5} />,
     },
     {
       link: "/admin/main/payments",

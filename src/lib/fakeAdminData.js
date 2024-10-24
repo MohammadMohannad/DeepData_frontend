@@ -7,7 +7,7 @@ export const fetchDashboardData = async () => {
           name: "برو",
           amount: 250000,
           periodicity: "yearly",
-          status: "active",
+          status: "inactive",
         },
         {
           id: 2,
