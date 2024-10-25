@@ -16,7 +16,6 @@ function AddStore({ open, setOpen }) {
   const [successMessage, setSuccessMessage] = useState(null);
   const router = useRouter();
 
-  // State structure similar to signupInfo in SignupForm
   const [storeInfo, setStoreInfo] = useState({
     userInfo: {
       name: "",
@@ -27,30 +26,27 @@ function AddStore({ open, setOpen }) {
     },
     businessInfo: {
       name: "",
-      businessPhoneNumber: "",
+      phone: "",
       instagram_user: "",
       meta_id: "",
-      logo: null,
       country: "",
       state: "",
-      type: "",
+      entity_type: "",
     },
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    phoneNumber: null,
+    phone: null,
     sec_phone: null,
-    businessPhoneNumber: null,
+    entity_phone: null,
   });
 
-  // Validation function for phone numbers
   const validatePhoneNumber = (phoneNumber) => {
     const phoneRegex = /^(07|9647)\d{9}$/;
     return phoneRegex.test(phoneNumber);
   };
 
-  // Debounced function for validating phone numbers
   const handlePhoneNumberChange = debounce((value, phoneType) => {
     const trimmedValue = value.trim();
     if (validatePhoneNumber(trimmedValue)) {
@@ -66,21 +62,19 @@ function AddStore({ open, setOpen }) {
     }
   }, 300);
 
-  // Handle input change and validation
-  const handleChange = (e, phoneType, section) => {
+  const handleChange = (e, field, section) => {
     const { value } = e.target;
     const numericValue = value.replace(/\D/g, "");
     setStoreInfo((prevState) => ({
       ...prevState,
       [section]: {
         ...prevState[section],
-        [phoneType]: numericValue,
+        [field]: numericValue,
       },
     }));
-    handlePhoneNumberChange(numericValue, phoneType);
+    handlePhoneNumberChange(numericValue, field);
   };
 
-  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -90,25 +84,16 @@ function AddStore({ open, setOpen }) {
     if (step === 2) {
       try {
         const formData = new FormData();
-
-        // Append userInfo fields
         Object.keys(storeInfo.userInfo).forEach((key) => {
           formData.append(`userInfo[${key}]`, storeInfo.userInfo[key]);
         });
 
-        // Append businessInfo fields, including the logo if present
         Object.keys(storeInfo.businessInfo).forEach((key) => {
-          if (key === "logo" && storeInfo.businessInfo.logo) {
-            formData.append("businessInfo[logo]", storeInfo.businessInfo.logo);
-          } else {
             formData.append(`businessInfo[${key}]`, storeInfo.businessInfo[key]);
-          }
         });
 
-        // Append passwords
-        
+        formData.append("confirmPassword", storeInfo.confirmPassword);
 
-        // Axios POST request
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`,
           formData,
@@ -120,11 +105,9 @@ function AddStore({ open, setOpen }) {
           }
         );
 
-        // Redirect to login page on success
-        router.push("/login");
+        // router.push("/login");
         setSuccessMessage("Signup successful! You can now log in.");
       } catch (error) {
-        console.error("Error during signup:", error);
         setErrorMessage(
           error.response?.data?.error || "Signup failed. Please try again."
         );
@@ -137,13 +120,43 @@ function AddStore({ open, setOpen }) {
     }
   };
 
+  const isStep1Valid = () => {
+    const { name, email, phone, sec_phone } = storeInfo.userInfo;
+    const { country, state } = storeInfo.businessInfo;
+    return (
+      name.trim() !== "" &&
+      email.trim() !== "" &&
+      phone.trim() !== "" &&
+      sec_phone.trim() !== "" &&
+      country.trim() !== "" &&
+      state.trim() !== "" &&
+      !errors.phone &&
+      !errors.sec_phone
+    );
+  };
+
+  const isStep2Valid = () => {
+    const {  confirmPassword } = storeInfo;
+    const { name, instagram_user, meta_id, entity_phone } = storeInfo.businessInfo;
+    const { password } = storeInfo.userInfo;
+    return (
+      name.trim() !== "" &&
+      password.trim() !== "" &&
+      confirmPassword.trim() !== "" &&
+      password === confirmPassword &&
+      instagram_user.trim() !== "" &&
+      meta_id.trim() !== "" &&
+      entity_phone.trim() !== "" &&
+      !errors.entity_phone
+    );
+  };
+
   useEffect(() => {
     if (open) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
-
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
@@ -217,26 +230,81 @@ function AddStore({ open, setOpen }) {
               id="email"
               className="mb-4"
             />
+            <div className="w-full grid grid-cols-2 gap-2 mb-4">
+            <label htmlFor="country" className="mb-1 col-span-1 block text-right text-[12px]">
+                البلد
+              </label>
+              <label htmlFor="state" className="mb-1 col-span-1 block text-right text-[12px]">
+                المحافظة
+              </label>
+              <Input
+                type="text"
+                id="country"
+                value={storeInfo.businessInfo.country}
+                onChange={(e) =>
+                  setStoreInfo({
+                    ...storeInfo,
+                    businessInfo: {
+                      ...storeInfo.businessInfo,
+                      country: e.target.value,
+                    },
+                  })
+                }
+                className={`col-span-1 ${errors.sec_phone && "ring-1 ring-red-500"}`}
+                required
+              />
+
+              <Input
+                type="text"
+                id="state"
+                value={storeInfo.businessInfo.state}
+                onChange={(e) =>
+                  setStoreInfo({
+                    ...storeInfo,
+                    businessInfo: {
+                      ...storeInfo.businessInfo,
+                      state: e.target.value,
+                    },
+                  })
+                }
+                className={`col-span-1 ${errors.sec_phone && "ring-1 ring-red-500"}`}
+                required
+              />
+            </div>
           </>
         )}
 
         {step === 2 && (
           <>
-            <label htmlFor="bnumber" className="text-sm block mb-2 text-right">
-              هاتف المشروع
-            </label>
-            <Input
-              value={storeInfo.businessInfo.businessPhoneNumber || ""}
-              onChange={(e) =>
-                handleChange(e, "businessPhoneNumber", "businessInfo")
-              }
-              className={`mb-4 w-full ${
-                errors.businessPhoneNumber && "ring-1 ring-red-500"
-              }`}
-              id="bnumber"
-              type="text"
-              required
-            />
+            <div className="w-full grid grid-cols-2 gap-2 mb-4">
+            <label htmlFor="bname" className="text-sm block mb-2 text-right">
+                اسم المشروع
+              </label>
+              <label htmlFor="bnumber" className="text-sm block mb-2 text-right">
+                هاتف المشروع
+              </label>
+              <Input
+                value={storeInfo.businessInfo.name || ""}
+                onChange={(e) =>
+                  setStoreInfo((prev) => ({
+                    ...prev,
+                    businessInfo: { ...prev.businessInfo, name: e.target.value },
+                  }))
+                }
+                className={`mb-4 w-full ${errors.name && "ring-1 ring-red-500"}`}
+                id="bname"
+                type="text"
+                required
+              />
+              <Input
+                value={storeInfo.businessInfo.entity_phone || ""}
+                onChange={(e) => handleChange(e, "entity_phone", "businessInfo")}
+                className={`mb-4 w-full ${errors.entity_phone && "ring-1 ring-red-500"}`}
+                id="bnumber"
+                type="text"
+                required
+              />
+            </div>
             <div className="w-full grid grid-cols-2 gap-2 mb-4">
               <label htmlFor="face" className="mb-1 col-span-1 block text-right text-[12px]">
                 رابط الفيسبوك
@@ -271,14 +339,6 @@ function AddStore({ open, setOpen }) {
                 required
               />
             </div>
-            <FileUploader
-              onFileChange={(selectedFile) =>
-                setStoreInfo((prev) => ({
-                  ...prev,
-                  businessInfo: { ...prev.businessInfo, logo: selectedFile },
-                }))
-              }
-            />
             <label htmlFor="password" className="text-sm mt-6 block mb-2 text-right">
               كلمة المرور
             </label>
@@ -292,7 +352,7 @@ function AddStore({ open, setOpen }) {
                   userInfo: { ...prev.userInfo, password: e.target.value },
                 }))
               }
-              value={storeInfo.password || ""}
+              value={storeInfo.userInfo.password || ""}
               className={"mb-4 w-full"}
             />
             <label htmlFor="cpassword" className="text-sm block mb-2 text-right">
@@ -327,18 +387,17 @@ function AddStore({ open, setOpen }) {
                   email: "",
                   phone: "",
                   sec_phone: "",
+                  password: "",
                 },
                 businessInfo: {
                   name: "",
-                  businessPhoneNumber: "",
+                  entity_phone: "",
                   instagram_user: "",
                   meta_id: "",
-                  logo: null,
                   country: "",
                   state: "",
                   type: "",
                 },
-                password: "",
                 confirmPassword: "",
               });
               setOpen(false);
@@ -349,32 +408,14 @@ function AddStore({ open, setOpen }) {
           <Button
             variant="default"
             type={step === 2 ? "submit" : "button"}
-            className={`h-full w-20 transition-all duration-300 ease-in ${
-              loading &&
-              "opacity-50 w-32 flex flex-row-reverse gap-2 cursor-not-allowed"
-            }`}
+            className={`h-full w-20 transition-all duration-300 ease-in ${loading &&
+              "opacity-50 w-32 flex flex-row-reverse gap-2 cursor-not-allowed"}`}
             onClick={() => {
-              if (step === 1) {
+              if (step === 1 && isStep1Valid()) {
                 setStep(2);
               }
             }}
-            disabled={
-              step === 1
-                ? errors.phone ||
-                  errors.sec_phone ||
-                  !storeInfo.userInfo.name ||
-                  !storeInfo.userInfo.email ||
-                  !storeInfo.businessInfo.name ||
-                  !storeInfo.businessInfo.type ||
-                  !storeInfo.businessInfo.country ||
-                  !storeInfo.businessInfo.state
-                : errors.businessPhoneNumber ||
-                  !storeInfo.businessInfo.instagram_user ||
-                  !storeInfo.businessInfo.meta_id ||
-                  !storeInfo.password ||
-                  !storeInfo.confirmPassword ||
-                  storeInfo.password !== storeInfo.confirmPassword
-            }
+            disabled={step === 1 ? !isStep1Valid() : !isStep2Valid()}
           >
             <p className="right transition-all duration-300 ease-in">
               {step === 1 ? "التالي" : "اضافة"}
