@@ -1,5 +1,118 @@
 export const fetchDashboardData = async () => {
   return {
+    subscriptions: {
+      subscription_plans: [
+        {
+          id: 1,
+          name: "برو",
+          amount: 250000,
+          periodicity: "yearly",
+          status: "inactive",
+        },
+        {
+          id: 2,
+          name: "ايكو",
+          amount: 50000,
+          periodicity: "monthly",
+          status: "active",
+        },
+        {
+          id: 3,
+          name: "بريميوم",
+          amount: 500000,
+          periodicity: "yearly",
+          status: "active",
+        },
+      ],
+      subscription_records: [
+        {
+          id: 1,
+          entity_id: 2,
+          subscription_plan_id: 1,
+          amount: 250000,
+          period_amount: 3,
+          status: "active",
+          start_date: "2024-11-01",
+          end_date: "2026-05-01",
+        },
+        {
+          id: 2,
+          entity_id: 1,
+          subscription_plan_id: 2,
+          amount: 50000,
+          period_amount: 1,
+          status: "inactive",
+          start_date: "2024-11-01",
+          end_date: "2024-12-01",
+        },
+        {
+          id: 3,
+          entity_id: 2,
+          subscription_plan_id: 3,
+          amount: 500000,
+          period_amount: 1,
+          status: "active",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+      ],
+    },
+
+    payments: {
+      financial: [
+        {
+          id: 1,
+          date: "2022-10-10",
+          amount: "1000",
+          entity_id: 4,
+          status: "paid",
+        },
+        {
+          id: 2,
+          date: "2022-10-10",
+          amount: "1000",
+          entity_id: 3,
+          status: "unpaid",
+        },
+        {
+          id: 3,
+          date: "2022-10-10",
+          amount: "1000",
+          entity_id: 1,
+          status: "partially paid",
+        },
+        {
+          id: 4,
+          date: "2022-10-10",
+          amount: "1000",
+          entity_id: 2,
+          status: "partially paid",
+        },
+      ],
+      // allStores is refered by entity_id
+      allStores: [
+        {
+          id: 1,
+          name: "متجر السعادة",
+        },
+        {
+          id: 2,
+          name: "متجر النور",
+        },
+        {
+          id: 3,
+          name: "متجر الحرية",
+        },
+        {
+          id: 4,
+          name: "متجر الوصل",
+        },
+        {
+          id: 5,
+          name: "متجر غافر",
+        },
+      ],
+    },
     employees: [{}],
     allStores: [
       {

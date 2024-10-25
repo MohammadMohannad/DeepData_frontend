@@ -9,6 +9,7 @@
   color: official;
   display: inline-block;
   position: relative;
+  z-index: 9999;
   width: 60px;
   height: 60px;
   transform: scale(0.5);
@@ -26,7 +27,7 @@
   width: 2.5px;
   height: 12px;
   border-radius: 20%;
-  background: white;
+  background: #85d68b;
 }
 .lds-spinner div:nth-child(1) {
   transform: rotate(0deg);

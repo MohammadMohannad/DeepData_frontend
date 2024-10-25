@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Container from "@/components/container/Container";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
-
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -46,34 +45,64 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const formatter = new Intl.NumberFormat("en-US");
+const fetchEntityData = async (fromDate, toDate) => {
+  console.log(fromDate, toDate);
+  try {
+    const params = {
+      from_date: fromDate ? new Date(fromDate).toISOString() : "2024-01-01",
+      to_date: toDate ? new Date(toDate).toISOString() : "2024-12-31",
+      // or use fromDate/toDate dynamically if needed
+    };
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_customer_count`,
+      {
+        withCredentials: true,
+        params,
+      }
+    );
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
 const useDateFilter = () => {
   const [date, setDate] = useState({ from: null, to: null });
   const [selectedFilter, setSelectedFilter] = useState("day"); // Default filter
 
+
   const handleFilterChange = (filter) => {
+    console.log(filter);
     setSelectedFilter(filter);
     const now = new Date();
     let startDate;
+    let endDate;
 
     switch (filter) {
       case "day":
         startDate = new Date(now.setHours(0, 0, 0, 0)); // Start of today
-        setDate({ from: startDate, to: null });
+        endDate = new Date(now.setHours(23, 59, 59, 999)); // End of today
+        setDate({ from: startDate, to: endDate });
         break;
       case "week":
         startDate = new Date(now.setDate(now.getDate() - 7)); // Start of last week
-        setDate({ from: startDate, to: null });
+        endDate = new Date(); // End of the week
+        setDate({ from: startDate, to: endDate });
         break;
       case "month":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of this month
-        setDate({ from: startDate, to: null });
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // End of this month
+        setDate({ from: startDate, to: endDate });
         break;
       case "year":
         startDate = new Date(now.getFullYear(), 0, 1); // Start of this year
-        setDate({ from: startDate, to: null });
+        endDate = new Date(now.getFullYear(), 11, 31); // End of this year
+        setDate({ from: startDate, to: endDate });
         break;
       default:
         break;
+    }
+    if (startDate && endDate) {
+      fetchEntityData(startDate, endDate);
     }
   };
 
@@ -92,10 +121,7 @@ const useDateFilter = () => {
 };
 
 function Dashboard() {
-  const [date, setDate] = useState({ from: null, to: null });
-  // const [fromDate, setFromDate] = useState(null);
-  // const [toDate, setToDate] = useState(null);
-
+  const [selectedFilter, setSelectedFilter] = useState("day");  // Manage selected tab
   const [customerCount, setCustomerCount] = useState(null);
   const [orderCount, setOrderCount] = useState(null);
   const [productCount, setProductCount] = useState(null);
@@ -106,44 +132,24 @@ function Dashboard() {
   const [topCustomers, setTopCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [dashboardData, setDashboardData] = useState({});
   const [open, setOpen] = useState(false);
-  
-  const fetchEntityData = async (fromDate, toDate) => {
-    try {
-      // Construct the query parameters
-      const params = {
-        from_date: fromDate ? new Date(fromDate).toISOString() : undefined,
-        to_date: toDate ? new Date(toDate).toISOString() : undefined,
-      };
-  
-      // Make the API call with query parameters
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entity_customer_count`, {
-        withCredentials: true,  // Include credentials if necessary
-        params,  // Include query parameters
-      });
-  
-      console.log(response.data);
-      return response.data;  // Return the customer count from the response
-    } catch (err) {
-      throw err;  // Rethrow error to be handled in the useEffect
-    }
-  };
-   useEffect(() => {
+  const { date, setDate, handleFilterChange } = useDateFilter();  // Now setDate is available
+
+
+
+  useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        setLoading(true);  // Start loading state
-        const fromDate = '2024-01-01';  // Example start date
-        const toDate = '2024-09-31';    // Example end date
-        
-        // Process entity data and update state as needed
-  
-        // Fetch both customer count and other dashboard data concurrently
+        setLoading(true);
+        const { from, to } = date;
+
+        // Fetch both customer count and dashboard data concurrently
         const [dashboardDataResponse, entityData] = await Promise.all([
           fetchDashboardData(),
-          fetchEntityData(fromDate, toDate),
+          fetchEntityData(from, to),
         ]);
+
         setDashboardData(dashboardDataResponse);
         setCustomerCount(entityData.customer_count);
         setOrderCount(entityData.orders_count);
@@ -153,39 +159,23 @@ function Dashboard() {
         setTopCities(entityData.topCities);
         setYearSummary(entityData.yearSummary);
         setTopCustomers(entityData.topCustomers);
-
       } catch (err) {
-        setError(err.message);  // Set error message if something goes wrong
+        setError(err.message);
       } finally {
-        setLoading(false);  // Stop loading state
+        setLoading(false);
       }
     };
 
-    loadDashboardData();  // Call the function on component mount
+    loadDashboardData();
+  }, [date]); // Re-run whenever `date` changes
 
-
-
-  }, [date]);  // Re-run the effect when the fromDate or toDate changes
-  const handleDateChange = (selectedDate) => {
-    if (selectedDate.length === 2) {
-      setDate({
-        from: selectedDate[0],
-        to: selectedDate[1],
-      });
-    }
+  const handleTabChange = (value) => {
+    handleFilterChange(value);  // Call the filter change on tab change
   };
-  const handleFetchData = () => {
-    fetchEntityData(date.from, date.to);
-  };
-  // const handleFromDateChange = (filter) => {
-  //   setFromDate(filter);
-  // };
-  // const handleToDateChange = (filter) => {
-  //   setToDate(filter);  
-  // };
 
   if (loading) return <div>Loading...</div>;  // Loading state UI
   if (error) return <div>Error: {error}</div>;  // Error state UI
+
 
   return (
     <>
@@ -208,32 +198,33 @@ function Dashboard() {
               <PopoverTrigger asChild>
                 <Button
                   id="date"
+                 
                   variant={"outline"}
                   className={`w-4/6 justify-start flex-row-reverse text-left font-normal ${
                     !date ? "text-muted-foreground" : ""
                   }`}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "LLL dd, y")} -{" "}
-                        {format(date.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(date.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
+             <CalendarIcon className="mr-2 h-4 w-4" />
+      {date?.from ? (
+        date.to ? (
+          <>
+              {format(date.from, "LLL dd, y")} -{" "}
+              {format(date.to, "LLL dd, y")}
+          </>
+        ) : (
+          format(date.from, "LLL dd, y")
+        )
+      ) : (
+        <span>Pick a date</span>
+      )}
+    </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   initialFocus
                   mode="range"
                   defaultMonth={date?.from}
-                  selected={date}
+                  selected={[date.from, date.to]}
                   onSelect={setDate}
                   numberOfMonths={2}
                 />
@@ -241,28 +232,28 @@ function Dashboard() {
             </Popover>
 
         {/* Fetch Data Button */}
-        <Button variant="default" className="w-2/6 mr-2 min-h-full" onClick={handleFetchData}>
+        <Button variant="default" className="w-2/6 mr-2 min-h-full" >
           تحميل
         </Button>
 </div>
         </div>
 
         <Tabs
-          defaultValue="day"
-          onValueChange={(value) => console.log(value)}
+          defaultValue={selectedFilter}
+          onValueChange={handleTabChange}
           className="w-full sm:w-fit"
         >
           <TabsList className="w-full">
-            <TabsTrigger className="w-1/4 px-4" value="day">
+            <TabsTrigger className="w-1/4 px-4" value="day" >
               هذا اليوم
             </TabsTrigger>
-            <TabsTrigger className="w-1/4 px-4" value="week">
+            <TabsTrigger className="w-1/4 px-4" value="week" >
               الاسبوع السابق
             </TabsTrigger>
-            <TabsTrigger className="w-1/4 px-4" value="month">
+            <TabsTrigger className="w-1/4 px-4" value="month" >
               هذا الشهر
             </TabsTrigger>
-            <TabsTrigger className="w-1/4 px-4" value="year">
+            <TabsTrigger className="w-1/4 px-4" value="year" >
               هذا العام
             </TabsTrigger>
           </TabsList>

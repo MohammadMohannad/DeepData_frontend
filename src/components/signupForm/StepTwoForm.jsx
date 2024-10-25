@@ -164,7 +164,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
         placeholder="رابط صفحة الفيسبوك"
         className="col-span-6 h-12 placeholder:h-6 placeholder:text-right"
       />
-      <FileUploader
+      {/* <FileUploader
         className={"col-span-6 h-18"}
         file={signupInfo.businessInfo.logo}
         onFileChange={(selectedFile) => {
@@ -176,7 +176,7 @@ function StepTwoForm({ signupInfo, setSignupInfo, step, loading }) {
             },
           });
         }}
-      />
+      /> */}
       <Button_one
         step={step}
         loading={loading}

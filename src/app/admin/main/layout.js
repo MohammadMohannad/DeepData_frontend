@@ -1,6 +1,14 @@
 import Aside from "@/components/aside/Aside";
 import Header from "@/components/header/Header";
-import { House, Store, Users, UserSearch } from "lucide-react";
+import {
+  CircleDollarSign,
+  House,
+  Store,
+  StretchHorizontal,
+  TicketPlus,
+  Users,
+  UserSearch,
+} from "lucide-react";
 
 export default function RootLayout({ children }) {
   const menuList = [
@@ -32,6 +40,21 @@ export default function RootLayout({ children }) {
           name: "الموظفين",
           icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
         },
+        {
+          link: "/admin/main/plans",
+          name: "خطط الاشتراك",
+          icon: <StretchHorizontal className="w-5 h-5" strokeWidth={1.5} />,
+        },
+        {
+          link: "/admin/main/payments",
+          name: "المدفوعات",
+          icon: <CircleDollarSign className="w-5 h-5" strokeWidth={1.5} />,
+        },
+        {
+          link: "/admin/main/subscriptions",
+          name: "الاشتراكات",
+          icon: <TicketPlus className="w-5 h-5" strokeWidth={1.5} />,
+        },
       ],
     },
   ];
@@ -55,6 +78,21 @@ export default function RootLayout({ children }) {
       link: "/admin/main/employees",
       name: "الموظفين",
       icon: <Users className="w-5 h-5" strokeWidth={1.5} />,
+    },
+    {
+      link: "/admin/main/plans",
+      name: "خطط الاشتراك",
+      icon: <StretchHorizontal className="w-5 h-5" strokeWidth={1.5} />,
+    },
+    {
+      link: "/admin/main/payments",
+      name: "المدفوعات",
+      icon: <CircleDollarSign className="w-5 h-5" strokeWidth={1.5} />,
+    },
+    {
+      link: "/admin/main/subscriptions",
+      name: "الاشتراكات",
+      icon: <TicketPlus className="w-5 h-5" strokeWidth={1.5} />,
     },
   ];
   return (
