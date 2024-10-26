@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Button } from "../ui/button";
 import { Check, ChevronDown, Plus } from "lucide-react";
 import Modal from "../modal/Modal";
@@ -26,11 +27,26 @@ function AddPlan() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("plan added successfully");
-      console.log(plan);
+
+    try {
+       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/subscription_plans`, plan,{
+          withCredentials: true, // Ensure cookies are included
+        });
+      alert("Plan added successfully");
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error("Error adding plan:", error);
+      alert("Failed to add plan. Please try again.");
+    } finally {
       setLoading(false);
-    }, 4000);
+      setPlan({
+        name: "",
+        amount: "",
+        periodicity: "",
+        status: "",
+      });
+      setIsOpen(false);
+    }
   };
 
   const formatter = new Intl.NumberFormat("en-US");
@@ -38,6 +54,7 @@ function AddPlan() {
     { name: "شهري", value: "monthly" },
     { name: "سنوي", value: "yearly" },
   ];
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("overflow-hidden");

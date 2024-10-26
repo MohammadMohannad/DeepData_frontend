@@ -62,10 +62,10 @@ const columns = ({ setPayment, setOpenPaymentModal }) => [
     enableHiding: false,
   },
   {
-    accessorKey: "store",
+    accessorKey: "entity_name",
     header: "اسم المتجر",
     cell: ({ row }) => {
-      return <div className="cursor-pointer">{row.getValue("store")}</div>;
+      return <div className="cursor-pointer">{row.getValue("entity_name")}</div>;
     },
   },
   {
@@ -77,10 +77,10 @@ const columns = ({ setPayment, setOpenPaymentModal }) => [
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "payment_date",
     header: "التاريخ",
     cell: ({ row }) => {
-      return <div>{row.getValue("date")}</div>;
+      return <div>{row.getValue("payment_date")}</div>;
     },
   },
 
@@ -236,9 +236,9 @@ export function DataTable({ payments, allStores }) {
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
-          value={table.getColumn("store")?.getFilterValue() ?? ""}
+          value={table.getColumn("entity_name")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("store")?.setFilterValue(event.target.value)
+            table.getColumn("entity_name")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-[320px] mr-1 bg-primary-foreground focus-visible:ring-secondary"
         />

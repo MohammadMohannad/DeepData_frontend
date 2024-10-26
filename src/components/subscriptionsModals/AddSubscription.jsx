@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Loader from "../loader/Loader";
+import axios from "axios";
 
 function AddSubscription({ plans, allStoresData }) {
   const [loading, setLoading] = useState(false);
@@ -30,11 +31,29 @@ function AddSubscription({ plans, allStoresData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("Payment added successfully");
-      console.log(subscription);
+
+    try {
+       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/subscriptions`, subscription,{
+          withCredentials: true, // Ensure cookies are included
+        });
+      alert("Plan added successfully");
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error("Error adding plan:", error);
+      alert("Failed to add plan. Please try again.");
+    } finally {
       setLoading(false);
-    }, 4000);
+      setSubscription({
+        entity_id: "",
+    subscription_plan_id: "",
+    amount: 0,
+    period_amount: 0,
+    status: "",
+    start_date: "",
+    end_date: "",
+      });
+      setIsOpen(false);
+    }
   };
 
   const formatter = new Intl.NumberFormat("en-US");
