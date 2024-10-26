@@ -14,7 +14,7 @@ async function fetchPlans() {
   return (await fetchDashboardData()).subscriptions.subscription_plans;
 }
 
-export default async function Payments() {
+export default async function Subscriptions() {
   const subscriptionsData = await fetchSubscriptions();
   const allStores = await fetchAllStores();
   const plans = await fetchPlans();

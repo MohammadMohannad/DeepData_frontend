@@ -72,6 +72,9 @@ input[type="number"] {
   .text-balance {
     text-wrap: balance;
   }
+  .auto-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 @layer base {

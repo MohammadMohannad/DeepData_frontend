@@ -8,7 +8,7 @@ async function fetchPlans() {
   return res.subscriptions.subscription_plans;
 }
 
-export default async function Payments() {
+export default async function Plans() {
   const plans = await fetchPlans();
 
   return (
