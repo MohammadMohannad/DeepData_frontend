@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Loader from "../loader/Loader";
+import axios from "axios";
 
 function EditPlan({ isOpen, setIsOpen, data }) {
   const [loading, setLoading] = useState(false);
@@ -26,12 +27,20 @@ function EditPlan({ isOpen, setIsOpen, data }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("plan added successfully");
-      console.log(plan);
+  
+    try {
+      const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/subscription_plans/${data?.id}`, plan,{withCredentials:true});
+      alert("Plan updated successfully");
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error("Error updating plan:", error);
+      alert("Failed to update plan. Please try again.");
+    } finally {
       setLoading(false);
-    }, 4000);
+      setIsOpen(false);
+    }
   };
+  
 
   const formatter = new Intl.NumberFormat("en-US");
   const periodicityOptions = [

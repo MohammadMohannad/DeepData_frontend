@@ -12,7 +12,7 @@ export default function Entities() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchEntities = async () => {
       try {
         // Send GET request to the Rails API
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/entities`, {
@@ -22,13 +22,13 @@ export default function Entities() {
         console.log(response);
         setEntities(response.data); // Update state with fetched data
       } catch (error) {
-        setError("Error fetching products data");
+        setError("Error fetching stores data");
       } finally {
         setLoading(false); // Mark loading as finished
       }
     };
 
-    fetchOrders(); // Fetch customers when the component mounts
+    fetchEntities(); // Fetch customers when the component mounts
   }, []); // Empty dependency array means this runs once on mount
 
   if (loading) {

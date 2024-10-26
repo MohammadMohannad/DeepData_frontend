@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Loader from "../loader/Loader";
+import axios from "axios";
 
 function AddPayment({ allStores }) {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ function AddPayment({ allStores }) {
   const [payment, setPayment] = useState({
     entity_id: "",
     amount: "",
-    date: "",
+    payment_date: "",
     status: "",
   });
   const [searchStore, setSearchStore] = useState({ value: "", stores: [] });
@@ -27,11 +28,26 @@ function AddPayment({ allStores }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/payments`, payment,{
+          withCredentials: true, // Ensure cookies are included
+        });
       alert("Payment added successfully");
-      console.log(payment);
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error("Error adding plan:", error);
+      alert("Failed to add payment. Please try again.");
+    } finally {
       setLoading(false);
-    }, 4000);
+      setPayment({
+        entity_id: "",
+        amount: "",
+        payment_date: "",
+        status: "",
+      });
+      setIsOpen(false);
+    }
   };
 
   const formatter = new Intl.NumberFormat("en-US");
@@ -133,7 +149,7 @@ function AddPayment({ allStores }) {
             <label className="text-right col-span-2 text-sm" htmlFor="amount">
               المبلغ
             </label>
-            <label className="text-right col-span-3 text-sm" htmlFor="date">
+            <label className="text-right col-span-3 text-sm" htmlFor="payment_date">
               التاريخ
             </label>
             <Input
@@ -153,10 +169,10 @@ function AddPayment({ allStores }) {
             />
 
             <Input
-              value={payment.date}
-              onChange={(e) => setPayment({ ...payment, date: e.target.value })}
+              value={payment.payment_date}
+              onChange={(e) => setPayment({ ...payment, payment_date: e.target.value })}
               className="col-span-3"
-              id="date"
+              id="payment_date"
               required
               type="date"
             />
@@ -237,7 +253,7 @@ function AddPayment({ allStores }) {
               disabled={
                 loading ||
                 !payment.amount ||
-                !payment.date ||
+                !payment.payment_date ||
                 !payment.entity_id ||
                 !payment.status
               }
