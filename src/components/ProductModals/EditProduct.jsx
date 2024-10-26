@@ -11,7 +11,7 @@ function EditProductModal({ product, open, setOpen }) {
   const [newProduct, setNewProduct] = useState({
     name: product?.name || "",
     periodicity_type: product?.periodicity_type || "",
-    priod: product?.priod || "",
+    priod_amount: product?.priod_amount || "",
     price: product?.price || "",
   });
 
@@ -91,7 +91,7 @@ function EditProductModal({ product, open, setOpen }) {
           >
             تكرارية المنتج
           </label>
-          <label htmlFor="priod" className="col-span-1 mb-1 order-8">
+          <label htmlFor="priod_amount" className="col-span-1 mb-1 order-8">
             المدة
           </label>
           <Input
@@ -107,11 +107,11 @@ function EditProductModal({ product, open, setOpen }) {
             type="text"
           />
           <Input
-            value={newProduct.priod || ""}
+            value={newProduct.priod_amount || ""}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, priod: e.target.value })
+              setNewProduct({ ...newProduct, priod_amount: e.target.value })
             }
-            id="priod"
+            id="priod_amount"
             className="col-span-1 mb-4 order-10"
             type="number"
           />
@@ -128,7 +128,7 @@ function EditProductModal({ product, open, setOpen }) {
                 name: "",
                 price: "",
                 periodicity_type: "",
-                priod: "",
+                priod_amount: "",
               });
             }}
           >
