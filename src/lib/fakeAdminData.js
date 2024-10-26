@@ -1,3 +1,5 @@
+import { sub } from "date-fns";
+
 export const fetchDashboardData = async () => {
   return {
     subscriptions: {
@@ -7,7 +9,7 @@ export const fetchDashboardData = async () => {
           name: "برو",
           amount: 250000,
           periodicity: "yearly",
-          status: "inactive",
+          status: "active",
         },
         {
           id: 2,
@@ -55,6 +57,73 @@ export const fetchDashboardData = async () => {
           start_date: "2024-11-01",
           end_date: "2025-11-01",
         },
+        {
+          id: 4,
+          entity_id: 4,
+          subscription_plan_id: 1,
+          amount: 50000,
+          period_amount: 5,
+          status: "active",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+        {
+          id: 5,
+          entity_id: 4,
+          subscription_plan_id: 2,
+          amount: 250000,
+          period_amount: 2,
+          status: "active",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+      ],
+      subscription_requests: [
+        {
+          id: 1,
+          entity_id: 1,
+          subscription_plan_id: 3,
+          subscription_record_id: 1,
+          status: "pending",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+        {
+          id: 2,
+          entity_id: 2,
+          subscription_plan_id: 3,
+          subscription_record_id: 2,
+          status: "pending",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+        {
+          id: 3,
+          entity_id: 3,
+          subscription_plan_id: 3,
+          subscription_record_id: 3,
+          status: "pending",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+        {
+          id: 4,
+          entity_id: 4,
+          subscription_plan_id: 2,
+          subscription_record_id: 4,
+          status: "rejected",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
+        {
+          id: 5,
+          entity_id: 5,
+          subscription_plan_id: 1,
+          subscription_record_id: 5,
+          status: "accepted",
+          start_date: "2024-11-01",
+          end_date: "2025-11-01",
+        },
       ],
     },
 
@@ -94,22 +163,27 @@ export const fetchDashboardData = async () => {
         {
           id: 1,
           name: "متجر السعادة",
+          owner: "محمد كاظم علي",
         },
         {
           id: 2,
           name: "متجر النور",
+          owner: "جابر كاظم محمد",
         },
         {
           id: 3,
           name: "متجر الحرية",
+          owner: "محمد علي عبدالحسين",
         },
         {
           id: 4,
           name: "متجر الوصل",
+          owner: "حسين جمال ناصر",
         },
         {
           id: 5,
           name: "متجر غافر",
+          owner: "علي محمود حسن",
         },
       ],
     },

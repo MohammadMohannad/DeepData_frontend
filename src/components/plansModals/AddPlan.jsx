@@ -176,7 +176,7 @@ function AddPlan() {
                     ? "مفعل"
                     : plan.status === "inactive"
                     ? "غير مفعل"
-                    : null || "حالة الاشتراك"}
+                    : null || "حالة الخطة"}
                 </p>
               </Button>
             </DropdownMenuTrigger>

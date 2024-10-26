@@ -3,6 +3,7 @@ import Header from "@/components/header/Header";
 import {
   CircleDollarSign,
   House,
+  ShieldPlus,
   Store,
   StretchHorizontal,
   TicketPlus,
@@ -54,6 +55,11 @@ export default function RootLayout({ children }) {
           link: "/admin/main/subscriptions",
           name: "الاشتراكات",
           icon: <TicketPlus className="w-5 h-5" strokeWidth={1.5} />,
+        },
+        {
+          link: "/admin/main/subscription-request",
+          name: "طلبات الاشتراك",
+          icon: <ShieldPlus className="w-5 h-5" strokeWidth={1.5} />,
         },
       ],
     },
