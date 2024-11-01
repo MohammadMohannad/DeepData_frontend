@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import "./globals.css";
 import { Readex_Pro } from "next/font/google";
 import ThemeColor from "@/components/statusBarColor/ThemeColor";
+import { RoleProvider } from "@/contexts/RoleContext";
 
 const readex_Pro = Readex_Pro({
   subsets: ["latin"],
@@ -24,12 +25,18 @@ export const metadata = {
   ],
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
-  viewport:
-    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: 0,
 };
 
 export default function RootLayout({ children }) {
   return (
+    <RoleProvider>
     <html lang="ar" suppressHydrationWarning={true}>
       <body className={readex_Pro.className}>
         <ThemeProvider
@@ -43,5 +50,6 @@ export default function RootLayout({ children }) {
         </ThemeProvider>
       </body>
     </html>
+    </RoleProvider>
   );
 }
