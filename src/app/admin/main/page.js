@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Container from "@/components/container/Container";
 import { Button } from "@/components/ui/button";
+import axios from 'axios';
+
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -39,20 +41,133 @@ import YearSummary from "@/components/charts/YearSummary";
 import TopCities from "@/components/charts/TopCities";
 import withAuth from "@/components/withAuth";
 const formatter = new Intl.NumberFormat("en-US");
+const fetchDashboardDataAPI = async (fromDate, toDate) => {
+  console.log(fromDate, toDate);
+  try {
+    const params = {
+      from_date: fromDate ? new Date(fromDate).toISOString() : "2024-01-01",
+      to_date: toDate ? new Date(toDate).toISOString() : "2024-12-31",
+      // or use fromDate/toDate dynamically if needed
+    };
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/DashboardData`,
+      {
+        withCredentials: true,
+        params,
+      }
+    );
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const useDateFilter = () => {
+  const [date, setDate] = useState({ from: null, to: null });
+  const [selectedFilter, setSelectedFilter] = useState("day"); // Default filter
+
+
+  const handleFilterChange = (filter) => {
+    console.log(filter);
+    setSelectedFilter(filter);
+    const now = new Date();
+    let startDate;
+    let endDate;
+
+    switch (filter) {
+      case "day":
+        startDate = new Date(now.setHours(0, 0, 0, 0)); // Start of today
+        endDate = new Date(now.setHours(23, 59, 59, 999)); // End of today
+        setDate({ from: startDate, to: endDate });
+        break;
+      case "week":
+        startDate = new Date(now.setDate(now.getDate() - 7)); // Start of last week
+        endDate = new Date(); // End of the week
+        setDate({ from: startDate, to: endDate });
+        break;
+      case "month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start of this month
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // End of this month
+        setDate({ from: startDate, to: endDate });
+        break;
+      case "year":
+        startDate = new Date(now.getFullYear(), 0, 1); // Start of this year
+        endDate = new Date(now.getFullYear(), 11, 31); // End of this year
+        setDate({ from: startDate, to: endDate });
+        break;
+      default:
+        break;
+    }
+    if (startDate && endDate) {
+      fetchEntityData(startDate, endDate);
+    }
+  };
+
+  const handleDateSelect = (selectedDate) => {
+    if (selectedDate.length === 2) {
+      setDate({ from: selectedDate[0], to: selectedDate[1] }); // Update with selected range
+    }
+  };
+
+  return {
+    date,
+    selectedFilter,
+    handleFilterChange,
+    handleDateSelect,
+  };
+};
 
 function Dashboard() {
-  const [date, setDate] = useState(null);
+  const { date, setDate, handleFilterChange } = useDateFilter();  // Now setDate is available
   const [dashboardData, setDashboardData] = useState({});
+  const [customerCount, setCustomerCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
+  const [revenue, setRevenue] = useState(0);
+  const [pendingRevenue, setPendingRevenue] = useState(0);
+  const [disabledAccounts, setDisabledAccounts] = useState([]);
+  const [topAdmins, setTopAdmins] = useState([]);
+  const [yearSummary, setYearSummary] = useState([]);
+  const [error, setError] = useState(null);
 
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const loadDashboardData = async () => {
-      const data = await fetchDashboardData(); // This should be an API call
-      setDashboardData(data);
+      setLoading(true); // Start loading
+      try {
+        if (date) {
+          const { from, to } = date;
+  
+          // Fetch dashboard data
+          const dashboardData = await fetchDashboardDataAPI(from, to);
+  
+          // Set all state variables based on fetched data
+          setDashboardData(dashboardData);
+          setCustomerCount(dashboardData.customer_count);
+          setUserCount(dashboardData.users_count);
+          setRevenue(dashboardData.total_income);
+          setPendingRevenue(dashboardData.total_unpaid_income);
+          setYearSummary(dashboardData.year_revenue_by_month);
+          setDisabledAccounts(dashboardData.disabledAccounts);  // Uncomment if needed
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false); // Stop loading after completion
+      }
     };
-
+  
     loadDashboardData();
-  }, []);
-
+  }, [date]);
+  
+  const handleTabChange = (value) => {
+    handleFilterChange(value);
+  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
   return (
     <>
       <Container className={"pb-4"}>
@@ -88,7 +203,7 @@ function Dashboard() {
                   initialFocus
                   mode="range"
                   defaultMonth={date?.from}
-                  selected={date}
+                  selected={[date.from, date.to]}
                   onSelect={setDate}
                   numberOfMonths={2}
                 />
@@ -125,14 +240,14 @@ function Dashboard() {
           <GeneralMainPageCards
             className={"order-4 sm:order-1"}
             title="الزبائن"
-            value={`2135+`}
+            value={`${customerCount !== null ? customerCount :'N/A'} `}
             description="+180.1% عن الشهر الماضي"
             icon={Users}
           />
           <GeneralMainPageCards
             className={"order-3 sm:order-2"}
             title="الحسابات الفعالة"
-            value={`512+`}
+            value={`${userCount !== null ? userCount :'N/A'} `}
             icon={Layers}
           />
           <GeneralMainPageCards
@@ -153,14 +268,14 @@ function Dashboard() {
           <GeneralMainPageCards
             className={"order-4 sm:order-1"}
             title="اجمالي الايرادات"
-            value={`IQD ${formatter.format(982231.89)}`}
-            description={`+20.1% from last month`}
+            value={`IQD ${formatter.format(revenue)}`}
+            description={`-`}
             icon={DollarSign}
           />
           <GeneralMainPageCards
             className={"order-1 sm:order-4"}
             title="المبالغ المعلقة"
-            value={`IQD ${formatter.format(787831.89)}`}
+            value={`IQD ${formatter.format(pendingRevenue)}`}
             description="+180.1% عن الشهر الماضي"
             icon={Users}
           />
@@ -235,7 +350,7 @@ function Dashboard() {
               ملخص العام
             </CardHeader>
             <CardContent>
-              <YearSummary data={dashboardData.yearSummary || []} />
+              <YearSummary data={yearSummary|| []} />
             </CardContent>
           </Card>
           {/* top cities */}
