@@ -1,9 +1,13 @@
+"use client";
 import Aside from "@/components/aside/Aside";
 import Header from "@/components/header/Header";
 import { Box, Folders, House, PhoneCall, Replace, Users } from "lucide-react";
-
+import { RoleProvider, useRole } from "@/contexts/RoleContext";
 
 export default function RootLayout({ children }) {
+  const role = useRole(); // Get the role from the context
+
+  // Define menuList and headerMenuList
   const menuList = [
     {
       group: "اكتشف",
@@ -33,11 +37,16 @@ export default function RootLayout({ children }) {
           name: "طلبات العملاء",
           icon: <Folders className="w-5 h-5" strokeWidth={1.5} />,
         },
-        {
-          link: "/customer/main/employees",
-          name: "الموظفين",
-          icon: <Replace className="w-5 h-5" strokeWidth={1.5} />,
-        },
+        // Conditionally add "الموظفين" if the role is "owner"
+        ...(role === "owner"
+          ? [
+              {
+                link: "/customer/main/employees",
+                name: "الموظفين",
+                icon: <Replace className="w-5 h-5" strokeWidth={1.5} />,
+              },
+            ]
+          : []),
         {
           link: "#",
           name: "الدعم",
@@ -46,6 +55,7 @@ export default function RootLayout({ children }) {
       ],
     },
   ];
+
   const headerMenuList = [
     {
       link: "/customer/main",
@@ -67,17 +77,23 @@ export default function RootLayout({ children }) {
       name: "طلبات العملاء",
       icon: <Folders className="w-5 h-5" strokeWidth={1.25} />,
     },
-    {
-      link: "/customer/main/employees",
-      name: "الموظفين",
-      icon: <Replace className="w-5 h-5" strokeWidth={1.25} />,
-    },
+    // Conditionally add "الموظفين" if the role is "owner"
+    ...(role === "owner"
+      ? [
+          {
+            link: "/customer/main/employees",
+            name: "الموظفين",
+            icon: <Replace className="w-5 h-5" strokeWidth={1.25} />,
+          },
+        ]
+      : []),
     {
       link: "#",
       name: "الدعم",
       icon: <PhoneCall className="w-5 h-5" strokeWidth={1.25} />,
     },
   ];
+
   return (
     <main className="flex flex-row-reverse items-start justify-center">
       <div className="hidden lg:flex min-w-[222px] min-h-screen">

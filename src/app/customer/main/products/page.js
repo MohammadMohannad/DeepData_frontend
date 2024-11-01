@@ -5,9 +5,10 @@ import { DataTable } from "@/components/dataTables/ProductsDataTable";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useRole } from "@/contexts/RoleContext";
 
 function Products() {
+  const role = useRole();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,10 +45,14 @@ function Products() {
         <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between py-[10px] sm:mb-[14px]">
           <h3 className="text-3xl font-bold mb-4 sm:mb-0">المنتجات</h3>
           <div className="min-h-full w-full sm:w-[23%] flex justify-between">
-            <AddProductForm />
-            <Button variant="default" className="w-[45%] mr-2 min-h-full">
-              تحميل
-            </Button>
+          {role === "owner" && (
+            <>
+              <AddProductForm />
+              <Button variant="default" className="w-[45%] mr-2 min-h-full">
+                تحميل
+              </Button>
+            </>
+          )}
           </div>
         </div>
         <DataTable products={products.products} />
