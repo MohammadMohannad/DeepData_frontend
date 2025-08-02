@@ -1,12 +1,16 @@
+// components/dataPicker/DataPicker.jsx
 "use client";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { useState } from "react";
+import { format } from "date-fns";
 
-export const DataPicker = ({ withButton = true, className }) => {
+export const DataPicker = ({ withButton = true, className, onApply }) => {
+  // purely internal date-range state
   const [date, setDate] = useState(false);
+
   return (
     <>
       <Popover className={className}>
@@ -46,8 +50,13 @@ export const DataPicker = ({ withButton = true, className }) => {
           />
         </PopoverContent>
       </Popover>
+
       {withButton && (
-        <Button variant="default" className="w-2/6 mr-2 min-h-full">
+        <Button
+          variant="default"
+          className="w-2/6 mr-2 min-h-full"
+          onClick={() => onApply && onApply(date)}
+        >
           تحميل
         </Button>
       )}

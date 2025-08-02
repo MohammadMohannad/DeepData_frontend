@@ -1,5 +1,10 @@
+// components/dataTables/OrdersDataTable.js
 "use client";
-import React, { useState } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -16,7 +21,6 @@ import {
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,7 +46,8 @@ import { Badge } from "../ui/badge";
 import OrderStatus from "../ordersModals/OrderStatus";
 import EditOrder from "../ordersModals/EditOrder";
 
-const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
+
+const makeColumns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -174,8 +179,8 @@ const columns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) => [
   },
 ];
 
-export function DataTable({ orders }) {
-  const [data, setData] = useState(orders);
+export const DataTable = forwardRef(({ orders }, ref) => {
+  const [data] = useState(orders);
   const [order, setOrder] = useState(null);
   const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -183,37 +188,27 @@ export function DataTable({ orders }) {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const [filteredData, setFilteredData] = useState(orders); // Initialize filteredData with orders
+  const [filteredData, setFilteredData] = useState(orders);
   const [activeStatusFilters, setActiveStatusFilters] = useState([
     "ملغى",
     "الطلب مكتمل",
   ]);
-  // Function to update the filtered data based on active filters
-  const updateFilteredData = (newFilters) => {
-    if (newFilters.length === 0) {
-      setFilteredData(orders); // Show all data if no filters are active
-    } else {
-      setFilteredData(
-        orders.filter((order) => newFilters.includes(order.status))
-      );
-    }
-  };
 
-  // Toggle function for status filters
   const toggleStatusFilter = (status) => {
-    setActiveStatusFilters((prevFilters) => {
-      const newFilters = prevFilters.includes(status)
-        ? prevFilters.filter((filter) => filter !== status) // Remove filter if it's already active
-        : [...prevFilters, status]; // Add filter if it's not active
-
-      updateFilteredData(newFilters); // Update the filtered data
-      return newFilters;
-    });
+    const next = activeStatusFilters.includes(status)
+      ? activeStatusFilters.filter((s) => s !== status)
+      : [...activeStatusFilters, status];
+    setActiveStatusFilters(next);
+    setFilteredData(
+      next.length
+        ? orders.filter((o) => next.includes(o.status))
+        : orders
+    );
   };
 
   const table = useReactTable({
-    data: filteredData, // Use filteredData here instead of original orders
-    columns: columns({ setOrder, setOpenOrderStatusModal, setOpenEditModal }),
+    data: filteredData,
+    columns: makeColumns({ setOrder, setOpenOrderStatusModal, setOpenEditModal }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -229,6 +224,9 @@ export function DataTable({ orders }) {
       rowSelection,
     },
   });
+
+  // 1) Expose the `table` via ref, just like your ProductsDataTable
+  useImperativeHandle(ref, () => table, [table]);
 
   return (
     <div className="w-full">
@@ -415,5 +413,5 @@ export function DataTable({ orders }) {
         </div>
       </div>
     </div>
-  );
-}
+ );
+});

@@ -1,6 +1,7 @@
+// components/dataTables/ProductsDataTable.js
 "use client";
-import React, { useState } from "react";
-import axios from "axios"; // Import Axios
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import axios from "axios";
 import {
   flexRender,
   getCoreRowModel,
@@ -33,7 +34,7 @@ import {
 import Container from "../container/Container";
 import EditProductModal from "../ProductModals/EditProduct";
 
-const columns = ({ setProduct, setOpen, handleDelete }) => [
+const makeColumns = ({ setProduct, setOpen, handleDelete }) => [
   {
     accessorKey: "name",
     header: "اسم المنتج",
@@ -84,7 +85,7 @@ const columns = ({ setProduct, setOpen, handleDelete }) => [
               <p>تعديل</p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleDelete(product)} // Call handleDelete function
+              onClick={() => handleDelete(product)}
               className="cursor-pointer flex items-center gap-2"
             >
               <Trash2 size={18} color="red" />
@@ -97,38 +98,31 @@ const columns = ({ setProduct, setOpen, handleDelete }) => [
   },
 ];
 
-export function DataTable({ products }) {
+
+export const DataTable = forwardRef(({ products }, ref) => {
   const [open, setOpen] = useState(false);
   const [product, setProduct] = useState();
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const data = products;
 
-  // Function to handle product deletion
   const handleDelete = async (product) => {
-    const confirmDelete = confirm(`Are you sure you want to delete ${product.name}?`);
-    
-    if (confirmDelete) {
-      try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${product.id}`, {withCredentials:true});
-        alert("Product deleted successfully");
-        // Optionally, trigger a reload or update state here to remove the deleted product from the table
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("Failed to delete the product");
-      }
+    if (!confirm(`Are you sure you want to delete ${product.name}?`)) return;
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${product.id}`,
+        { withCredentials: true }
+      );
+      alert("Product deleted successfully");
+    } catch {
+      alert("Failed to delete the product");
     }
   };
 
   const table = useReactTable({
-    data,
-    columns: columns({
-      setProduct,
-      setOpen,
-      handleDelete, // Pass handleDelete function to columns
-    }),
+    data: products,
+    columns: makeColumns({ setProduct, setOpen, handleDelete }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -145,11 +139,16 @@ export function DataTable({ products }) {
     },
   });
 
+  // expose `table` to parent via ref
+  useImperativeHandle(ref, () => table, [table]);
+
   return (
     <div className="w-full">
+
       {open && (
         <EditProductModal open={open} setOpen={setOpen} product={product} />
       )}
+
       <div className="w-full h-[100px] flex sm:items-center flex-col-reverse items-end gap-4 sm:flex-row sm:h-[40px] sm:gap-0 my-4 sm:justify-between">
         <Input
           placeholder="ابحث الان"
@@ -192,6 +191,7 @@ export function DataTable({ products }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <Container className="overflow-x-auto">
         <div className="rounded-md border min-w-[800px]">
           <Table>
@@ -242,6 +242,7 @@ export function DataTable({ products }) {
           </Table>
         </div>
       </Container>
+
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex text-sm text-muted-foreground" dir="ltr">
           {table.getFilteredSelectedRowModel().rows.length}
@@ -269,4 +270,4 @@ export function DataTable({ products }) {
       </div>
     </div>
   );
-}
+});

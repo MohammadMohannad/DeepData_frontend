@@ -1,6 +1,11 @@
+// components/dataTables/CustomersDataTable.js
 "use client";
-import React, { useState } from "react";
-import axios from "axios"; // Import Axios
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import axios from "axios";
 import {
   flexRender,
   getCoreRowModel,
@@ -18,7 +23,6 @@ import {
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -43,12 +47,12 @@ import Container from "../container/Container";
 import CustomerOrders from "../customerModals/CustomerOrders";
 import CustomerEditModal from "../customerModals/CustomerEdit";
 
-const columns = ({
+const makeColumns = ({
   setOrders,
   setOpenOrdersModal,
   setCustomer,
   setOpenEditModal,
-  handleDelete, // Pass the handleDelete function
+  handleDelete,
 }) => [
   {
     id: "select",
@@ -190,10 +194,9 @@ const columns = ({
   },
 ];
 
-export function DataTable({ customers }) {
-  const [customer, setCustomer] = useState(); // for customer edit
+export const DataTable = forwardRef(({ customers }, ref) => {
+  const [customer, setCustomer] = useState();
   const [openEditModal, setOpenEditModal] = useState(false);
-  const data = customers;
   const [orders, setOrders] = useState([]);
   const [openOrdersModal, setOpenOrdersModal] = useState(false);
   const [sorting, setSorting] = useState([]);
@@ -201,30 +204,30 @@ export function DataTable({ customers }) {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
 
-  // Function to handle customer deletion
+  // deletion handler (unchanged)
   const handleDelete = async (customer) => {
-    const confirmDelete = confirm(`Are you sure you want to delete ${customer.name}?`);
-    
-    if (confirmDelete) {
-      try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/customers/${customer.id}`,{withCredentials:true});
-        alert("Customer deleted successfully");
-        // Optionally, refresh the customer list or update the state to remove the deleted customer
-      } catch (error) {
-        console.error("Error deleting customer:", error);
-        alert("Failed to delete the customer");
-      }
+    if (!confirm(`Are you sure you want to delete ${customer.name}?`))
+      return;
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/customers/${customer.id}`,
+        { withCredentials: true }
+      );
+      alert("Customer deleted successfully");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete the customer");
     }
   };
 
   const table = useReactTable({
-    data,
-    columns: columns({
+    data: customers,
+    columns: makeColumns({
       setOpenOrdersModal,
       setOrders,
       setCustomer,
       setOpenEditModal,
-      handleDelete, // Pass handleDelete to the columns
+      handleDelete,
     }),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -241,6 +244,9 @@ export function DataTable({ customers }) {
       rowSelection,
     },
   });
+
+  // expose the table instance to parent via ref
+  useImperativeHandle(ref, () => table, [table]);
 
   return (
     <div className="w-full">
@@ -382,4 +388,4 @@ export function DataTable({ customers }) {
       </div>
     </div>
   );
-}
+});

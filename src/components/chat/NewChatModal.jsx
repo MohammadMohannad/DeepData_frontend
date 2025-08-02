@@ -1,10 +1,11 @@
 "use client";
-import { ChevronLeft, X, Clipboard } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
+import ChatImageUploader from "../fileUploader/ChatImageUploader";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export default function ChatModal({ open, setOpen }) {
+export default function NewChatModal({ open, setOpen }) {
   const [message, setMessage] = useState({
     message: "",
     uploadedImage: null,
@@ -12,6 +13,7 @@ export default function ChatModal({ open, setOpen }) {
   const [messages, setMessages] = useState([]);
   const textareaRef = useRef(null);
 
+  // Lock scroll when modal is open
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", open);
     return () => {
@@ -19,6 +21,7 @@ export default function ChatModal({ open, setOpen }) {
     };
   }, [open]);
 
+  // Auto‐resize textarea height on content change
   useEffect(() => {
     const ta = textareaRef.current;
     if (ta) {
@@ -27,56 +30,32 @@ export default function ChatModal({ open, setOpen }) {
     }
   }, [message.message]);
 
-  const handleImageUpload = (imageBlob) => {
-    setMessage((m) => ({ ...m, uploadedImage: imageBlob }));
-  };
-
-  const handlePasteClick = async () => {
-    try {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        if (item.types.some(t => t.startsWith('image/'))) {
-          const type = item.types.find(t => t.startsWith('image/'));
-          const blob = await item.getType(type);
-          handleImageUpload(blob);
-          toast.success("تم لصق الصورة من الحافظة");
-          return;
-        }
-      }
-      const text = await navigator.clipboard.readText();
-      setMessage((m) => ({ ...m, message: m.message + text }));
-      toast.success("تم لصق النص من الحافظة");
-    } catch (err) {
-      console.error('Clipboard read failed', err);
-      toast.error("لا يمكن الوصول إلى الحافظة");
-    }
+  const handleImageUpload = (image) => {
+    setMessage((m) => ({ ...m, uploadedImage: image }));
   };
 
   const sendMessage = async () => {
-    if (!message.message.trim() && !message.uploadedImage) return;
+    if (!message.message.trim()) return;
 
     const newMsg = {
       message: message.message,
       time: new Date().toLocaleTimeString(),
-      image: message.uploadedImage,
     };
     setMessages((prev) => [...prev, newMsg]);
 
     try {
-      const formData = new FormData();
-      formData.append('message', message.message);
-      if (message.uploadedImage) {
-        formData.append('uploadedImage', message.uploadedImage, 'clipboard-image.png');
-      }
-
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/send_message`,
-        formData,
-        { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
+        {
+          message: message.message,
+          uploadedImage: message.uploadedImage,
+        },
+        { withCredentials: true }
       );
       toast.success("تم ارسال الرسالة وحفظ البيانات بنجاح");
     } catch (err) {
       toast.error("حدث خطأ أثناء الإرسال");
+      // Optionally revert optimistic UI here
     }
 
     setMessage({ message: "", uploadedImage: null });
@@ -102,7 +81,7 @@ export default function ChatModal({ open, setOpen }) {
           dir="ltr"
         >
           <div className="w-full h-full relative sm:block flex items-center justify-center">
-            <div className="max-w-[400px] flex flex-col justify-between min-w-[96%] sm:min-w-[400px] h-[calc(100vh-200px)] sm:h-fit sm:max-h-[680px] bg-background border sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
+            <div className="max-w-full flex flex-col justify-between min-w-[96%] sm:min-w-[400px] h-[calc(100vh-200px)] sm:h-fit sm:max-h-[680px] bg-background border sm:border rounded-[6px] sm:absolute sm:left-[38px] sm:bottom-8 lg:bottom-20">
 
               {/* Header (large screens) */}
               <div className="hidden sm:block w-full h-2/5 gradient relative overflow-hidden rounded-t-[6px]">
@@ -142,14 +121,14 @@ export default function ChatModal({ open, setOpen }) {
               </div>
 
               {/* Messages */}
-              <div className="w-full h-fit sm:max-h-[250px] min-h-[250px] px-[20px] pt-4 overflow-y-scroll" dir="rtl">
-                <div className="w-[80%] h-fit mb-8" dir="rtl">
+              <div className="w-full h-fit sm:max-h-[250px] min-h-[250px] px-[20px] pt-4 overflow-y-scroll">
+                <div className="w-[80%] h-fit mb-8">
                   <div className="w-full bg-green_1 rounded-l-[6px] rounded-br-[6px] text-[13px] px-2.5 py-1.5 text-white">
                     مرحبا بك مرة اخرى
                   </div>
                   <div
-                    dir="rtl"
-                    className="text-start text-[10px] text-[#98A2B3]"
+                    dir="ltr"
+                    className="text-center text-[10px] text-[#98A2B3]"
                   >
                     Now
                   </div>
@@ -165,19 +144,12 @@ export default function ChatModal({ open, setOpen }) {
                     >
                       {msg.time}
                     </div>
-                    {msg.image && (
-                      <img
-                        src={URL.createObjectURL(msg.image)}
-                        alt="pasted"
-                        className="mt-2 max-h-[100px] rounded"
-                      />
-                    )}
                   </div>
                 ))}
               </div>
 
               {/* Input area */}
-              <div className="px-[20px] py-[11px] w-full border-t rounded-b-[6px] flex gap-1 flex-row-reverse items-center">
+              <div className="px-[20px] w-full border-t rounded-b-[6px] flex gap-1 flex-row-reverse items-center">
                 <div className="flex-1">
                   <textarea
                     ref={textareaRef}
@@ -189,17 +161,9 @@ export default function ChatModal({ open, setOpen }) {
                     onKeyDown={handleKeyDown}
                     placeholder="اكتب الطلب"
                     className="w-full resize-none border-none p-0 focus:outline-none break-all whitespace-pre-wrap overflow-hidden"
-                    dir="rtl"
                   />
                 </div>
-                {/* Paste from clipboard */}
-                <div
-                  onClick={handlePasteClick}
-                  className="w-[35px] h-[35px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
-                  title="Paste from clipboard"
-                >
-                  <Clipboard size={20} />
-                </div>
+                <ChatImageUploader onImageUpload={handleImageUpload} />
                 <div
                   onClick={sendMessage}
                   className="w-[35px] h-[35px] rounded-full bg-green_1 flex items-center justify-center cursor-pointer"
@@ -215,3 +179,4 @@ export default function ChatModal({ open, setOpen }) {
     </>
   );
 }
+
