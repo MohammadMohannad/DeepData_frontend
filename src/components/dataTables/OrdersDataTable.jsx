@@ -180,6 +180,7 @@ const makeColumns = ({ setOpenOrderStatusModal, setOrder, setOpenEditModal }) =>
 ];
 
 export const DataTable = forwardRef(({ orders }, ref) => {
+  DataTable.displayName = "OrdersDataTable";
   const [data] = useState(orders);
   const [order, setOrder] = useState(null);
   const [openOrderStatusModal, setOpenOrderStatusModal] = useState(false);

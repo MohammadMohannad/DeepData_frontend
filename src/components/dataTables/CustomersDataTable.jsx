@@ -195,6 +195,7 @@ const makeColumns = ({
 ];
 
 export const DataTable = forwardRef(({ customers }, ref) => {
+  DataTable.displayName = "CustomersDataTable";
   const [customer, setCustomer] = useState();
   const [openEditModal, setOpenEditModal] = useState(false);
   const [orders, setOrders] = useState([]);

@@ -1,48 +1,44 @@
-// components/ExportButton.js
+// src/components/ExportButton.js
 "use client";
 
 import React from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { Button } from "@/components/ui/button";   // ← import your styled Button
+import { Button } from "@/components/ui/button";
 
 export default function ExportButton({
-  table,
+  data = [],               // array of row-objects
+  columns = [],            // array of { key, header }
   fileName = "export.xlsx",
   label = "تحميل اكسل",
-  variant = "default",  // you can expose variant/size as props if you want
+  variant = "default",
   size = "default",
 }) {
   const handleExport = () => {
-    const cols = table
-      .getAllLeafColumns()
-      .filter((col) => col.getIsVisible() && col.id !== "actions");
-
-    const headers = cols.map((col) =>
-      typeof col.columnDef.header === "string" ? col.columnDef.header : col.id
+    // 1) build plain-object rows with only the columns you care about
+    const sheetData = data.map((row) =>
+      columns.reduce((acc, col) => {
+        // handle nested "company.name" if you ever need it:
+        const value = col.key.split(".").reduce((o, p) => o?.[p], row);
+        acc[col.header] = value;
+        return acc;
+      }, {})
     );
 
-    const data = table.getFilteredRowModel().rows.map((row) => {
-      const obj = {};
-      cols.forEach((col, idx) => {
-        obj[headers[idx]] = row.getValue(col.id);
-      });
-      return obj;
+    // 2) convert → XLSX sheet + workbook
+    const ws = XLSX.utils.json_to_sheet(sheetData, {
+      header: columns.map((c) => c.header),
     });
-
-    const ws = XLSX.utils.json_to_sheet(data, { header: headers });
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    // 3) write + download
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     saveAs(new Blob([wbout]), fileName);
   };
 
   return (
-    <Button
-      onClick={handleExport}
-      variant={variant}
-      size={size}
-    >
+    <Button onClick={handleExport} variant={variant} size={size}>
       {label}
     </Button>
   );

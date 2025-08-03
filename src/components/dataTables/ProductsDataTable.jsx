@@ -100,6 +100,7 @@ const makeColumns = ({ setProduct, setOpen, handleDelete }) => [
 
 
 export const DataTable = forwardRef(({ products }, ref) => {
+  DataTable.displayName = "ProductsDataTable";
   const [open, setOpen] = useState(false);
   const [product, setProduct] = useState();
   const [sorting, setSorting] = useState([]);

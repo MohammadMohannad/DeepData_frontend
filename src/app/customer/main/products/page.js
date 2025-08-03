@@ -1,23 +1,20 @@
-// pages/products.js
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import AddProductForm from "@/components/ProductModals/AddProduct";
 import Container from "@/components/container/Container";
 import { DataTable } from "@/components/dataTables/ProductsDataTable";
 import ExportButton from "@/components/ExportButton";
+import { productsColumns } from "@/config/productsColumns";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/contexts/RoleContext";
 
 export default function Products() {
   const role = useRole();
   const [products, setProducts] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // ref for the table instance
-  const tableRef = useRef(null);
+  const [error,    setError]    = useState(null);
+  const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
     axios
@@ -25,11 +22,11 @@ export default function Products() {
         withCredentials: true,
       })
       .then((res) => setProducts(res.data.products))
-      .catch(() => setError("Error fetching products data"))
+      .catch(() => setError("Error fetching products"))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading…</div>;
   if (error)   return <div>Error: {error}</div>;
 
   return (
@@ -39,23 +36,29 @@ export default function Products() {
         <div className="min-h-full w-full sm:w-[23%] flex justify-between">
           {role === "owner" && (
             <>
-            <AddProductForm />
-            <ExportButton
-              table={tableRef.current}
-              fileName="products.xlsx"
-              label="تحميل اكسل"
-              variant="default"
-              className="w-[45%] mr-2 min-h-full"
-            />
+              <AddProductForm />
+              <Button variant="default" className="w-[45%] mr-2 min-h-full">
+                تحميل
+              </Button>
             </>
           )}
         </div>
       </div>
 
-    
+      {role === "owner" && (
+        <div className="flex justify-end mb-4">
+          <ExportButton
+            data={products}
+            columns={productsColumns}
+            fileName="products.xlsx"
+            label="تحميل اكسل"
+            variant="default"
+            size="default"
+          />
+        </div>
+      )}
 
-      {/* ← Pass the ref into DataTable */}
-      <DataTable ref={tableRef} products={products} />
+      <DataTable products={products} />
     </Container>
   );
 }
