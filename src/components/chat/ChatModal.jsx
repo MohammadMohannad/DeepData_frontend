@@ -193,13 +193,7 @@ export default function ChatModal({ open, setOpen }) {
                   />
                 </div>
                 {/* Paste from clipboard */}
-                <div
-                  onClick={handlePasteClick}
-                  className="w-[35px] h-[35px] rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
-                  title="Paste from clipboard"
-                >
-                  <Clipboard size={20} />
-                </div>
+               
                 <div
                   onClick={sendMessage}
                   className="w-[35px] h-[35px] rounded-full bg-green_1 flex items-center justify-center cursor-pointer"

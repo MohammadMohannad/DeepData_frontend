@@ -232,7 +232,7 @@ export const DataTable = forwardRef(({ products }, ref) => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length}
+                    colSpan={table.getAllLeafColumns().length}
                     className="h-24 text-center"
                   >
                     No results.

@@ -1,110 +1,99 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import logout from "@/assets/logout-icon.svg";
-import avatar from "@/assets/Avatar.svg";
-import axios from 'axios';
-import React, { useState, useEffect } from "react";
+// components/AvatarPopover.jsx
+"use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Image from "next/image";
 import Link from "next/link";
 import { Dot } from "lucide-react";
+import logoutIcon from "@/assets/logout-icon.svg";
+import avatarPlaceholder from "@/assets/Avatar.svg";
 import { handleLogout } from "../logout";
-import { useRouter } from "next/navigation";
 
 export function AvatarPopover({ img }) {
   const router = useRouter();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
-  // Fetch user data from the API
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/user_data`, {
-        withCredentials: true,  // Include credentials if necessary
-      });
-      console.log(response.data);
-      return response.data;
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user_data`,
+        { withCredentials: true }
+      );
+      setUserData(res.data);
     } catch (err) {
-      throw err;
+      if (err.response?.status === 401) {
+        // redirect to login on unauthorized
+        router.push("/login");
+        return;
+      }
+      setError(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch user data
-        const userDataResponse = await fetchUserData();
-        setUserData(userDataResponse);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUserData();
+    fetchUserData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;  // Loading UI
+  if (loading) return <div>Loading...</div>;
+  if (error)   return <div>Error: {error.message || "Something went wrong"}</div>;
 
-  if (error) return <div>Error: {error.message || "An error occurred"}</div>;  // Error handling
+  // If not authenticated (401 happened), userData remains null and we've redirected.
+  if (!userData) return null;
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-full h-full rounded-full">
           <Image
-            src={img || avatar}
+            src={img || avatarPlaceholder}
             alt="avatar"
-            sizes="(100vw, 100vh)"
             fill
             priority
+            className="rounded-full"
           />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-44 p-2" align="start">
-        <div className="w-full rounded-md flex-col flex items-center cursor-pointer justify-center p-2 gap-1.5 border mb-4 h-24 overflow-hidden">
-          <div className="relative z-20 w-10 h-10 rounded-full">
+        <div className="flex flex-col items-center p-2 mb-4 border rounded-md h-24 overflow-hidden">
+          <div className="relative w-10 h-10 mb-1">
             <Image
-              src={img || avatar}
+              src={img || avatarPlaceholder}
               alt="avatar"
-              sizes="(100vw, 100vh)"
               width={40}
               height={40}
+              className="rounded-full"
             />
-            <Dot
-              size={70}
-              className="text-green-400 absolute bottom-[-30px] z-30"
-            />
+            <Dot size={70} className="absolute bottom-[-30px] text-green-400" />
           </div>
           <div className="text-center">
-            <p className="text-sm">{userData ? userData.name : "User"}</p>
-            <p className="text-[9px] text-muted-foreground">
-            {userData ? userData.email : "N/A"}            </p>
+            <p className="text-sm">{userData.name}</p>
+            <p className="text-[9px] text-muted-foreground">{userData.email}</p>
           </div>
         </div>
+
         <Link
           href="#"
           onClick={async (e) => {
-            e.preventDefault(); // Prevent default link behavior
-            await handleLogout(router); // Call the Axios logout function
+            e.preventDefault();
+            await handleLogout(router);
           }}
-          className="w-full rounded-md bg-red-100 text-red-500 flex items-center justify-center p-2 gap-2"
+          className="flex items-center justify-center gap-2 w-full p-2 bg-red-100 text-red-500 rounded-md"
         >
           <p className="text-sm">تسجيل الخروج</p>
-          <Image src={logout} alt="logout" width={20} height={20} />
+          <Image src={logoutIcon} alt="logout" width={20} height={20} />
         </Link>
       </PopoverContent>
     </Popover>
   );
 }
+
 export default AvatarPopover;
