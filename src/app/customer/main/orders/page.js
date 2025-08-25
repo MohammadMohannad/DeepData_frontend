@@ -1,6 +1,4 @@
-// src/app/(your-path)/Orders.jsx
 "use client";
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Container from "@/components/container/Container";
@@ -13,7 +11,6 @@ export default function Orders() {
   const [orders, setOrders]   = useState([]);
   const [error,  setError]    = useState(null);
   const [loading,setLoading]  = useState(true);
-
   const fetchOrders = async ({ from, to } = {}) => {
     setLoading(true);
     try {
@@ -51,7 +48,7 @@ export default function Orders() {
         </div>
       </div>
       <div className="flex justify-end mb-4">
-          <ExportButton
+        <ExportButton
           data={orders}
           columns={ordersColumns}
           fileName="orders.xlsx"
@@ -60,11 +57,9 @@ export default function Orders() {
           size="default"
           className="w-2/6 mr-2 min-h-full"
         />
-    
       </div>
-
       {/* Your unchanged OrdersDataTable */}
-      <DataTable orders={orders} />
+      <DataTable orders={orders}/>
     </Container>
   );
 }
